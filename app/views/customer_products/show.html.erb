@@ -1,0 +1,66 @@
+
+<%= link_to 'Back', customer_url(@customer_id), class:"btn btn-secondary" %>
+<br>
+<br>  
+
+<h4>Product Shipment Pricelist <strong>"<%= @customer_product.customer.name %> - <%= @customer_product.name %> / 1 <%= @customer_product.uom %>"</strong></h4>
+
+<% @customer_locations.each do |customer_location| %>
+
+  <p style="display: inline-block;">Address : </p><strong><%= " "+customer_location.address %> - <%= customer_location.location.name %></strong>
+  <br>
+  <br>
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th>Dooring</th>
+          <th>Per Cubic</th>
+          <th>Per UOM</th>
+          <th>Per 20ft</th>
+          <th>Per 40ft</th>
+          <th>Per 20od</th>
+          <th>Per 21ft</th>
+          <th>Per 20fr</th>
+          <th>Per 40fr</th>
+          <th>Ppn Category</th>
+          <th colspan="2" width="5%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @customer_product_pricelist.each do |customer_product_pricelist| %>
+          <% if customer_product_pricelist.customer_location_id == customer_location.id %>
+            <tr>
+              <td><%= customer_product_pricelist.location.name %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.percubic) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.peruom) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per20ft) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per40ft) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per20od) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per21ft) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per20fr) %></td>
+              <td><%= number_with_delimiter(customer_product_pricelist.per40fr) %></td>
+              <td>
+                <% if customer_product_pricelist.ppncategory.blank? %>
+                  Not Set
+                <% elsif customer_product_pricelist.ppncategory == 1 %>
+                  PPN(+1%)
+                <% elsif customer_product_pricelist.ppncategory == 2 %>
+                  Non PPN
+                <% end %></td>
+              <td><%= link_to 'Edit', edit_customer_product_pricelist_path(customer_product_pricelist), class:"btn btn-info"  %></td>
+              <td><%= link_to 'X', customer_product_pricelist, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger"  %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+<br>
+<% end %>
+
+
+<br>
+<br>

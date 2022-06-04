@@ -1,0 +1,55 @@
+<h4>Customer Product Pricelists</h4>
+
+<br>
+
+<div class="table-responsive">
+<table class="table">
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Product</th>
+      <th>Dooring</th>
+      <th>PerCubic</th>
+      <th>PerUOM</th>
+      <th>Per20ft</th>
+      <th>Per40ft</th>
+      <th>Per20od</th>
+      <th>Per21ft</th>
+      <th>Per20fr</th>
+      <th>Per40fr</th>
+      <th>Ppncategory</th>
+      <th>Active</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @customer_product_pricelists.each do |customer_product_pricelist| %>
+      <tr>
+        <td><%= customer_product_pricelist.customer_product.customer.name %></td>
+        <td><%= customer_product_pricelist.customer_product.name %></td>
+        <td><%= customer_product_pricelist.location.name %></td>
+        <td><%= customer_product_pricelist.percubic %></td>
+        <td><%= customer_product_pricelist.peruom %></td>
+        <td><%= customer_product_pricelist.per20ft %></td>
+        <td><%= customer_product_pricelist.per40ft %></td>
+        <td><%= customer_product_pricelist.per20od %></td>
+        <td><%= customer_product_pricelist.per21ft %></td>
+        <td><%= customer_product_pricelist.per20fr %></td>
+        <td><%= customer_product_pricelist.per40fr %></td>
+        <td><%= customer_product_pricelist.ppncategory %></td>
+        <td><%= customer_product_pricelist.active %></td>
+        <td><%= customer_product_pricelist.description %></td>
+        <td><%= link_to 'Show', customer_product_pricelist %></td>
+        <td><%= link_to 'Edit', edit_customer_product_pricelist_path(customer_product_pricelist) %></td>
+        <td><%= link_to 'Destroy', customer_product_pricelist, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+
+<br>
+
+<%= link_to 'New Customer Product Pricelist', new_customer_product_pricelist_path %>

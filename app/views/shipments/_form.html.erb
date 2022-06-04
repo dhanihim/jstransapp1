@@ -1,0 +1,76 @@
+<%= form_with(model: shipment) do |form| %>
+  <% if shipment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(shipment.errors.count, "error") %> prohibited this shipment from being saved:</h2>
+
+      <ul>
+        <% shipment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field form-group">
+    <%= form.text_field :uid, class:"form-control", placeholder:"Shipment UID", autocomplete:"off", value:"JST-"+DateTime.now.strftime("%Y%m%d%H%M"), readonly:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :shipname, class:"form-control", placeholder:"Ship's Name", autocomplete:"off", required:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :voyage, class:"form-control", placeholder:"Voyage", autocomplete:"off", required:"true"   %>
+  </div>
+
+  <div class="row">
+    <div class="field form-group col-md-3">
+      <%= form.label :estimateddeparture, "Estimated Departure" %>
+      <%= form.date_field :estimateddeparture, class:'form-control', required:'true' %>
+    </div>
+
+    <div class="field form-group col-md-3">
+      <%= form.label :estimatedarrival, "Estimated Arrival" %>
+      <%= form.date_field :estimatedarrival, class:'form-control', required:'true' %>
+    </div>
+
+    <div class="field form-group col-md-3">
+      <%= form.label :actualdeparture, "Actual Departure" %>
+      <%= form.date_field :actualdeparture, class:'form-control'%>
+    </div>
+
+    <div class="field form-group col-md-3">
+      <%= form.label :actualarrival, "Actual Arrival" %>
+      <%= form.date_field :actualarrival, class:'form-control'%>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field form-group">
+        <%= form.label :pol, "Port of Loading" %>
+        <%= form.collection_select :pol, Location.all.order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+      </div>
+    </div>
+
+    <div class="col-md-6">  
+      <div class="field form-group">
+        <%= form.label :pod, "Port of Discharge" %>
+        <%= form.collection_select :pod, Location.all.order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off"  %>
+  </div>
+
+  <br>
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

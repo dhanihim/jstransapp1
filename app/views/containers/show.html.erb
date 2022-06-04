@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Number:</strong>
+  <%= @container.number %>
+</p>
+
+<p>
+  <strong>Sealnumber:</strong>
+  <%= @container.sealnumber %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @container.size %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @container.active %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @container.description %>
+</p>
+
+<%= link_to 'Edit', edit_container_path(@container) %> |
+<%= link_to 'Back', containers_path %>

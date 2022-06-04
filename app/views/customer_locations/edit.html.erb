@@ -1,0 +1,8 @@
+<h4>Editing Customer Location for "<%= @customer_name %>"</h4>
+
+<br>
+
+<%= render 'form', customer_location: @customer_location %>
+
+<br>
+<%= link_to 'Back', customer_path(params[:customerid]), class:"btn btn-secondary" %>

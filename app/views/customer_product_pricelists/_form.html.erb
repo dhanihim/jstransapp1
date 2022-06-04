@@ -1,0 +1,83 @@
+<%= form_with(model: customer_product_pricelist) do |form| %>
+  <% if customer_product_pricelist.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(customer_product_pricelist.errors.count, "error") %> prohibited this customer_product_pricelist from being saved:</h2>
+
+      <ul>
+        <% customer_product_pricelist.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="field form-group">
+        <%= form.label :percubic, "Price Per 1 Cubic" %>
+        <%= form.number_field :percubic, class:"form-control", placeholder:"Price per 1 cubic", autocomplete:"off", required:"true"  %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="field form-group">
+        <%= form.label :peruom, "Price Per UOM" %>
+        <%= form.number_field :peruom, class:"form-control", placeholder:"Price per UOM", autocomplete:"off", required:"true"  %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="field form-group">
+        <%= form.label :per20ft, "Price For 20 FT" %>
+        <%= form.number_field :per20ft, class:"form-control", placeholder:"Price for 20FT", autocomplete:"off", required:"true"  %>
+      </div>
+
+      <div class="field form-group">
+        <%= form.label :per40ft, "Price For 40 FT" %>
+        <%= form.number_field :per40ft, class:"form-control", placeholder:"Price for 20FT", autocomplete:"off", required:"true"  %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="field form-group">
+        <%= form.label :per20od, "Price For 20 OD" %>
+        <%= form.number_field :per20od, class:"form-control", placeholder:"Price for 20OD", autocomplete:"off", required:"true"  %>
+      </div>
+
+      <div class="field form-group">
+        <%= form.label :per21ft, "Price For 21 FT" %>
+        <%= form.number_field :per21ft, class:"form-control", placeholder:"Price for 21FT", autocomplete:"off", required:"true"  %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="field form-group">
+        <%= form.label :per20fr, "Price For 20 FR" %>
+        <%= form.number_field :per20fr, class:"form-control", placeholder:"Price for 20FR", autocomplete:"off", required:"true"  %>
+      </div>
+
+      <div class="field form-group">
+        <%= form.label :per40fr, "Price For 40 FR" %>
+        <%= form.number_field :per40fr, class:"form-control", placeholder:"Price for 40FR", autocomplete:"off", required:"true"  %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :ppncategory %>
+    <%= form.select :ppncategory, [["PPN(+1%)",1],["Non PPN",2]], {}, class:"form-control", placeholder:"Category", autocomplete:"off"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off" %>
+  </div>
+
+  <br>
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

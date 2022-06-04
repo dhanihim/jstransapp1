@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  per20ft: 1
+  per40ft: 1
+  per20od: 1
+  per21ft: 1
+  per20fr: 1
+  per40fr: 1
+  ppncategory: 1
+  active: 1
+  description: MyString
+
+two:
+  per20ft: 1
+  per40ft: 1
+  per20od: 1
+  per21ft: 1
+  per20fr: 1
+  per40fr: 1
+  ppncategory: 1
+  active: 1
+  description: MyString

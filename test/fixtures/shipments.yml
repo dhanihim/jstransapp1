@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  uid: MyString
+  shipname: MyString
+  voyage: MyString
+  estimateddeparture: 2022-05-21
+  estimatedarrival: 2022-05-21
+  actualdeparture: 2022-05-21
+  actualarrival: 2022-05-21
+  active: 1
+  description: MyString
+
+two:
+  uid: MyString
+  shipname: MyString
+  voyage: MyString
+  estimateddeparture: 2022-05-21
+  estimatedarrival: 2022-05-21
+  actualdeparture: 2022-05-21
+  actualarrival: 2022-05-21
+  active: 1
+  description: MyString

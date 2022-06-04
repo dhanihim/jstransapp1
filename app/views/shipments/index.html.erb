@@ -1,0 +1,89 @@
+<h2>Shipments</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <%= render 'searchdateform'%>
+  </div>
+  <div class="col-md-6">
+    <%= render 'searchform'%>
+  </div>
+</div>
+
+<br>
+<hr>
+
+<% if params[:commit]=="Load Shipment Data" %>
+
+  <% if !params[:query].empty? %>
+    <h6>Searching for keyword <strong>"<%= params["query"] %>"</strong></h6>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox1">
+        <h4 class="textbox1" style="margin-bottom: 35px;">1</h4>
+        <h6 class="textbox1">Active Shipment</h6>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="informationbox2"></div>        
+        <h4 class="textbox2" style="margin-bottom: 35px;">0</h4>
+        <h6 class="textbox2">Finished Shipment</h6>
+    </div>
+    <div class="col-md-2">
+      <div class="informationbox2"></div>
+        <h4 class="textbox2" style="margin-bottom: 35px;">1</h4>        
+        <h6 class="textbox2">Ongoing Shipment</h6>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width:15%;">UID</th>
+        <th>Shipname</th>
+        <th>Voyage</th>
+        <th>Estimated Departure</th>
+        <th>Estimated Arrival</th>
+        <th>Actual Departure</th>
+        <th>Actual Arrival</th>
+        <th>Description</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @shipments.each do |shipment| %>
+        <tr>
+          <td><%= shipment.uid %></td>
+          <td><%= shipment.shipname %></td>
+          <td><%= shipment.voyage %></td>
+          <td><%= shipment.estimateddeparture %></td>
+          <td><%= shipment.estimatedarrival %></td>
+          <td><%= shipment.actualdeparture %></td>
+          <td><%= shipment.actualarrival %></td>
+          <td><%= shipment.description %></td>
+          <td><%= link_to 'Show', shipment %></td>
+          <td><%= link_to 'Edit', edit_shipment_path(shipment) %></td>
+          <td><%= link_to 'Destroy', shipment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  </div>
+
+<br>
+<%= link_to 'New Shipment', new_shipment_path, class:"btn btn-primary" %>
+
+<% elsif %>
+<center><h5>Or</h5></center>
+
+<br>
+<%= link_to 'Create New Shipment', new_shipment_path, class:"btn btn-primary btn-block" %>
+<% end %>
+
+
+

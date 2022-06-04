@@ -1,0 +1,43 @@
+<%= form_with(model: agent) do |form| %>
+  <% if agent.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(agent.errors.count, "error") %> prohibited this agent from being saved:</h2>
+
+      <ul>
+        <% agent.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field form-group">
+    <%= form.text_field :name, class:"form-control", placeholder:"Name", autocomplete:"off", autofocus:"true", required:"true" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :address, class:"form-control", placeholder:"Address", autocomplete:"off"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :contact, class:"form-control", placeholder:"Contact", autocomplete:"off"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.select :pickupordooring, ["Pickup","Dooring"], {}, class:"form-control", placeholder:"Type", autocomplete:"off"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"  %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off"   %>
+  </div>
+
+  <br>
+
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

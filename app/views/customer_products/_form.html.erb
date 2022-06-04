@@ -1,0 +1,39 @@
+<%= form_with(model: customer_product) do |form| %>
+  <% if customer_product.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(customer_product.errors.count, "error") %> prohibited this customer_product from being saved:</h2>
+
+      <ul>
+        <% customer_product.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field form-group">
+    <%= form.text_field :customer_id, class:"form-control", placeholder:"Customer ID", hidden:"true", value:params[:customerid] %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :name, class:"form-control", placeholder:"Name", autocomplete:"off", autofocus:"true", required:"true" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :uom, class:"form-control", placeholder:"Unit of Measurement", autocomplete:"off", required:"true" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off" %>
+  </div>
+
+  <br>
+
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

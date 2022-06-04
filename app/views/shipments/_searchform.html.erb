@@ -1,0 +1,15 @@
+<br>
+
+<center><h5>Search by Keyword</h5></center>
+
+<%= form_with url: "", method: :get do |form| %>
+<center>
+  <div class="row">
+    <%= form.text_field :query, placeholder:"Search by Shipment ID / Ship's Name / POD / POL", class:"form-control", style:"text-align:center; margin-top:15px;", autocomplete:"off", autofocus:"true" %> 
+  </div>
+  
+  <br>
+  
+  <%= form.submit "Load Shipment Data", class:"btn btn-secondary" %>
+</center>
+<% end %>

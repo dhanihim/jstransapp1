@@ -1,0 +1,6 @@
+class AddCustomerLocationIdToCustomerProductPricelist < ActiveRecord::Migration[6.1]
+  def change
+    add_column :customer_product_pricelists, :customer_location_id, :integer
+    add_index :customer_product_pricelists, :customer_location_id
+  end
+end

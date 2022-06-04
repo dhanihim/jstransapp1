@@ -1,0 +1,35 @@
+<h4>Customer Products</h4>
+
+<br>
+
+<div class="table-responsive">
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Uom</th>
+      <th>Active</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @customer_products.each do |customer_product| %>
+      <tr>
+        <td><%= customer_product.name %></td>
+        <td><%= customer_product.uom %></td>
+        <td><%= customer_product.active %></td>
+        <td><%= customer_product.description %></td>
+        <td><%= link_to 'Show', customer_product %></td>
+        <td><%= link_to 'Edit', edit_customer_product_path(customer_product) %></td>
+        <td><%= link_to 'Destroy', customer_product, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+</div>
+<br>
+
+<%= link_to 'New Customer Product', new_customer_product_path, class:"btn btn-primary" %>

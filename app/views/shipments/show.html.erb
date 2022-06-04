@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Uid:</strong>
+  <%= @shipment.uid %>
+</p>
+
+<p>
+  <strong>Shipname:</strong>
+  <%= @shipment.shipname %>
+</p>
+
+<p>
+  <strong>Voyage:</strong>
+  <%= @shipment.voyage %>
+</p>
+
+<p>
+  <strong>Estimateddeparture:</strong>
+  <%= @shipment.estimateddeparture %>
+</p>
+
+<p>
+  <strong>Estimatedarrival:</strong>
+  <%= @shipment.estimatedarrival %>
+</p>
+
+<p>
+  <strong>Actualdeparture:</strong>
+  <%= @shipment.actualdeparture %>
+</p>
+
+<p>
+  <strong>Actualarrival:</strong>
+  <%= @shipment.actualarrival %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @shipment.active %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @shipment.description %>
+</p>
+
+<%= link_to 'Edit', edit_shipment_path(@shipment) %> |
+<%= link_to 'Back', shipments_path %>

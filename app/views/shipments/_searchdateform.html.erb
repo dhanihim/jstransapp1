@@ -1,0 +1,26 @@
+<br>
+
+<center><h5>Search by Date</h5></center>
+
+<%= form_with url: "/", method: :get do |form| %>
+<center>
+
+  <div class="row">
+    <div class="col-md-4">
+      <%= form.date_field :datefrom, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+    </div>
+    <div class="col-md-4">
+      <%= form.date_field :dateto, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+    </div>
+    <div class="col-md-4">
+      <%= form.select :datetype, ["Created At","Estimated Departure","Estimated Arrival","Actual Departure","Actual Arrival"], {}, class:"form-control", style:"margin-top:15px;", placeholder:"datetype", autocomplete:"off"   %>
+    </div>
+  </div>
+  <br>
+
+  <!-- <div class='row'>
+    <%= form.date_select :check_out_req, { ampm: true, order: [:day, :month, :year] }, { class: "form-control", style:"display:inline-block; width:30%; margin:auto;" } %>
+  </div>  -->
+  <%= form.submit "Load Shipment Data", class:"btn btn-secondary" %>
+</center>
+<% end %>

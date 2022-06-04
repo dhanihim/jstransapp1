@@ -1,0 +1,75 @@
+<%= link_to 'Back', customers_path, class:"btn btn-secondary"  %>
+<br>
+<br>
+
+
+<div class="row">
+  <div class="col-md-6">
+    <!-- Customer Location List -->
+    <h4>Customer Locations</h4>
+
+    <%= link_to 'New Customer Location', new_customer_location_path(:customerid => params[:id]), class:"btn btn-primary btn-sm" %>
+    <br>
+    <br>
+
+    <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Address</th>
+          <th>POD</th>
+          <th colspan="2" style="width:5%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @customer_locations.each do |customer_location| %>
+          <tr>
+            <td><%= customer_location.address %></td>
+            <td><%= customer_location.location.name %></td>
+            <td><%= link_to 'Edit', edit_customer_location_path(customer_location, :customerid => params[:id]), class:"btn btn-info" %></td>
+            <td><%= link_to 'X', customer_location, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger"  %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    </div>
+  </div>
+  <br>
+
+  <div class="col-md-6">
+  <!-- Customer Product List -->
+  <h4>Customer Products</h4>
+
+  <%= link_to 'New Customer Product', new_customer_product_path(:customerid => params[:id]), class:"btn btn-primary btn-sm" %>
+
+  <br>
+  <br>
+  <div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>UOM</th>
+        <th colspan="3" width="5%"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @customer_products.each do |customer_product| %>
+        <tr>
+          <td><%= customer_product.name %></td>
+          <td><%= customer_product.uom %></td>
+          <td><%= link_to 'Pricelist', customer_product, class:"btn btn-success" %></td>
+          <td><%= link_to 'Edit', edit_customer_product_path(customer_product, :customerid => params[:id]), class:"btn btn-info" %></td>
+          <td><%= link_to 'X', customer_product, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  </div>
+  </div>
+</div>
+<br>

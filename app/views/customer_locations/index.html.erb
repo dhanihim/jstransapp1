@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>Address</th>
+      <th>Location</th>
       <th>Active</th>
       <th>Description</th>
       <th colspan="3"></th>
@@ -16,6 +17,7 @@
     <% @customer_locations.each do |customer_location| %>
       <tr>
         <td><%= customer_location.address %></td>
+        <td><%= customer_location.location.name %></td>
         <td><%= customer_location.active %></td>
         <td><%= customer_location.description %></td>
         <td><%= link_to 'Show', customer_location %></td>

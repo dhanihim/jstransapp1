@@ -1,0 +1,81 @@
+<%= form_with(model: assignment) do |form| %>
+  <% if assignment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+
+      <ul>
+        <% assignment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <% if !params[:id].nil? %>
+
+    <div class="field form-group">
+      <%= form.text_field :uid, class:"form-control" , value: 'ASG'+Time.now.to_i.to_s, readonly:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :agent, "Pickup Agent" %>
+      <%= form.collection_select :agent_id, Agent.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control", :disabled => "true"} %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :customer %>
+      <%= form.collection_select :customer_id, Customer.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control", :disabled => "true"} %>
+    </div>
+    
+    <div class="field form-group">
+      <%= form.label :pickuptime, "Pickup Time" %>
+      <%= form.datetime_field :pickuptime, class:'form-control', required:'true', readonly:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :pickup_location %>
+      <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :destination_location %>
+      <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+    </div>
+
+  <% elsif %>
+
+  <div class="field form-group">
+      <%= form.text_field :uid, class:"form-control" , value: 'ASG'+Time.now.to_i.to_s, readonly:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :agent, "Pickup Agent" %>
+      <%= form.collection_select :agent_id, Agent.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :customer %>
+      <%= form.collection_select :customer_id, Customer.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+    </div>
+    
+    <div class="field form-group">
+      <%= form.label :pickuptime, "Pickup Time" %>
+      <%= form.datetime_field :pickuptime, class:'form-control', required:'true' %>
+    </div>
+
+  <% end %>
+
+  <div class="field">
+    <%= form.number_field :document_status, type:"hidden", value:'0' %>
+  </div>
+
+  <div class="field">
+    <%= form.number_field :active, type:"hidden", value:'1' %>
+  </div>
+
+  <br>
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

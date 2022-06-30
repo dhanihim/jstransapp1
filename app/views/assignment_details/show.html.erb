@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @assignment_detail.quantity %>
+</p>
+
+<p>
+  <strong>Total:</strong>
+  <%= @assignment_detail.total %>
+</p>
+
+<%= link_to 'Edit', edit_assignment_detail_path(@assignment_detail) %> |
+<%= link_to 'Back', assignment_details_path %>

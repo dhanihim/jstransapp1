@@ -1,0 +1,37 @@
+<%= form_with(model: assignment_detail) do |form| %>
+  <% if assignment_detail.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(assignment_detail.errors.count, "error") %> prohibited this assignment_detail from being saved:</h2>
+
+      <ul>
+        <% assignment_detail.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field form-group">
+    <%= form.label :customer_product_id %>
+    <%= form.collection_select :customer_product_id, CustomerProduct.where("customer_id = ?", params[:cid]).order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :quantity %>
+    <%= form.number_field :quantity , class:"form-control", required:"true" %>
+  </div>
+
+  <div class="field">
+    <%= form.number_field :total, type:"hidden", value:"0" %>
+  </div>
+
+  <div class="field">
+    <%= form.number_field :assignment_id, type:"hidden", value: params[:id] %>
+  </div>
+
+  <br>
+
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+  </div>
+<% end %>

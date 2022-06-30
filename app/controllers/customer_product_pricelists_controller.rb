@@ -41,7 +41,7 @@ class CustomerProductPricelistsController < ApplicationController
   def update
     respond_to do |format|
       if @customer_product_pricelist.update(customer_product_pricelist_params)
-        format.html { redirect_to customer_product_pricelist_url(@customer_product_pricelist), notice: "Customer product pricelist was successfully updated." }
+        format.html { redirect_to customer_product_path(@customer_product_pricelist.customer_product_id), notice: "Customer product pricelist was successfully updated." }
         format.json { render :show, status: :ok, location: @customer_product_pricelist }
       else
         format.html { render :edit, status: :unprocessable_entity }

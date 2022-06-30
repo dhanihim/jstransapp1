@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_23_160926) do
+ActiveRecord::Schema.define(version: 2022_06_27_030400) do
 
   create_table "agents", force: :cascade do |t|
     t.string "name"
@@ -21,6 +21,32 @@ ActiveRecord::Schema.define(version: 2022_05_23_160926) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "assignment_details", force: :cascade do |t|
+    t.integer "quantity"
+    t.integer "total"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "assignment_id"
+    t.integer "customer_product_id"
+    t.index ["assignment_id"], name: "index_assignment_details_on_assignment_id"
+    t.index ["customer_product_id"], name: "index_assignment_details_on_customer_product_id"
+  end
+
+  create_table "assignments", force: :cascade do |t|
+    t.string "uid"
+    t.datetime "pickuptime"
+    t.integer "document_status"
+    t.integer "active"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "agent_id"
+    t.string "customer_id"
+    t.string "pickup_location"
+    t.string "destination_location"
+    t.index ["agent_id"], name: "index_assignments_on_agent_id"
+    t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
 
   create_table "containers", force: :cascade do |t|

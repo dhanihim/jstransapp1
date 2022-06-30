@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :assignment_details
+  resources :assignments
   resources :shipments
   resources :customer_product_pricelists
   resources :containers

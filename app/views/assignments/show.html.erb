@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Uid:</strong>
+  <%= @assignment.uid %>
+</p>
+
+<p>
+  <strong>Pickuptime:</strong>
+  <%= @assignment.pickuptime %>
+</p>
+
+<p>
+  <strong>Document status:</strong>
+  <%= @assignment.document_status %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @assignment.active %>
+</p>
+
+<%= link_to 'Edit', edit_assignment_path(@assignment) %> |
+<%= link_to 'Back', assignments_path %>

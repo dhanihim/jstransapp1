@@ -1,0 +1,65 @@
+<h4>Assignments</h4>
+
+<br>
+
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Uid</th>
+        <th>Pickup Agent</th>
+        <th>Customer</th>
+        <th>Pickup Address</th>
+        <th>Destination Address</th>
+        <th>POL - POD</th>
+        <th>Pickuptime</th>
+        <th>Document</th>
+        <th colspan="3" style="width:5%"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @assignments.each do |assignment| %>
+        <tr>
+          <td><%= assignment.uid %></td>
+          <td><%= assignment.agent.name %></td>
+          <td><%= assignment.customer.name %></td>
+
+          <% if !assignment.pickup_location.nil? %>
+            <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <% if !assignment.pickup_location.nil? %>
+            <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+            <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <td><%= assignment.pickuptime.to_s(:long) %></td>
+
+          <% if assignment.document_status %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <td style="color:green;"><strong>Uploaded</strong></td>
+          <% end %>
+
+          <td><%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %></td>
+          <td><%= link_to 'Edit', edit_assignment_path(assignment), class:"btn btn-info" %></td>
+          <td><%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>

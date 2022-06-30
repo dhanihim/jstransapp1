@@ -8,8 +8,6 @@
       <th>Number</th>
       <th>Seal Number</th>
       <th>Size</th>
-      <th>Active</th>
-      <th>Description</th>
       <th colspan="3" style="width:5%"></th>
     </tr>
   </thead>
@@ -20,9 +18,7 @@
         <td><%= container.number %></td>
         <td><%= container.sealnumber %></td>
         <td><%= container.size %></td>
-        <td><%= container.active %></td>
-        <td><%= container.description %></td>
-        <td><%= link_to 'Show', container, class:"btn btn-success" %></td>
+        <td><%= link_to 'Assignment List', container, class:"btn btn-success", style:"white-space:nowrap;", style:"white-space:nowrap;" %></td>
         <td><%= link_to 'Edit', edit_container_path(container), class:"btn btn-info" %></td>
         <td><%= link_to 'Destroy', container, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
       </tr>

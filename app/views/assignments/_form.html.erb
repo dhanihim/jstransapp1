@@ -35,13 +35,14 @@
 
     <div class="field form-group">
       <%= form.label :pickup_location %>
-      <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+      <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
     </div>
 
     <div class="field form-group">
       <%= form.label :destination_location %>
-      <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+      <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
     </div>
+
 
   <% elsif %>
 

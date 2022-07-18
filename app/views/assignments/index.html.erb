@@ -14,7 +14,7 @@
         <th>POL - POD</th>
         <th>Pickuptime</th>
         <th>Document</th>
-        <th colspan="3" style="width:5%"></th>
+        <th></th>
       </tr>
     </thead>
 
@@ -51,9 +51,10 @@
             <td style="color:green;"><strong>Uploaded</strong></td>
           <% end %>
 
-          <td><%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %></td>
-          <td><%= link_to 'Edit', edit_assignment_path(assignment), class:"btn btn-info" %></td>
-          <td><%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+          <td style="white-space: nowrap;">
+            <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
+            <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
+            <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
         </tr>
       <% end %>
     </tbody>

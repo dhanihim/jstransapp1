@@ -24,41 +24,10 @@
         <%= form.number_field :peruom, class:"form-control", placeholder:"Price per UOM", autocomplete:"off", required:"true"  %>
       </div>
     </div>
-  </div>
-  <div class="row">
     <div class="col-md-4">
       <div class="field form-group">
-        <%= form.label :per20ft, "Price For 20 FT" %>
-        <%= form.number_field :per20ft, class:"form-control", placeholder:"Price for 20FT", autocomplete:"off", required:"true"  %>
-      </div>
-
-      <div class="field form-group">
-        <%= form.label :per40ft, "Price For 40 FT" %>
-        <%= form.number_field :per40ft, class:"form-control", placeholder:"Price for 20FT", autocomplete:"off", required:"true"  %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="field form-group">
-        <%= form.label :per20od, "Price For 20 OD" %>
-        <%= form.number_field :per20od, class:"form-control", placeholder:"Price for 20OD", autocomplete:"off", required:"true"  %>
-      </div>
-
-      <div class="field form-group">
-        <%= form.label :per21ft, "Price For 21 FT" %>
-        <%= form.number_field :per21ft, class:"form-control", placeholder:"Price for 21FT", autocomplete:"off", required:"true"  %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="field form-group">
-        <%= form.label :per20fr, "Price For 20 FR" %>
-        <%= form.number_field :per20fr, class:"form-control", placeholder:"Price for 20FR", autocomplete:"off", required:"true"  %>
-      </div>
-
-      <div class="field form-group">
-        <%= form.label :per40fr, "Price For 40 FR" %>
-        <%= form.number_field :per40fr, class:"form-control", placeholder:"Price for 40FR", autocomplete:"off", required:"true"  %>
+        <%= form.label :pertonnage, "Price Per Tonnage" %>
+        <%= form.number_field :pertonnage, class:"form-control", placeholder:"Price per Tonnage", autocomplete:"off", required:"true"  %>
       </div>
     </div>
   </div>
@@ -69,7 +38,12 @@
   </div>
 
   <div class="field form-group">
-    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"   %>
+    <%= form.label :expireddate %>
+    <%= form.date_field :expireddate, class:"form-control", autocomplete:"off", required:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true" , hidden:"true"  %>
   </div>
 
   <div class="field form-group">

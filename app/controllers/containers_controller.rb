@@ -1,6 +1,19 @@
 class ContainersController < ApplicationController
   before_action :set_container, only: %i[ show edit update destroy ]
 
+  def update_container_shipment
+    shipment_id = params[:shipment_id]
+    container_id = params[:id]
+
+    @container = Container.find(container_id)
+
+    @container.shipment_id = shipment_id
+
+    @container.save
+
+    redirect_to(container_url(@container))
+  end
+
   # GET /containers or /containers.json
   def index
     @containers = Container.all
@@ -8,6 +21,10 @@ class ContainersController < ApplicationController
 
   # GET /containers/1 or /containers/1.json
   def show
+    @assignmentsavailable = Assignment.where("container_id IS NULL AND containertype = ?", Container.find(params[:id]).size)
+    @assignmentsassigned = Assignment.where("container_id = ?", params[:id])
+
+    @containers = Container.find(params[:id])
   end
 
   # GET /containers/new
@@ -38,7 +55,7 @@ class ContainersController < ApplicationController
   def update
     respond_to do |format|
       if @container.update(container_params)
-        format.html { redirect_to container_url(@container), notice: "Container was successfully updated." }
+        format.html { redirect_to containers_path, notice: "Container was successfully updated." }
         format.json { render :show, status: :ok, location: @container }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -65,6 +82,6 @@ class ContainersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def container_params
-      params.require(:container).permit(:number, :sealnumber, :size, :active, :description)
+      params.require(:container).permit(:pol, :pod, :number, :sealnumber, :size, :active, :description, :shipment_id)
     end
 end

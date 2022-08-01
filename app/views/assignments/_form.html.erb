@@ -19,6 +19,16 @@
     </div>
 
     <div class="field form-group">
+      <%= form.label :loadtype, "Load Type" %>
+      <%= form.text_field :loadtype, class:"form-control" ,readonly:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :containertype, "Container Type" %>
+      <%= form.select :containertype, ["20FT","20FR","20OD","21FT","40FT","40FR"], {}, {class:"form-control", :disabled => "true"} %>
+    </div>
+
+    <div class="field form-group">
       <%= form.label :agent, "Pickup Agent" %>
       <%= form.collection_select :agent_id, Agent.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control", :disabled => "true"} %>
     </div>
@@ -33,21 +43,41 @@
       <%= form.datetime_field :pickuptime, class:'form-control', required:'true', readonly:"true" %>
     </div>
 
-    <div class="field form-group">
-      <%= form.label :pickup_location %>
-      <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
-    </div>
+    <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
+      <div class="field form-group">
+        <%= form.label :pickup_location %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+      </div>
 
-    <div class="field form-group">
-      <%= form.label :destination_location %>
-      <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
-    </div>
+      <div class="field form-group">
+        <%= form.label :destination_location %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+      </div>
+    <% else %>
+      <div class="field form-group">
+        <%= form.label :pickup_location %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+      </div>
 
-
+      <div class="field form-group">
+        <%= form.label :destination_location %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+      </div>
+    <% end %>
   <% elsif %>
 
   <div class="field form-group">
       <%= form.text_field :uid, class:"form-control" , value: 'ASG'+Time.now.to_i.to_s, readonly:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :loadtype, "Load Type" %>
+      <%= form.select :loadtype, ["Full Container Load","Less Container Load"], {}, class:"form-control", placeholder:"Load Type", autocomplete:"off"   %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :containertype, "Container Type" %>
+      <%= form.select :containertype, ["20FT","20FR","20OD","21FT","40FT","40FR"], {}, class:"form-control", placeholder:"Load Type", autocomplete:"off"   %>
     </div>
 
     <div class="field form-group">
@@ -72,11 +102,20 @@
   </div>
 
   <div class="field">
-    <%= form.number_field :active, type:"hidden", value:'1' %>
+    <%= form.number_field :active, type:"hidden", value:'1', hidden:"true" %>
   </div>
 
   <br>
-  <div class="actions">
-    <%= form.submit class:"btn btn-primary" %>
-  </div>
+
+  <% if !params[:id].nil? %>
+    <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
+      <div class="actions">
+        <%= form.submit class:"btn btn-primary" %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="actions">
+      <%= form.submit class:"btn btn-primary" %>
+    </div>
+  <% end %>
 <% end %>

@@ -27,12 +27,7 @@ class CustomerProductsController < ApplicationController
 
           @customer_product_pricelist.percubic = 0;
           @customer_product_pricelist.peruom = 0;
-          @customer_product_pricelist.per20ft = 0;
-          @customer_product_pricelist.per40ft = 0;
-          @customer_product_pricelist.per20od = 0;
-          @customer_product_pricelist.per21ft = 0;
-          @customer_product_pricelist.per20fr = 0;
-          @customer_product_pricelist.per40fr = 0;
+          @customer_product_pricelist.pertonnage = 0;
           @customer_product_pricelist.active = 1;
           @customer_product_pricelist.customer_product_id = @productid;
           @customer_product_pricelist.customer_location_id = @locationid;
@@ -43,7 +38,7 @@ class CustomerProductsController < ApplicationController
       end
     end
 
-    @customer_product_pricelist = CustomerProductPricelist.where("customer_product_id = ?", @productid)
+    @customer_product_pricelist = CustomerProductPricelist.where("customer_product_id = ?", @productid).order("location_id ASC")
   end
 
   # GET /customer_products/new

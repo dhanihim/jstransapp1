@@ -16,18 +16,17 @@
   </div>
 
   <div class="field form-group">
-    <%= form.text_field :address, class:"form-control", placeholder:"Address", autocomplete:"off", autofocus:"true", required:"true" %>
+    <%= form.label :address, "Address" %>
+    <%= form.text_area :address, class:"form-control", placeholder:"Address", autocomplete:"off", autofocus:"true", required:"true" %>
   </div>
 
-  <br>
   <div class="field form-group">
     <%= form.label :location_id, "POD" %>
     <%= form.collection_select :location_id, Location.where("active = 1"), :id, :name, {}, {class:"form-control"} %>
   </div>
 
-  <br>
   <div class="field form-group">
-    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"  %>
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true", hidden:"true", hidden:"true"  %>
   </div>
 
   <div class="field form-group">

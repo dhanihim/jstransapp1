@@ -1,0 +1,1 @@
+json.partial! "customer_location_pricelists/customer_location_pricelist", customer_location_pricelist: @customer_location_pricelist

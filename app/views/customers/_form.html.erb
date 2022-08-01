@@ -24,7 +24,19 @@
   </div>
 
   <div class="field form-group">
-    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true" %>
+    <%= form.text_field :npwp, class:"form-control", placeholder:"NPWP", autocomplete:"off"  %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :person_responsible, class:"form-control", placeholder:"Person Responsible", autocomplete:"off"  %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :person_responsible_uid, class:"form-control", placeholder:"Person Responsible ID Number", autocomplete:"off"  %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true", hidden:"true" %>
   </div>
 
   <div class="field form-group">

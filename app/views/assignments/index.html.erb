@@ -1,6 +1,90 @@
-<h4>Assignments</h4>
+<% if (params[:loadtype]=='1' || params[:loadtype].nil?) %>
+<h4>Full Container Load Assignments</h4>
 
 <br>
+
+<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>
+
+<br>
+<br>
+
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>UID</th>
+        <th>Pickup Agent</th>
+        <th>Customer</th>
+        <th>Pickup Address</th>
+        <th>Destination Address</th>
+        <th>POL - POD</th>
+        <th>Pickuptime</th>
+        <th>Load Type</th>
+        <th>Container</th>
+        <th>Total Product</th>
+        <th>Total Price</th>
+        <th>Document</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @assignmentsfcl.each do |assignment| %>
+        <tr>
+          <td><%= assignment.uid %></td>
+          <td><%= assignment.agent.name %></td>
+          <td><%= assignment.customer.name %></td>
+          <% if !assignment.pickup_location.nil? %>
+            <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <% if !assignment.pickup_location.nil? %>
+            <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+            <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
+
+          <td><%= assignment.pickuptime.to_s(:long) %></td>
+          <td><%= assignment.loadtype %></td>
+          <td><%= assignment.containertype %></td>
+          <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+          <td><%= number_with_delimiter(assignment.total_price) %></td>
+
+          <% if assignment.document_status %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <td style="color:green;"><strong>Uploaded</strong></td>
+          <% end %>
+
+          <td style="width:5%; white-space: nowrap;">
+            <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
+            <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
+            <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+<% elsif (params[:loadtype]=='2') %>
+<h4>Less Container Load Assignments</h4>
+<br>
+
+<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>
+
+<br>
+<br>
+
 
 <div class="table-responsive">
   <table class="table">
@@ -13,13 +97,17 @@
         <th>Destination Address</th>
         <th>POL - POD</th>
         <th>Pickuptime</th>
+        <th>Load Type</th>
+        <th>Container</th>
+        <th>Total Product</th>
+        <th>Total Price</th>
         <th>Document</th>
         <th></th>
       </tr>
     </thead>
 
     <tbody>
-      <% @assignments.each do |assignment| %>
+      <% @assignmentslcl.each do |assignment| %>
         <tr>
           <td><%= assignment.uid %></td>
           <td><%= assignment.agent.name %></td>
@@ -45,22 +133,33 @@
 
           <td><%= assignment.pickuptime.to_s(:long) %></td>
 
+          <td><%= assignment.loadtype %></td>
+          <td><%= assignment.containertype %></td>
+          
+          <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+
+          <td><%= number_with_delimiter(assignment.total_price) %></td>
+
           <% if assignment.document_status %>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
-          <% elsif %>
-            <td style="color:green;"><strong>Uploaded</strong></td>
+              <td style="color:red"><strong>Not Uploaded</strong></td>
+            <% elsif %>
+              <td style="color:green;"><strong>Uploaded</strong></td>
           <% end %>
 
-          <td style="white-space: nowrap;">
+
+          <td style="width:5%; white-space: nowrap;">
             <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
             <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
             <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
+          </td>
         </tr>
+
+
       <% end %>
     </tbody>
   </table>
 </div>
 
 <br>
+<% end %>
 
-<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>

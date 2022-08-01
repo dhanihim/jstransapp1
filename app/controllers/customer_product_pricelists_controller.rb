@@ -68,6 +68,6 @@ class CustomerProductPricelistsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_product_pricelist_params
-      params.require(:customer_product_pricelist).permit(:percubic, :peruom, :per20ft, :per40ft, :per20od, :per21ft, :per20fr, :per40fr, :ppncategory, :active, :description, :customer_product_id, :customer_location_id, :location_id)
+      params.require(:customer_product_pricelist).permit(:percubic, :peruom, :pertonnage, :ppncategory, :active, :description, :customer_product_id, :customer_location_id, :location_id, :expireddate)
     end
 end

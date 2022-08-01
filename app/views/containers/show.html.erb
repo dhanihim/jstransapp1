@@ -1,29 +1,161 @@
-<p id="notice"><%= notice %></p>
+<%= link_to 'Back', containers_path, class:"btn btn-secondary" %>
+<br>
+<br>
 
-<p>
-  <strong>Number:</strong>
-  <%= @container.number %>
-</p>
+<h4>Container <%= @container.size %> <strong><%= @container.number %> - <%= @container.sealnumber %></strong></h4>
+<h4><strong><%= Location.find(@container.pol).name %> - <%= Location.find(@container.pod).name %></strong></h4>
 
-<p>
-  <strong>Sealnumber:</strong>
-  <%= @container.sealnumber %>
-</p>
+<div style="margin-top:15px">
+  <% if @container.shipment_id.nil? || @container.shipment_id == 0 %>
+      <%= form_with url: update_container_shipment_container_url, method: :get do |form| %>
+        <div class="form-group">
+          <%= form.label :shipment_id, "Attach to Shipment" %>
+          <%= form.collection_select :shipment_id, Shipment.where("pol = ? AND pod = ?", @container.pol, @container.pod).order("shipname ASC"), :id, :shipname_with_uid, {}, {class:"form-control"} %> 
+        </div>
+        <div class="field form-group">
+          <%= form.submit "Update", class:"btn btn-primary" %>
+        </div>
+      </center>
+      <% end %>
+  <% else %>
+     <%= form_with url: update_container_shipment_container_url, method: :get do |form| %>
+        <div class="field form-group">
+          <%= form.label :shipment_id, "Shipment" %>
+          <%= form.text_field :shipment_id, class:"form-control", value: Shipment.find(@container.shipment_id).shipname_with_uid ,readonly:"true"  %>
+        </div>
+        <div class="field form-group">
+          <%= form.submit "Seperate from shipment", class:"btn btn-danger" %>
+        </div>
+    <% end %>
+  <% end %>
+</div>
 
-<p>
-  <strong>Type:</strong>
-  <%= @container.size %>
-</p>
+<br>
 
-<p>
-  <strong>Active:</strong>
-  <%= @container.active %>
-</p>
+<h5>Assignment List(s)</h5>
+<hr>
+<br>
+<div class="container-fluid" style="margin-bottom:100px;">
+  <div style="padding:20px; background-color: #f5f5f5; border-radius:10px">
+    <h5>Available Assignment</h5>
+    <div class="table-responsive" style="margin-top:15px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>UID</th>
+            <th>Pickup Agent</th>
+            <th>Customer</th>
+            <th>Pickup Address</th>
+            <th>Destination Address</th>
+            <th>POL - POD</th>
+            <th>Pickuptime</th>
+            <th>Load Type</th>
+            <th>Total Product</th>
+            <th>Total Price</th>
+            <th></th>
+          </tr>
+        </thead>
 
-<p>
-  <strong>Description:</strong>
-  <%= @container.description %>
-</p>
+        <tbody>
+          <% @assignmentsavailable.each do |assignment| %>
+            <% if Location.find(CustomerLocation.find(assignment.pickup_location).location_id) == Location.find(@container.pol) && Location.find(CustomerLocation.find(assignment.destination_location).location_id) == Location.find(@container.pod) %>
+              <tr>
+                <td><%= assignment.uid %></td>
+                <td><%= assignment.agent.name %></td>
+                <td><%= assignment.customer.name %></td>
 
-<%= link_to 'Edit', edit_container_path(@container) %> |
-<%= link_to 'Back', containers_path %>
+                <% if !assignment.pickup_location.nil? %>
+                  <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+                <% elsif %>
+                  <td>-</td>
+                <% end %>
+
+                <% if !assignment.pickup_location.nil? %>
+                  <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+                <% elsif %>
+                  <td>-</td>
+                <% end %>
+
+                <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+                  <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+                <% elsif %>
+                  <td>-</td>
+                <% end %>
+
+                <td><%= assignment.pickuptime.to_s(:long) %></td>
+                <td><%= assignment.loadtype %></td>
+                <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+                <td><%= number_with_delimiter(assignment.total_price) %></td>
+
+                <td style="width:5%; white-space: nowrap;">
+                  <%= link_to 'Add', update_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div> 
+
+  <br>
+  <br>
+
+  <div>
+    <h5>Assigned to Container</h5>
+    <div class="table-responsive" style="margin-top: 15px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>UID</th>
+            <th>Pickup Agent</th>
+            <th>Customer</th>
+            <th>Pickup Address</th>
+            <th>Destination Address</th>
+            <th>POL - POD</th>
+            <th>Pickuptime</th>
+            <th>Load Type</th>
+            <th>Total Product</th>
+            <th>Total Price</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @assignmentsassigned.each do |assignment| %>
+            <tr>
+              <td><%= assignment.uid %></td>
+              <td><%= assignment.agent.name %></td>
+              <td><%= assignment.customer.name %></td>
+
+              <% if !assignment.pickup_location.nil? %>
+                <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+              <% elsif %>
+                <td>-</td>
+              <% end %>
+
+              <% if !assignment.pickup_location.nil? %>
+                <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+              <% elsif %>
+                <td>-</td>
+              <% end %>
+
+              <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+                <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+              <% elsif %>
+                <td>-</td>
+              <% end %>
+
+              <td><%= assignment.pickuptime.to_s(:long) %></td>
+              <td><%= assignment.loadtype %></td>
+              <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+              <td><%= number_with_delimiter(assignment.total_price) %></td>
+
+              <td style="width:5%; white-space: nowrap;">
+                <%= link_to 'X', remove_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-danger", style:"white-space:nowrap;" %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div> 
+</div>

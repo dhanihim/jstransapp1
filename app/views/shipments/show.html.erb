@@ -1,49 +1,31 @@
-<p id="notice"><%= notice %></p>
+<%= link_to 'Back', shipments_path, class:"btn btn-secondary" %>
+<br>
+<br>
 
-<p>
-  <strong>Uid:</strong>
-  <%= @shipment.uid %>
-</p>
+<h3><strong><%= @shipment.uid %></strong></h3>
+<h3><%= @shipment.shipname %> <%= @shipment.voyage %></h3>
+<h5>
+  <% if @shipment.actualdeparture.nil? %>
+    (Not Yet Departed)
+  <% else %>
+    <%= @shipment.actualdeparture %>
+  <% end %>
+   - 
+  <% if @shipment.actualarrival.nil? %>
+    (Not Yet Arrived)
+  <% else %>
+    <%= @shipment.actualarrival %>
+  <% end %>
+</h5>
 
-<p>
-  <strong>Shipname:</strong>
-  <%= @shipment.shipname %>
-</p>
+<br>
+<br>
 
-<p>
-  <strong>Voyage:</strong>
-  <%= @shipment.voyage %>
-</p>
+<h5>Customer List (<%= @customers.count %>)</h5>
+<% @customers.each do |customer| %>
+  <p><%= customer.name %></p>
+<% end %>
 
-<p>
-  <strong>Estimateddeparture:</strong>
-  <%= @shipment.estimateddeparture %>
-</p>
-
-<p>
-  <strong>Estimatedarrival:</strong>
-  <%= @shipment.estimatedarrival %>
-</p>
-
-<p>
-  <strong>Actualdeparture:</strong>
-  <%= @shipment.actualdeparture %>
-</p>
-
-<p>
-  <strong>Actualarrival:</strong>
-  <%= @shipment.actualarrival %>
-</p>
-
-<p>
-  <strong>Active:</strong>
-  <%= @shipment.active %>
-</p>
-
-<p>
-  <strong>Description:</strong>
-  <%= @shipment.description %>
-</p>
-
-<%= link_to 'Edit', edit_shipment_path(@shipment) %> |
-<%= link_to 'Back', shipments_path %>
+<table class="table">
+  
+</table>

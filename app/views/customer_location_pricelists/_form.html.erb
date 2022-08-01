@@ -1,0 +1,79 @@
+<%= form_with(model: customer_location_pricelist) do |form| %>
+  <% if customer_location_pricelist.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(customer_location_pricelist.errors.count, "error") %> prohibited this customer_location_pricelist from being saved:</h2>
+
+      <ul>
+        <% customer_location_pricelist.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <div class="row">
+    <div class="field form-group col-md-4">
+      <%= form.label :per20ft %>
+      <%= form.number_field :per20ft, class:"form-control" %>
+    </div>
+
+    <div class="field form-group col-md-4">
+      <%= form.label :per20fr %>
+      <%= form.number_field :per20fr, class:"form-control" %>
+    </div>
+    
+    <div class="field form-group col-md-4">
+      <%= form.label :per20od %>
+      <%= form.number_field :per20od, class:"form-control" %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="field form-group col-md-4">
+      <%= form.label :per21ft %>
+      <%= form.number_field :per21ft, class:"form-control" %>
+    </div>
+
+    <div class="field form-group col-md-4">
+      <%= form.label :per40ft %>
+      <%= form.number_field :per40ft, class:"form-control" %>
+    </div>
+
+    <div class="field form-group col-md-4">
+      <%= form.label :per40fr %>
+      <%= form.number_field :per40fr, class:"form-control" %>
+    </div>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :ppncategory %>
+    <%= form.select :ppncategory, [["PPN(+1%)",1],["Non PPN",2]], {}, class:"form-control", placeholder:"Category", autocomplete:"off"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :expireddate %>
+    <%= form.date_field :expireddate, class:"form-control", autocomplete:"off", required:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true", hidden:"true"   %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.number_field :customer_location_id, class:"form-control", hidden:"true" %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.number_field :location_id, class:"form-control", hidden:"true" %>
+  </div>
+
+  <br>
+  <div class="actions">
+    <%= form.submit "Update Data", class:"btn btn-primary" %>
+  </div>
+<% end %>

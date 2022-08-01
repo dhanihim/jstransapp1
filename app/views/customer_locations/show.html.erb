@@ -1,19 +1,62 @@
-<p id="notice"><%= notice %></p>
+<%= link_to 'Back', customer_url(@customer_id), class:"btn btn-secondary" %>
+<br>
+<br>  
 
-<p>
-  <strong>Address:</strong>
-  <%= @customer_location.address %>
-</p>
+<h4>Location Shipment Pricelist <strong>"<%= @customer_locations.customer.name %> - <%= @customer_locations.address %>, <%= @customer_locations.location.name %></strong>"</h4>
+<br>
 
-<p>
-  <strong>Active:</strong>
-  <%= @customer_location.active %>
-</p>
+<div class="table-responsive">
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th>Dooring Location</th>
+      <th>20 FT</th>
+      <th>20 FR</th>
+      <th>20 OD</th>
+      <th>21 FT</th>
+      <th>40 FT</th>
+      <th>40 FR</th>
+      <th>Ppncategory</th>
+      <th>Expired</th>
+      <th></th>
+    </tr>
+  </thead>
 
-<p>
-  <strong>Description:</strong>
-  <%= @customer_location.description %>
-</p>
+  <tbody>
+    <% @customer_location_pricelists.each do |customer_location_pricelist| %>
+      <% if customer_location_pricelist.location_id != @customer_locations.location_id %>
+        <tr>
+          <td><%= customer_location_pricelist.location.name %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per20ft) %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per20fr) %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per20od) %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per21ft) %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per40ft) %></td>
+          <td><%= number_with_delimiter(customer_location_pricelist.per40fr) %></td>
+          <td>
+              <% if customer_location_pricelist.ppncategory.blank? %>
+                Not Set
+              <% elsif customer_location_pricelist.ppncategory == 1 %>
+                PPN(+1%)
+              <% elsif customer_location_pricelist.ppncategory == 2 %>
+                Non PPN
+              <% end %>  
+          </td>
+          <td>
+            <% if customer_location_pricelist.expireddate.blank? %>
+              <%= customer_location_pricelist.expireddate %> 
+            <% else %>
+              <%= customer_location_pricelist.expireddate.to_s(:long) %> 
+            <% end %> 
+          </td>
+          <td style="width:5%; white-space:nowrap">
+            <%= link_to 'Edit', edit_customer_location_pricelist_path(customer_location_pricelist), class:"btn btn-info" %>
+            <%= link_to 'X', customer_location_pricelist, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+</div>
 
-<%= link_to 'Edit', edit_customer_location_path(@customer_location) %> |
-<%= link_to 'Back', customer_locations_path %>
+<br>

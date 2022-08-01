@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_27_030400) do
+ActiveRecord::Schema.define(version: 2022_07_21_054723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "assignment_id"
     t.integer "customer_product_id"
+    t.integer "price"
+    t.string "unit"
     t.index ["assignment_id"], name: "index_assignment_details_on_assignment_id"
     t.index ["customer_product_id"], name: "index_assignment_details_on_customer_product_id"
   end
@@ -48,6 +50,10 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.string "customer_id"
     t.string "pickup_location"
     t.string "destination_location"
+    t.string "loadtype"
+    t.string "containertype"
+    t.integer "total_price"
+    t.integer "container_id"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -60,6 +66,35 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "shipment_id"
+    t.integer "pol"
+    t.integer "pod"
+  end
+
+  create_table "containertypes", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "customer_location_pricelists", force: :cascade do |t|
+    t.integer "ppncategory"
+    t.integer "active"
+    t.string "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "per40fr"
+    t.integer "per20fr"
+    t.integer "per21ft"
+    t.integer "per20od"
+    t.integer "per40ft"
+    t.integer "per20ft"
+    t.integer "customer_location_id"
+    t.integer "location_id"
+    t.date "expireddate"
+    t.index ["customer_location_id"], name: "index_customer_location_pricelists_on_customer_location_id"
+    t.index ["location_id"], name: "index_customer_location_pricelists_on_location_id"
   end
 
   create_table "customer_locations", force: :cascade do |t|
@@ -75,12 +110,6 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
   end
 
   create_table "customer_product_pricelists", force: :cascade do |t|
-    t.integer "per20ft"
-    t.integer "per40ft"
-    t.integer "per20od"
-    t.integer "per21ft"
-    t.integer "per20fr"
-    t.integer "per40fr"
     t.integer "ppncategory"
     t.integer "active"
     t.string "description"
@@ -91,6 +120,8 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.integer "location_id"
     t.integer "percubic"
     t.integer "peruom"
+    t.integer "pertonnage"
+    t.date "expireddate"
     t.index ["customer_location_id"], name: "index_customer_product_pricelists_on_customer_location_id"
     t.index ["customer_product_id"], name: "index_customer_product_pricelists_on_customer_product_id"
     t.index ["location_id"], name: "index_customer_product_pricelists_on_location_id"
@@ -115,6 +146,9 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "npwp"
+    t.string "person_responsible"
+    t.string "person_responsible_uid"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -137,8 +171,8 @@ ActiveRecord::Schema.define(version: 2022_06_27_030400) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "pod"
-    t.string "pol"
+    t.integer "pol"
+    t.integer "pod"
   end
 
   create_table "users", force: :cascade do |t|

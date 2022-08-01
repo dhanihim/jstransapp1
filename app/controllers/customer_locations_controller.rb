@@ -8,6 +8,32 @@ class CustomerLocationsController < ApplicationController
 
   # GET /customer_locations/1 or /customer_locations/1.json
   def show
+    @customer_id = @customer_location.customer_id
+
+    @customer_locations = CustomerLocation.find(params[:id])
+    @dooring_locations = Location.where("active = 1")
+
+    @dooring_locations.each do |dooring_location|
+      @dooringid = dooring_location.id
+      @available = CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ?", @customer_locations.id, @dooringid).count
+
+      if(@available==0)
+        @customer_location_pricelist = CustomerLocationPricelist.new
+        @customer_location_pricelist.per40fr = 0
+        @customer_location_pricelist.per20fr = 0
+        @customer_location_pricelist.per21ft = 0
+        @customer_location_pricelist.per20od = 0
+        @customer_location_pricelist.per40ft = 0
+        @customer_location_pricelist.per20ft = 0
+        @customer_location_pricelist.active = 1
+        @customer_location_pricelist.customer_location_id = @customer_locations.id;
+        @customer_location_pricelist.location_id = @dooringid;
+
+        @customer_location_pricelist.save
+      end
+    end
+
+    @customer_location_pricelists = CustomerLocationPricelist.where("customer_location_id = ?", @customer_locations.id).order("location_id ASC")
   end
 
   # GET /customer_locations/new

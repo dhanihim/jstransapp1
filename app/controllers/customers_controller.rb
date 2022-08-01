@@ -10,6 +10,8 @@ class CustomersController < ApplicationController
   def show
     @customer_locations = CustomerLocation.where("customer_id = ?", params[:id])
     @customer_products = CustomerProduct.where("customer_id = ?", params[:id])
+
+    @assignments = Assignment.where("customer_id = ?",params[:id])
   end
 
   # GET /customers/new
@@ -67,6 +69,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.require(:customer).permit(:name, :address, :contact, :active, :description)
+      params.require(:customer).permit(:name, :address, :contact, :active, :description, :npwp, :person_responsible, :person_responsible_uid)
     end
 end

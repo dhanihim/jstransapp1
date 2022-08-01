@@ -3,6 +3,7 @@ class CustomerLocation < ApplicationRecord
 	belongs_to :location
 
 	has_many :customer_product_pricelist
+	has_many :customer_location_pricelist
 	has_many :assignment
 
 	def name_with_initial

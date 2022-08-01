@@ -12,6 +12,10 @@
   <% end %>
 
   <div class="field form-group">
+    <%= form.text_field :shipment_id, class:"form-control", value:"", hidden:"true" %>
+  </div>
+
+  <div class="field form-group">
     <%= form.text_field :number, class:"form-control", placeholder:"Container Number", autocomplete:"off", autofocus:"true", required:"true"  %>
   </div>
 
@@ -20,17 +24,35 @@
   </div>
 
   <div class="field form-group">
-    <%= form.select :size, ["20 FT","40 FT","20 OD","21 FT","20 FR","40 FR"], {}, class:"form-control", placeholder:"Type", autocomplete:"off"   %>
+    <%= form.select :size, ["20FT","20FR","20OD","21FT","40FT","40FR"], {}, class:"form-control", placeholder:"Type", autocomplete:"off"   %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field form-group">
+        <%= form.label :pol, "Port of Loading" %>
+        <%= form.collection_select :pol, Location.all.order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+      </div>
+    </div>
+
+    <div class="col-md-6">  
+      <div class="field form-group">
+        <%= form.label :pod, "Port of Discharge" %>
+        <%= form.collection_select :pod, Location.all.order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+      </div>
+    </div>
   </div>
 
   <div class="field form-group">
-    <%= form.number_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true"  %>
+    <%= form.number_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true", hidden:"true"  %>
   </div>
 
   <div class="field form-group">
     <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off"  %>
   </div>
 
+  <br>
+  
   <div class="actions">
     <%= form.submit class:"btn btn-primary"%>
   </div>

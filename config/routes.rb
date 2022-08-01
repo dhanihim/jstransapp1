@@ -1,9 +1,30 @@
 Rails.application.routes.draw do
+  resources :customer_location_pricelists
+  
   resources :assignment_details
-  resources :assignments
-  resources :shipments
+
+  resources :assignments do
+    member do
+      get :update_assignment_container
+      get :remove_assignment_container
+    end
+  end
+
+  resources :shipments do
+    member do 
+      get :document_packing_list
+      get :document_invoice
+    end
+  end
+
   resources :customer_product_pricelists
-  resources :containers
+  
+  resources :containers do
+    member do 
+      get :update_container_shipment
+    end
+  end
+
   devise_for :users
   get 'dashboard/index'
   resources :customer_products

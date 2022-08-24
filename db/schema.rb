@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_21_054723) do
+ActiveRecord::Schema.define(version: 2022_08_24_121022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 2022_07_21_054723) do
   create_table "assignments", force: :cascade do |t|
     t.string "uid"
     t.datetime "pickuptime"
-    t.integer "document_status"
+    t.string "document_status"
     t.integer "active"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 2022_07_21_054723) do
     t.string "containertype"
     t.integer "total_price"
     t.integer "container_id"
+    t.string "payment_status"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end

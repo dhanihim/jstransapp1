@@ -15,7 +15,7 @@
   <% if !params[:id].nil? %>
 
     <div class="field form-group">
-      <%= form.text_field :uid, class:"form-control" , value: 'ASG'+Time.now.to_i.to_s, readonly:"true" %>
+      <%= form.text_field :uid, class:"form-control", readonly:"true" %>
     </div>
 
     <div class="field form-group">
@@ -101,8 +101,16 @@
 
   <% end %>
 
-  <div class="field">
-    <%= form.number_field :document_status, type:"hidden", value:'0' %>
+  <div class="field form-group">
+    <%= form.label :document_status, "Travel Document" %>
+    <br>
+    <%= form.file_field :document_status %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :payment_status, "Payment Document" %>
+    <br>
+    <%= form.file_field :payment_status %>
   </div>
 
   <div class="field">
@@ -115,11 +123,15 @@
     <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
       <div class="actions">
         <%= form.submit class:"btn btn-primary" %>
+        <br>
+        <br>
       </div>
     <% end %>
   <% else %>
     <div class="actions">
       <%= form.submit class:"btn btn-primary" %>
+      <br>
+      <br>
     </div>
   <% end %>
 <% end %>

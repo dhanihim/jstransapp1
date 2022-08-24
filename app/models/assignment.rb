@@ -4,4 +4,6 @@ class Assignment < ApplicationRecord
 	belongs_to :agent
 	belongs_to :customer
 
+	mount_uploader :document_status, FileUploader
+	mount_uploader :payment_status, FileUploader
 end

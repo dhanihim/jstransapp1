@@ -66,6 +66,14 @@ class ContainersController < ApplicationController
 
   # DELETE /containers/1 or /containers/1.json
   def destroy
+    @container_id = @container.id
+
+    @assignment = Assignment.where("container_id = ?", @container_id)
+    @assignment.each do |assignment|
+      assignment.container_id = nil
+      assignment.save
+    end
+
     @container.destroy
 
     respond_to do |format|

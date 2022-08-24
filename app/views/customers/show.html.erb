@@ -88,6 +88,7 @@
           <th>Pickup Agent</th>
           <th>Customer</th>
           <th>Container Number</th>
+          <th>Load Type</th>
           <th>Pickup Address</th>
           <th>Destination Address</th>
           <th>POL - POD</th>
@@ -111,8 +112,10 @@
               <% if assignment.container_id.nil? %>
                 -
               <% else %>
-                <%= Container.find(assignment.container_id).number %></td>
+                <%= Container.find(assignment.container_id).number %>
               <% end %>
+            </td>
+            <td><%= assignment.loadtype %></td>
             <% if !assignment.pickup_location.nil? %>
               <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
             <% elsif %>

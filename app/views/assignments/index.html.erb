@@ -3,7 +3,7 @@
 
 <br>
 
-<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>
+<%= link_to 'New Assignment',  new_assignment_path(:loadtype => 1), class:"btn btn-primary" %>
 
 <br>
 <br>
@@ -15,6 +15,7 @@
         <th>UID</th>
         <th>Pickup Agent</th>
         <th>Customer</th>
+        <th>Container</th>
         <th>Pickup Address</th>
         <th>Destination Address</th>
         <th>POL - POD</th>
@@ -34,6 +35,11 @@
           <td><%= assignment.uid %></td>
           <td><%= assignment.agent.name %></td>
           <td><%= assignment.customer.name %></td>
+          <% if assignment.container_id.nil? %>
+            <td><%= assignment.container_id %></td>
+          <% else %>
+            <td><%= Container.find(assignment.container_id).number %></td>
+          <% end %>
           <% if !assignment.pickup_location.nil? %>
             <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
           <% elsif %>
@@ -80,7 +86,7 @@
 <h4>Less Container Load Assignments</h4>
 <br>
 
-<%= link_to 'New Assignment', new_assignment_path, class:"btn btn-primary" %>
+<%= link_to 'New Assignment', new_assignment_path(:loadtype => 2), class:"btn btn-primary" %>
 
 <br>
 <br>

@@ -100,6 +100,14 @@ class ShipmentsController < ApplicationController
 
   # DELETE /shipments/1 or /shipments/1.json
   def destroy
+    @shipment_id = @shipment.id
+
+    @container = Container.where("shipment_id = ?", @shipment_id)
+    @container.each do |container|
+      container.shipment_id = nil
+      container.save
+    end
+
     @shipment.destroy
 
     respond_to do |format|

@@ -72,7 +72,11 @@
 
     <div class="field form-group">
       <%= form.label :loadtype, "Load Type" %>
-      <%= form.select :loadtype, ["Full Container Load","Less Container Load"], {}, class:"form-control", placeholder:"Load Type", autocomplete:"off"   %>
+      <% if params[:loadtype].nil? || params[:loadtype]=='1' %>
+        <%= form.select :loadtype, ["Full Container Load","Less Container Load"], {}, class:"form-control", placeholder:"Load Type", autocomplete:"off"   %>
+      <% else %>
+        <%= form.select :loadtype, ["Full Container Load", "Less Container Load"], {:selected => "Less Container Load"}, class:"form-control", placeholder:"Load Type", autocomplete:"off"   %>
+      <% end %>
     </div>
 
     <div class="field form-group">

@@ -53,9 +53,9 @@ class AssignmentDetailsController < ApplicationController
           total = customer_product_pricelist.pertonnage
         end
       end
-    end
 
-    @assignment_detail.total = total*@assignment_detail.quantity
+      @assignment_detail.total = total*@assignment_detail.quantity
+    end
 
     assignment_total = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("total")
 

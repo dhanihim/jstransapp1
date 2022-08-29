@@ -21,8 +21,8 @@ class ShipmentsController < ApplicationController
     
       @shipments = Shipment.where("uid LIKE ? OR shipname LIKE ?", "%#{keyword}%", "%#{keyword}%")
       @shipmentsongoing = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualdeparture IS NULL", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsonwater = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualdeparture <= now()", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsfinished = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualarrival <= now()", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsonwater = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsfinished = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualarrival >= now()", "%#{keyword}%", "%#{keyword}%")
     end
 
     if(!params[:datefrom].nil? && !params[:dateto].nil?)

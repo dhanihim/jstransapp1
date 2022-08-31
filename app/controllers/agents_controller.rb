@@ -3,7 +3,7 @@ class AgentsController < ApplicationController
 
   # GET /agents or /agents.json
   def index
-    @agents = Agent.all
+    @agents = Agent.where("active = 1")
   end
 
   # GET /agents/1 or /agents/1.json
@@ -49,7 +49,10 @@ class AgentsController < ApplicationController
 
   # DELETE /agents/1 or /agents/1.json
   def destroy
-    @agent.destroy
+    @agent = Agent.find(params[:id])
+
+    @agent.active = 0
+    @agent.save
 
     respond_to do |format|
       format.html { redirect_to agents_url, notice: "Agent was successfully destroyed." }

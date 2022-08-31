@@ -7,13 +7,14 @@ Rails.application.routes.draw do
     member do
       get :update_assignment_container
       get :remove_assignment_container
+      get :document_invoice
     end
   end
 
   resources :shipments do
     member do 
       get :document_packing_list
-      get :document_invoice
+      get :depart
     end
   end
 

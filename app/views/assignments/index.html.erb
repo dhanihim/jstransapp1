@@ -14,6 +14,7 @@
       <tr>
         <th>UID</th>
         <th>Pickup Agent</th>
+        <th>Dooring Agent</th>
         <th>Customer</th>
         <th>Container</th>
         <th>Pickup Address</th>
@@ -24,7 +25,10 @@
         <th>Container</th>
         <th>Total Product</th>
         <th>Total Price</th>
+        <th>PPN(1.1%)</th>
+        <th>Grand Total</th>
         <th>Travel Document</th>
+        <th>Dooring Document</th>
         <th>Payment Document</th>
         <th></th>
       </tr>
@@ -35,6 +39,11 @@
         <tr>
           <td><%= assignment.uid %></td>
           <td><%= assignment.agent.name %></td>
+          <% if assignment.dooring_agent_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
+          <% end %>
           <td><%= assignment.customer.name %></td>
           <% if assignment.container_id.nil? %>
             <td><%= assignment.container_id %></td>
@@ -64,6 +73,8 @@
           <td><%= assignment.containertype %></td>
           <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
           <td><%= number_with_delimiter(assignment.total_price) %></td>
+          <td><%= number_with_delimiter(assignment.ppn) %></td>
+          <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
           <% if assignment.document_status.url.nil? %>
             <td style="color:red"><strong>Not Uploaded</strong></td>
@@ -71,6 +82,18 @@
             <% if assignment.document_status.file.exists? %>
               <td>
                 <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <% if assignment.dooring_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.dooring_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
               </td>
             <% else %>
               <td style="color:red"><strong>Error</strong></td>
@@ -117,6 +140,7 @@
       <tr>
         <th>Uid</th>
         <th>Pickup Agent</th>
+        <th>Dooring Agent</th>
         <th>Customer</th>
         <th>Pickup Address</th>
         <th>Destination Address</th>
@@ -126,7 +150,11 @@
         <th>Container</th>
         <th>Total Product</th>
         <th>Total Price</th>
-        <th>Document</th>
+        <th>PPN(1.1%)</th>
+        <th>Grand Total</th>
+        <th>Travel Document</th>
+        <th>Dooring Document</th>
+        <th>Payment Document</th>
         <th></th>
       </tr>
     </thead>
@@ -136,6 +164,11 @@
         <tr>
           <td><%= assignment.uid %></td>
           <td><%= assignment.agent.name %></td>
+          <% if assignment.dooring_agent_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
+          <% end %>
           <td><%= assignment.customer.name %></td>
 
           <% if !assignment.pickup_location.nil? %>
@@ -164,11 +197,43 @@
           <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
 
           <td><%= number_with_delimiter(assignment.total_price) %></td>
+          <td><%= number_with_delimiter(assignment.ppn) %></td>
+          <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
-          <% if assignment.document_status %>
-              <td style="color:red"><strong>Not Uploaded</strong></td>
-            <% elsif %>
-              <td style="color:green;"><strong>Uploaded</strong></td>
+          <% if assignment.document_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.document_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <% if assignment.dooring_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.dooring_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <% if assignment.payment_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.payment_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
           <% end %>
 
 

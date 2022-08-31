@@ -2,7 +2,7 @@
 <br>
 <br>
 
-<h3><strong><%= @shipment.uid %></strong></h3>
+<h3><sthong><%= @shipment.uid %></sthong></h3>
 <h3><%= @shipment.shipname %> <%= @shipment.voyage %></h3>
 <h5>
   <% if @shipment.actualdeparture.nil? %>
@@ -19,13 +19,30 @@
 </h5>
 
 <br>
-<br>
 
-<h5>Customer List (<%= @customers.count %>)</h5>
-<% @customers.each do |customer| %>
-  <p><%= customer.name %></p>
-<% end %>
+<h5 style="margin:20px">Customer List (<%= @customer_array.count %>)</h5>
 
-<table class="table">
-  
-</table>
+<div class="col-md-6">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th style="width:5%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% counter = 0 %>
+      <% @customer_array.each do |customer| %>
+        <tr>
+          <% counter = counter+1 %>
+          <td><%= counter %></td>
+          <td><%= Customer.find(customer).name %></td>
+          <td>
+            <%= link_to 'Invoice', document_invoice_shipment_url(@shipment), class:"btn btn-warning", target:"_blank", style:"color:white" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

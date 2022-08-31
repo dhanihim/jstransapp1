@@ -66,57 +66,70 @@
   </div>
 
   <div class="col-md-8" style="margin-bottom: 25px;">
-    <h4>Productlist</h4>
+    <h4>Add Product</h4>
     <br>
+    <div>
+      <%= render 'form', assignment_detail: @assignment_detail %>
+    </div>
+    <br>
+    <br>
+    <div class="container-fluid">
+    <h4>Product List</h4>
     <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Quantity</th>
-          <th>Unit</th>
-          <th>Total</th>
-          <th></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @assignment_details.each do |assignment_detail| %>
+      <table class="table">
+        <thead>
           <tr>
-            <td><%= assignment_detail.customer_product.name %></td>
-            <td><%= assignment_detail.quantity %></td>
-            <td>
-              <% if assignment_detail.unit != "UOM" %>
-                <%= assignment_detail.unit %></td>
-              <% else %>
-                <%= assignment_detail.customer_product.uom %></td>
-              <% end %>
-
-            <% if assignment_detail.assignment.loadtype != "Full Container Load" %> 
-              <td><%= number_with_delimiter(assignment_detail.total) %></td>
-            <% else %>
-              <td>-</td>
-            <% end %>        
-
-            <td style="width:5%; white-space:nowrap;"><%= link_to 'X', assignment_detail, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+            <th>Detail</th>
+            <th>Product/Category</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Total</th>
+            <th>PPN(1.1%)</th>
+            <th>Grand Total</th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          <% @assignment_details.each do |assignment_detail| %>
+            <tr>
+              <td><%= assignment_detail.description %></td>
+              <td><%= assignment_detail.customer_product.name %></td>
+              <td><%= assignment_detail.quantity %></td>
+              <td>
+                <% if assignment_detail.unit != "UOM" %>
+                  <%= assignment_detail.unit %>
+                <% else %>
+                  <%= assignment_detail.customer_product.uom %>
+                <% end %>
+              </td>
+              <% if assignment_detail.assignment.loadtype != "Full Container Load" %> 
+                <td><%= number_with_delimiter(assignment_detail.total) %></td>
+                <td><%= number_with_delimiter(assignment_detail.ppn) %></td>
+                <td><%= number_with_delimiter(assignment_detail.grand_total) %></td>
+              <% else %>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+              <% end %>        
+              <td style="width:5%; white-space:nowrap;">
+                <%= link_to 'X', assignment_detail, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
+                </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
     </div>
 
-    <% if params[:id].nil? %>
-      <%= link_to 'New Assignment Detail', new_assignment_detail_path, class:"btn btn-primary" %>
-    <% elsif %>
-      <!-- Button trigger modal -->
+      <!-- Button trigger modal
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
         New Assignment Detail
-      </button>
-    <% end %>
+      </button> -->
   </div>
 <br>
 
-<!-- Modal -->
+<!-- Modal
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -127,8 +140,9 @@
         </button>
       </div>
       <div class="modal-body">
-        <%= render 'form', assignment_detail: @assignment_detail %>
+          //render form
       </div>
     </div>
   </div>
-</div>
+</div> 
+-->

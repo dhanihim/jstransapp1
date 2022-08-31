@@ -21,8 +21,12 @@
   </div>
 
   <div class="field form-group">
-    <%= form.label :location_id, "POD" %>
+    <%= form.label :location_id, "Location" %>
     <%= form.collection_select :location_id, Location.where("active = 1"), :id, :name, {}, {class:"form-control"} %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.select :pickup_or_dooring, ["Pickup","Dooring"], {}, class:"form-control", placeholder:"Type", autocomplete:"off"   %>
   </div>
 
   <div class="field form-group">

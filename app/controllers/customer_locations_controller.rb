@@ -96,6 +96,6 @@ class CustomerLocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_location_params
-      params.require(:customer_location).permit(:address, :active, :description, :customer_id, :location_id)
+      params.require(:customer_location).permit(:address, :active, :description, :customer_id, :location_id, :pickup_or_dooring)
     end
 end

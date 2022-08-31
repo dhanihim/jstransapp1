@@ -11,7 +11,7 @@ class CustomerProductsController < ApplicationController
     @customer_products = CustomerProduct.find(params[:id])
     @customer_id = @customer_products.customer_id
 
-    @customer_locations = CustomerLocation.where("customer_id = ?", @customer_id)
+    @customer_locations = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", @customer_id)
     @dooring_locations = Location.where("active = 1")
 
     @customer_locations.each do |customer_location|

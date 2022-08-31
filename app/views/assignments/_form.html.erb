@@ -29,8 +29,13 @@
     </div>
 
     <div class="field form-group">
-      <%= form.label :agent, "Pickup Agent" %>
-      <%= form.collection_select :agent_id, Agent.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control", :disabled => "true"} %>
+      <%= form.label :agent_id, "Pickup Agent" %>
+      <%= form.collection_select :agent_id, Agent.where("active = 1 AND pickupordooring = 'Pickup'").order("name ASC"), :id, :name, {}, {class:"form-control", :disabled => "true"} %>
+    </div>
+
+    <div class="field form-group">
+      <label>Dooring Agent</label>
+      <input type="text" class="form-control" readonly="true" value="<%= Agent.find(@assignment.dooring_agent_id).name %>">
     </div>
 
     <div class="field form-group">
@@ -40,28 +45,28 @@
     
     <div class="field form-group">
       <%= form.label :pickuptime, "Pickup Time" %>
-      <%= form.datetime_field :pickuptime, class:'form-control', required:'true', readonly:"true" %>
+      <%= form.date_field :pickuptime, class:'form-control', required:'true', readonly:"true" %>
     </div>
 
     <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
       <div class="field form-group">
         <%= form.label :pickup_location %>
-        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
       </div>
 
       <div class="field form-group">
         <%= form.label :destination_location %>
-        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
       </div>
     <% else %>
       <div class="field form-group">
         <%= form.label :pickup_location %>
-        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
       </div>
 
       <div class="field form-group">
         <%= form.label :destination_location %>
-        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ?", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
       </div>
     <% end %>
   <% elsif %>
@@ -85,8 +90,13 @@
     </div>
 
     <div class="field form-group">
-      <%= form.label :agent, "Pickup Agent" %>
-      <%= form.collection_select :agent_id, Agent.where("active = 1").order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+      <%= form.label :agent_id, "Pickup Agent" %>
+      <%= form.collection_select :agent_id, Agent.where("active = 1 AND pickupordooring = 'Pickup'").order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.label :dooring_agent_id, "Pickup Agent" %>
+      <%= form.collection_select :dooring_agent_id, Agent.where("active = 1 AND pickupordooring = 'Dooring'").order("name ASC"), :id, :name, {}, {class:"form-control"} %>
     </div>
 
     <div class="field form-group">
@@ -96,7 +106,7 @@
     
     <div class="field form-group">
       <%= form.label :pickuptime, "Pickup Time" %>
-      <%= form.datetime_field :pickuptime, class:'form-control', required:'true' %>
+      <%= form.date_field :pickuptime, class:'form-control', required:'true' %>
     </div>
 
   <% end %>
@@ -124,13 +134,11 @@
       <div class="actions">
         <%= form.submit class:"btn btn-primary" %>
         <br>
-        <br>
       </div>
     <% end %>
   <% else %>
     <div class="actions">
       <%= form.submit class:"btn btn-primary" %>
-      <br>
       <br>
     </div>
   <% end %>

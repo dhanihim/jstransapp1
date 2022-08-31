@@ -32,7 +32,15 @@
   </div>
 
   <div class="field form-group">
-    <%= form.text_field :person_responsible_uid, class:"form-control", placeholder:"Person Responsible ID Number", autocomplete:"off"  %>
+    <%= form.label :npwp_file, "NPWP Image" %>
+    <br>
+    <%= form.file_field :npwp_file %>
+  </div>
+
+  <div class="field form-group">
+    <%= form.label :person_responsible_file, "Person Responsible ID Image" %>
+    <br>
+    <%= form.file_field :person_responsible_file %>
   </div>
 
   <div class="field form-group">

@@ -94,8 +94,7 @@
           <td><%= Location.find(shipment.pod).name %></td>
           <td><%= Container.where("shipment_id = ?",shipment.id).count %></td>
           <td style="width:5%; white-space:nowrap">
-            <%= link_to 'Packing List', document_packing_list_shipment_url(shipment), class:"btn btn-success", target:"_blank" %>
-            <%= link_to 'Detail', shipment_url(shipment), class:"btn btn-primary", target:"_blank" %>
+            <%= link_to 'Shipment Packing List', document_packing_list_shipment_url(shipment), class:"btn btn-success", target:"_blank" %>
             <%= link_to 'Edit', edit_shipment_path(shipment), class:"btn btn-info" %>
             <%= link_to 'X', shipment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
           </td>
@@ -115,5 +114,9 @@
 <%= link_to 'Create New Shipment', new_shipment_path, class:"btn btn-primary btn-block" %>
 <% end %>
 
-
+<br>
+<br>
+<br>
+<br>
+<br>
 

@@ -1,0 +1,115 @@
+<%= image_tag 'logo.png', alt: 'icon', style:"width:12%" %>
+
+<br>
+<br>
+<div class="row">
+	<div class="col-md-6">
+		<table class="table table-borderless table-sm">
+			<tbody>
+				<tr>
+					<td>Bill To</td>
+					<td>:</td>
+					<td><%= @assignment.customer.name %></td>
+				</tr>
+				<tr>
+					<td>Address</td>
+					<td>:</td>
+					<td><%= @assignment.customer.address %></td>
+				</tr>
+				<tr>
+					<td style="padding-top:30px">Invoice Date</td>
+					<td style="padding-top:30px">:</td>
+					<td style="padding-top:30px"><%= @assignment.created_at.to_s(:long) %></td>
+				</tr>
+				<tr>
+					<td>Order Pickup</td>
+					<td>:</td>
+					<td><%= @assignment.pickuptime.to_date.to_s(:long)%></td>
+				</tr>
+				<tr>
+					<td>Invoice Number</td>
+					<td>:</td>
+					<td><%= @assignment.uid%></td>
+				</tr>
+
+				<tr>
+					<td style="padding-top:30px">Shipname</td>
+					<td style="padding-top:30px">:</td>
+					<td style="padding-top:30px"><%= @assignment.created_at.to_s(:long) %></td>
+				</tr>
+				<tr>
+					<td>ETD/ETA</td>
+					<td>:</td>
+					<td><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %> / <%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimatedarrival.to_s(:long) %></td>
+				</tr>
+				<tr>
+					<td>Pickup Location</td>
+					<td>:</td>
+					<td><%= CustomerLocation.find(@assignment.pickup_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name %></strong></td>
+				</tr>
+				<tr>
+					<td>Destination Location</td>
+					<td>:</td>
+					<td><%= CustomerLocation.find(@assignment.destination_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name %></strong></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="container-fluid">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Container Number</th>
+				<th>Price</th>
+				<th>Remark</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><%= Container.find(@assignment.container_id).number %></td>
+				<td>IDR <%= number_with_delimiter(@assignment.total_price) %></td>
+				<td>-</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<br>
+<br>
+<table class="table">
+	<tr>
+		<td><h5>Total</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(@assignment.total_price) %></h5></td>
+	</tr>
+	<tr>
+		<td><h5>PPN</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(@assignment.ppn) %></h5></td>
+	</tr>
+	<tr>
+		<td><h5>Grand Total</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(@assignment.grand_total) %></h5></td>
+	</tr>
+</table>
+
+<br>
+<br>
+<br>
+<div class="col-md-6 offset-6">
+	<p>
+		<center>
+		Jonathan Susilo
+		<br>
+		__________________________
+		</center>
+	</p>
+</div>
+
+<br>
+<br>
+<p>
+	Pembayaran bisa dilakukan ke rekening
+	<br>
+	BCA / 2168077888 / JS TRANS DAN LOGISTIK CV 
+</p>

@@ -52,6 +52,8 @@
             <th>Load Type</th>
             <th>Total Product</th>
             <th>Total Price</th>
+            <th>PPN(1.1%)</th>
+            <th>Grand Total</th>
             <th></th>
           </tr>
         </thead>
@@ -86,6 +88,8 @@
                 <td><%= assignment.loadtype %></td>
                 <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
                 <td><%= number_with_delimiter(assignment.total_price) %></td>
+                <td><%= number_with_delimiter(assignment.ppn) %></td>
+                <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
                 <td style="width:5%; white-space: nowrap;">
                   <%= link_to 'Add', update_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
@@ -116,6 +120,8 @@
             <th>Load Type</th>
             <th>Total Product</th>
             <th>Total Price</th>
+            <th>PPN(1.1%)</th>
+            <th>Grand Total</th>
             <th></th>
           </tr>
         </thead>
@@ -149,6 +155,8 @@
               <td><%= assignment.loadtype %></td>
               <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
               <td><%= number_with_delimiter(assignment.total_price) %></td>
+              <td><%= number_with_delimiter(assignment.ppn) %></td>
+              <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
               <td style="width:5%; white-space: nowrap;">
                 <%= link_to 'X', remove_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-danger", style:"white-space:nowrap;" %>

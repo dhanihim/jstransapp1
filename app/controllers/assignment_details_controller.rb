@@ -43,6 +43,7 @@ class AssignmentDetailsController < ApplicationController
       dooring_location = CustomerLocation.find(@assignment_detail.assignment.destination_location).location_id
 
       customer_product_pricelist = CustomerProductPricelist.where("customer_product_id = ? AND customer_location_id = ? AND location_id = ?", @assignment_detail.customer_product_id, pickup_address, dooring_location)
+      ppn = 0
 
       customer_product_pricelist.each do |customer_product_pricelist|
         if(@assignment_detail.unit == "Meter Cubic")
@@ -52,16 +53,29 @@ class AssignmentDetailsController < ApplicationController
         elsif(@assignment_detail.unit == "Ton")
           total = customer_product_pricelist.pertonnage
         end
+
+        ppn = customer_product_pricelist.ppncategory
       end
 
       @assignment_detail.total = total*@assignment_detail.quantity
+      if(ppn==1)
+        @assignment_detail.ppn = (1.1/100*@assignment_detail.total)
+        @assignment_detail.grand_total = @assignment_detail.total + @assignment_detail.ppn
+      else
+        @assignment_detail.grand_total = @assignment_detail.total
+        @assignment_detail.ppn = 0
+      end
+
+      assignment_total = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("total")
+      assignment_ppn = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("ppn")
+      assignment_grandtotal = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("grand_total")
+
+      @assignment = Assignment.find(@assignment_detail.assignment_id)
+      @assignment.total_price = assignment_total + @assignment_detail.total
+      @assignment.ppn = assignment_ppn + @assignment_detail.ppn
+      @assignment.grand_total = assignment_grandtotal + @assignment_detail.grand_total
+      @assignment.save
     end
-
-    assignment_total = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("total")
-
-    @assignment = Assignment.find(@assignment_detail.assignment_id)
-    @assignment.total_price = assignment_total + @assignment_detail.total
-    @assignment.save
 
     respond_to do |format|
       if @assignment_detail.save
@@ -99,8 +113,10 @@ class AssignmentDetailsController < ApplicationController
     assignment_total = AssignmentDetail.where("assignment_id = ?", @assignment_detail.assignment_id).sum("total")
 
     @assignment = Assignment.find(@assignment_detail.assignment_id)
-    @assignment.total_price = assignment_total - @assignment_detail.total
-    @assignment.save
+    if(@assignment.loadtype != "Full Container Load")
+      @assignment.total_price = assignment_total - @assignment_detail.total
+      @assignment.save
+    end
 
     @assignment_detail.destroy
 
@@ -118,6 +134,6 @@ class AssignmentDetailsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_detail_params
-      params.require(:assignment_detail).permit(:assignment_id, :customer_product_id, :quantity, :unit, :total)
+      params.require(:assignment_detail).permit(:assignment_id, :customer_product_id, :quantity, :unit, :total, :description)
     end
 end

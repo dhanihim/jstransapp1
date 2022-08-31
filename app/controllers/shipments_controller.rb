@@ -1,9 +1,12 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
-  def document_invoice
-    @shipment = Shipment.find(params[:id])
-    @containers = Container.where("shipment_id = ?", @shipment.id)
+  def depart
+    @shipments = Shipment.find(params[:id])
+    @shipments.actualdeparture = DateTime.current.to_date
+    @shipments.save
+
+    redirect_to(root_path)
   end
 
   def document_packing_list
@@ -19,10 +22,10 @@ class ShipmentsController < ApplicationController
     if(!params[:keyword].nil?)
       keyword = params[:keyword].upcase
     
-      @shipments = Shipment.where("uid LIKE ? OR shipname LIKE ?", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsongoing = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualdeparture IS NULL", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsonwater = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsfinished = Shipment.where("(uid LIKE ? OR shipname LIKE ?) AND actualarrival >= now()", "%#{keyword}%", "%#{keyword}%")
+      @shipments = Shipment.where("uid LIKE ? OR UPPER(shipname) LIKE ?", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsongoing = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture IS NULL", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsonwater = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsfinished = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualarrival >= now()", "%#{keyword}%", "%#{keyword}%")
     end
 
     if(!params[:datefrom].nil? && !params[:dateto].nil?)
@@ -58,7 +61,21 @@ class ShipmentsController < ApplicationController
 
   # GET /shipments/1 or /shipments/1.json
   def show
-    @customers = Customer.where(:id => "SELECT customer_id FROM assignments")
+    @customer_array = []
+    @container = Container.where("shipment_id = ?", params[:id])
+
+    @container.each do |container|
+      container_id = container.id
+
+      @assignment = Assignment.where("container_id = ?", container_id)
+      @assignment.each do |assignment|
+        customer_id = assignment.customer_id
+        
+        if(!@customer_array.include? customer_id)
+          @customer_array.push(customer_id)
+        end
+      end
+    end
   end
 
   # GET /shipments/new

@@ -1,6 +1,10 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
 
+  def document_invoice
+    @assignment = Assignment.find(params[:id])
+  end
+
   def update_assignment_container
     @assignment = Assignment.find(params[:id])
 
@@ -38,6 +42,7 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/1/edit
   def edit
+    @assignment = Assignment.find(params[:id])
   end
 
   # POST /assignments or /assignments.json
@@ -72,6 +77,7 @@ class AssignmentsController < ApplicationController
           price = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ?", pickup_location, location)
           container = @assignment.containertype
           priceused = 0
+          ppncategory = 0
 
           price.each do |price|
             if(container == "20FT" && price.per20ft!=0)
@@ -88,8 +94,19 @@ class AssignmentsController < ApplicationController
               priceused = price.per40fr
             end
 
-            @assignment.total_price = priceused
+            ppncategory = price.ppncategory
           end
+
+          @assignment.total_price = priceused
+
+          if(ppncategory==1)
+            @assignment.ppn = (1.1*priceused/100)
+          else
+            @assignment.ppn = 0
+          end
+
+          @assignment.grand_total = @assignment.total_price + @assignment.ppn
+
           loadtype = 1
           customer_id = @assignment.customer_id
         end
@@ -136,6 +153,6 @@ class AssignmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_params
-      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active)
+      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status)
     end
 end

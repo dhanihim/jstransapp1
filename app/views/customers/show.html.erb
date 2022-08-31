@@ -4,44 +4,77 @@
 
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-8" style="background-color:#f5f5f5; padding-right:30px; padding-left:30px; border-radius: 20px;">
     <!-- Customer Location List -->
+    <br>  
     <h4>Customer Locations</h4>
 
     <%= link_to 'New Customer Location', new_customer_location_path(:customerid => params[:id]), class:"btn btn-primary btn-sm" %>
     <br>
     <br>
 
-    <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Address</th>
-          <th>POL</th>
-          <th></th>
-        </tr>
-      </thead>
+    <div class="row">
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <h5>Pickup</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Location</th>
+              <th></th>
+            </tr>
+          </thead>
 
-      <tbody>
-        <% @customer_locations.each do |customer_location| %>
-          <tr>
-            <td><%= customer_location.address %></td>
-            <td><%= customer_location.location.name %></td>
-            <td style="width:5%; white-space:nowrap;">
-              <%= link_to 'FCL Pricelist', customer_location, class:"btn btn-success" %>
-              <%= link_to 'Edit', edit_customer_location_path(customer_location, :customerid => params[:id]), class:"btn btn-info" %>
-              <%= link_to 'X', customer_location, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger"  %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
+          <tbody>
+            <% @customer_location_pickup.each do |customer_location| %>
+              <tr>
+                <td><%= customer_location.address %></td>
+                <td><%= customer_location.location.name %></td>
+                <td style="width:5%; white-space:nowrap;">
+                  <%= link_to 'FCL Pricelist', customer_location, class:"btn btn-success" %>
+                  <%= link_to 'Edit', edit_customer_location_path(customer_location, :customerid => params[:id]), class:"btn btn-info" %>
+                  <%= link_to 'X', customer_location, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger"  %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
+
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <h5>Dooring</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Location</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @customer_location_dooring.each do |customer_location| %>
+              <tr>
+                <td><%= customer_location.address %></td>
+                <td><%= customer_location.location.name %></td>
+                <td style="width:5%; white-space:nowrap;">
+                  <%= link_to 'Edit', edit_customer_location_path(customer_location, :customerid => params[:id]), class:"btn btn-info" %>
+                  <%= link_to 'X', customer_location, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger"  %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div> 
   </div>
   <br>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
   <!-- Customer Product List -->
+  <br>  
   <h4>Customer Products</h4>
 
   <%= link_to 'New Customer Product', new_customer_product_path(:customerid => params[:id]), class:"btn btn-primary btn-sm" %>
@@ -52,7 +85,7 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Name</th>
+        <th>Product/Category</th>
         <th>UOM</th>
         <th></th>
       </tr>
@@ -98,6 +131,7 @@
           <th>Total Product</th>
           <th>Total Price</th>
           <th>Travel Document</th>
+          <th>Dooring Document</th>
           <th>Payment Document</th>
           <th></th>
         </tr>
@@ -153,6 +187,18 @@
               <% end %>
             <% end %>
 
+            <% if assignment.dooring_status.url.nil? %>
+              <td style="color:red"><strong>Not Uploaded</strong></td>
+            <% elsif %>
+              <% if assignment.dooring_status.file.exists? %>
+                <td>
+                  <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
+                </td>
+              <% else %>
+                <td style="color:red"><strong>Error</strong></td>
+              <% end %>
+            <% end %>
+
             <% if assignment.payment_status.url.nil? %>
               <td style="color:red"><strong>Not Uploaded</strong></td>
             <% elsif %>
@@ -166,6 +212,7 @@
             <% end %>
 
             <td style="width:5%; white-space: nowrap;">
+              <%= link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
               <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
               <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
               <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>

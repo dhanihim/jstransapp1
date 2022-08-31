@@ -3,12 +3,13 @@ class CustomersController < ApplicationController
 
   # GET /customers or /customers.json
   def index
-    @customers = Customer.all
+    @customers = Customer.where("active = 1")
   end
 
   # GET /customers/1 or /customers/1.json
   def show
-    @customer_locations = CustomerLocation.where("customer_id = ?", params[:id])
+    @customer_location_pickup = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:id])
+    @customer_location_dooring = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:id])
     @customer_products = CustomerProduct.where("customer_id = ?", params[:id])
 
     @assignments = Assignment.where("customer_id = ?",params[:id])
@@ -53,7 +54,10 @@ class CustomersController < ApplicationController
 
   # DELETE /customers/1 or /customers/1.json
   def destroy
-    @customer.destroy
+    @customer = Customer.find(params[:id])
+
+    @customer.active = 0
+    @customer.save
 
     respond_to do |format|
       format.html { redirect_to customers_url, notice: "Customer was successfully destroyed." }
@@ -69,6 +73,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.require(:customer).permit(:name, :address, :contact, :active, :description, :npwp, :person_responsible, :person_responsible_uid)
+      params.require(:customer).permit(:name, :address, :contact, :active, :description, :npwp, :person_responsible, :person_responsible_uid, :npwp_file, :person_responsible_file)
     end
 end

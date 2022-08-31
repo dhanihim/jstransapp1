@@ -13,8 +13,9 @@
       <th>Address</th>
       <th>Contact</th>
       <th>NPWP</th>
-      <th>Person Responsible</th>
-      <th>Person Responsible ID</th>
+      <th>Person Responsible (PR)</th>
+      <th>NPWP File</th>
+      <th>PR ID File</th>
       <th></th>
     </tr>
   </thead>
@@ -27,7 +28,29 @@
         <td><%= customer.contact %></td>
         <td><%= customer.npwp %></td>
         <td><%= customer.person_responsible %></td>
-        <td><%= customer.person_responsible_uid %></td>
+        <% if customer.npwp_file.url.nil? %>
+          <td style="color:red"><strong>Not Uploaded</strong></td>
+        <% elsif %>
+          <% if customer.npwp_file.file.exists? %>
+            <td>
+              <%= link_to '📁 Download', customer.npwp_file.url, class:"btn btn-dark btn-sm" %>
+            </td>
+          <% else %>
+            <td style="color:red"><strong>Error</strong></td>
+          <% end %>
+        <% end %>
+        <% if customer.person_responsible_file.url.nil? %>
+          <td style="color:red"><strong>Not Uploaded</strong></td>
+        <% elsif %>
+          <% if customer.person_responsible_file.file.exists? %>
+            <td>
+              <%= link_to '📁 Download', customer.person_responsible_file.url, class:"btn btn-dark btn-sm" %>
+            </td>
+          <% else %>
+            <td style="color:red"><strong>Error</strong></td>
+          <% end %>
+        <% end %>
+
         <td style="width:5%; white-space: nowrap;">
           <%= link_to 'Detail', customer, class:"btn btn-success" %>
           <%= link_to 'Edit', edit_customer_path(customer), class:"btn btn-info" %>

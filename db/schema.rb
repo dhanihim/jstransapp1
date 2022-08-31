@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_24_121022) do
+ActiveRecord::Schema.define(version: 2022_08_31_082044) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,9 @@ ActiveRecord::Schema.define(version: 2022_08_24_121022) do
     t.integer "customer_product_id"
     t.integer "price"
     t.string "unit"
+    t.integer "ppn"
+    t.integer "grand_total"
+    t.string "description"
     t.index ["assignment_id"], name: "index_assignment_details_on_assignment_id"
     t.index ["customer_product_id"], name: "index_assignment_details_on_customer_product_id"
   end
@@ -55,6 +58,10 @@ ActiveRecord::Schema.define(version: 2022_08_24_121022) do
     t.integer "total_price"
     t.integer "container_id"
     t.string "payment_status"
+    t.integer "ppn"
+    t.integer "grand_total"
+    t.integer "dooring_agent_id"
+    t.string "dooring_status"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -106,6 +113,7 @@ ActiveRecord::Schema.define(version: 2022_08_24_121022) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "customer_id"
     t.integer "location_id"
+    t.string "pickup_or_dooring"
     t.index ["customer_id"], name: "index_customer_locations_on_customer_id"
     t.index ["location_id"], name: "index_customer_locations_on_location_id"
   end
@@ -150,6 +158,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_121022) do
     t.string "npwp"
     t.string "person_responsible"
     t.string "person_responsible_uid"
+    t.string "npwp_file"
+    t.string "person_responsible_file"
   end
 
   create_table "locations", force: :cascade do |t|

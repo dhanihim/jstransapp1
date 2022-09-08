@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_31_082044) do
+ActiveRecord::Schema.define(version: 2022_09_08_134755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2022_08_31_082044) do
     t.integer "ppn"
     t.integer "grand_total"
     t.string "description"
+    t.string "unit_description"
     t.index ["assignment_id"], name: "index_assignment_details_on_assignment_id"
     t.index ["customer_product_id"], name: "index_assignment_details_on_customer_product_id"
   end

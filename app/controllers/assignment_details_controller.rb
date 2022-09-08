@@ -134,6 +134,6 @@ class AssignmentDetailsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_detail_params
-      params.require(:assignment_detail).permit(:assignment_id, :customer_product_id, :quantity, :unit, :total, :description)
+      params.require(:assignment_detail).permit(:assignment_id, :customer_product_id, :quantity, :unit, :total, :description, :unit_description)
     end
 end

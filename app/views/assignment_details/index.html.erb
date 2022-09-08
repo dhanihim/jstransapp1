@@ -3,7 +3,7 @@
 <br>
 
 <div class="row" style="padding: 10px;">
-  <div class="col-md-4" style="background-color:#e3e3e3; padding: 20px; border-radius: 5%; margin-bottom: 25px;">
+  <div class="col-md-3" style="background-color:#e3e3e3; padding: 20px; border-radius: 5%; margin-bottom: 25px;">
     <h4>Assignment Details</h4>
 
     <br>
@@ -65,7 +65,7 @@
     </table>
   </div>
 
-  <div class="col-md-8" style="margin-bottom: 25px;">
+  <div class="col-md-9" style="margin-bottom: 25px;">
     <h4>Add Product</h4>
     <br>
     <div>
@@ -83,6 +83,7 @@
             <th>Product/Category</th>
             <th>Quantity</th>
             <th>Unit</th>
+            <th>Unit Desc.</th>
             <th>Total</th>
             <th>PPN(1.1%)</th>
             <th>Grand Total</th>
@@ -97,10 +98,13 @@
               <td><%= assignment_detail.customer_product.name %></td>
               <td><%= assignment_detail.quantity %></td>
               <td>
+                <%= assignment_detail.unit %>
+              </td>
+              <td>
                 <% if assignment_detail.unit != "UOM" %>
-                  <%= assignment_detail.unit %>
+                  -
                 <% else %>
-                  <%= assignment_detail.customer_product.uom %>
+                  <%= assignment_detail.unit_description %>
                 <% end %>
               </td>
               <% if assignment_detail.assignment.loadtype != "Full Container Load" %> 

@@ -30,17 +30,24 @@
       </div>
     </div>
 
-    <div class="col-md-3"> 
+    <div class="col-md-2"> 
       <div class="field form-group">
         <%= form.label :quantity %>
-        <%= form.number_field :quantity , class:"form-control", required:"true" %>
+        <%= form.number_field :quantity , class:"form-control", required:"true", placeholder:"Number of the Product" %>
       </div>
     </div>
 
-    <div class="col-md-3"> 
+    <div class="col-md-2"> 
       <div class="field form-group">
         <%= form.label :unit %>
-        <%= form.select :unit, ["Meter Cubic", "UOM", "Ton"], {}, class:"form-control"  %>
+        <%= form.select :unit, ["UOM", "Meter Cubic", "Ton"], {}, class:"form-control"  %>
+      </div>
+    </div>
+
+    <div class="col-md-2"> 
+      <div class="field form-group">
+        <%= form.label :unit_description %>
+        <%= form.text_field :unit_description , class:"form-control", required:"true", placeholder:"Unit (ex: pcs, box, etc.)"%>
       </div>
     </div>
 

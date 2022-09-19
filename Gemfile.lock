@@ -1,11 +1,4 @@
 GEM
-  remote: https://rails-assets.org/
-  specs:
-    rails-assets-datatables (1.10.21)
-      rails-assets-jquery (>= 1.7.0)
-    rails-assets-jquery (3.6.1)
-
-GEM
   remote: https://rubygems.org/
   specs:
     actioncable (6.1.5)
@@ -255,8 +248,6 @@ DEPENDENCIES
   puma (~> 5.0)
   rack-mini-profiler (~> 2.0)
   rails (~> 6.1.4, >= 6.1.4.6)
-  rails-assets-datatables!
-  rails-assets-jquery!
   sass-rails (>= 6)
   selenium-webdriver
   turbolinks (~> 5)

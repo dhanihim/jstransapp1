@@ -12,7 +12,12 @@
 <br>
 <hr>
 
-<% if params[:commit]=="Load Shipment Data" %>
+
+<br>
+<%= link_to 'New Shipment', new_shipment_path, class:"btn btn-primary" %>
+
+<br>
+<br>
 
   <% if !params[:keyword].nil? %>
     <h6>Searching for keyword <strong>"<%= params[:keyword] %>"</strong></h6>
@@ -94,7 +99,7 @@
           <td><%= Location.find(shipment.pod).name %></td>
           <td><%= Container.where("shipment_id = ?",shipment.id).count %></td>
           <td style="width:5%; white-space:nowrap">
-            <%= link_to 'Shipment Packing List', document_packing_list_shipment_url(shipment), class:"btn btn-success", target:"_blank" %>
+            <%= link_to 'Overview', shipment_path(shipment), class:"btn btn-success" %>
             <%= link_to 'Edit', edit_shipment_path(shipment), class:"btn btn-info" %>
             <%= link_to 'X', shipment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
           </td>
@@ -104,19 +109,6 @@
   </table>
   </div>
 
-<br>
-<%= link_to 'New Shipment', new_shipment_path, class:"btn btn-primary" %>
-
-<% elsif %>
-<center><h5>Or</h5></center>
-
-<br>
-<%= link_to 'Create New Shipment', new_shipment_path, class:"btn btn-primary btn-block" %>
-<% end %>
-
-<br>
-<br>
-<br>
 <br>
 <br>
 

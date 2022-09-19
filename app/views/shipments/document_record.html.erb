@@ -1,0 +1,149 @@
+<%= image_tag 'logo.png', alt: 'icon', style:"width:12%" %>
+
+<br>
+<br>
+<div class="row">
+	<div class="col-md-6">
+		Graha Bukopin, Jl. Panglima Sudirman No. 10 Lantai 12, Surabaya
+		<br>
+		(031)8666037 / (081)931077488
+		<br>
+		<br>
+		SHIPPER
+		<br>
+		<strong>JS Trans dan Logistik</strong>
+		<br>
+		CONSIGNEE
+		<br>
+		<strong><%= @customer.name %></strong>
+	</div>
+	<div class="col-md-4">
+		<table class="table table-sm">
+			<tbody>
+				<tr>
+					<td>BA No</td>
+					<td>:</td>
+					<td><%= @assignment.uid %></td>
+				</tr>
+				<tr>
+					<td>Cargo Type</td>
+					<td>:</td>
+					<td><%= @assignment.loadtype %></td>
+				</tr>
+				<tr>
+					<td>Container</td>
+					<td>:</td>
+					<td><%= @assignment.containertype %></td>
+				</tr>
+				<tr>
+					<td>Total Weight</td>
+					<td>:</td>
+					<td>-</td>
+				</tr>
+				<tr>
+					<td>Vessel / Voyage</td>
+					<td>:</td>
+					<td><%= Shipment.find(params[:id]).shipname %> <%= Shipment.find(params[:id]).voyage %></td>
+				</tr>
+				<tr>
+					<td>POL</td>
+					<td>:</td>
+					<td><%= Location.find(Shipment.find(params[:id]).pol).name %></td>
+				</tr>
+				<tr>
+					<td>POD</td>
+					<td>:</td>
+					<td><%= Location.find(Shipment.find(params[:id]).pod).name %></td>
+				</tr>
+				<tr>
+					<td>ETD</td>
+					<td>:</td>
+					<td><%= Shipment.find(params[:id]).estimateddeparture.to_s(:long) %></td>
+				</tr>
+				<tr>
+					<td>ETA</td>
+					<td>:</td>
+					<td><%= Shipment.find(params[:id]).estimatedarrival.to_s(:long) %></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+<br>
+
+<div>
+	Container Number : <strong><%= Container.find(@assignment.container_id).number %></strong>
+	<br>
+	<br>
+	<table class="table" style="margin-top:-15px">
+		<thead class="table-secondary">
+			<th style="width:20%">Detail Product</th>
+			<th style="width:15%">Product/Category</th>
+			<th style="width:10%">Quantity</th>
+			<th style="width:10%">Unit</th>
+		</thead>
+		<tbody>
+			<% @assignment_details = AssignmentDetail.where("assignment_id = ?", @assignment.id) %>
+
+			<% @assignment_details.each do |assignment_detail| %>
+			<tr>
+				<td><%= assignment_detail.description %></td>
+				<td><%= assignment_detail.customer_product.name %></td>
+				<td><%= assignment_detail.quantity %></td>
+				<td>
+					<% if assignment_detail.unit == "UOM" %>
+						<%= assignment_detail.customer_product.uom %>
+					<% else %>
+						<%= assignment_detail.unit %>
+					<% end %>
+				</td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<div>
+	REMARKS:
+
+	<div style="margin-top:30px">
+		<div class="row">
+			<div class="col-md-3">
+				<center>Transporter</center>
+				<br>
+				<br>
+				<br>
+				<center><strong>Jonathan Susilo</strong></center>
+			</div>
+			<div class="col-md-3">
+				<center>Pembuka Segel Container</center>
+				<br>
+				<br>
+				<br>
+				<center>_______________________</center>
+			</div>
+			<div class="col-md-3">
+				<center>Agent Door</center>
+				<br>
+				<br>
+				<br>
+				<center>_______________________</center>
+			</div>
+			<div class="col-md-3">
+				<center>Penerima</center>
+				<br>
+				<br>
+				<br>
+				<center>_______________________</center>
+			</div>
+		</div>
+	</div>
+</div>

@@ -11,8 +11,30 @@ class ShipmentsController < ApplicationController
 
   def document_packing_list
     @shipment = Shipment.find(params[:id])
-    @containers = Container.where("shipment_id = ?", @shipment.id)
+
+    if(!params[:container_id].nil?)
+      @containers = Container.where("id = ?", params[:container_id])
+    else
+      @containers = Container.where("shipment_id = ?", @shipment.id)
+    end
   end
+
+  def document_customer_packing_list
+    @shipment = Shipment.find(params[:id])
+
+    if(!params[:container_id].nil?)
+      @containers = Container.where("id = ?", params[:container_id])
+    else
+      @containers = Container.where("shipment_id = ?", @shipment.id)
+    end
+  end
+
+  def document_record
+    @shipment = Shipment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
+    @customer = Customer.find(@assignment.customer_id)
+  end
+
 
   # GET /shipments or /shipments.json
   def index
@@ -26,6 +48,11 @@ class ShipmentsController < ApplicationController
       @shipmentsongoing = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture IS NULL", "%#{keyword}%", "%#{keyword}%")
       @shipmentsonwater = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL", "%#{keyword}%", "%#{keyword}%")
       @shipmentsfinished = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualarrival >= now()", "%#{keyword}%", "%#{keyword}%")
+    else
+      @shipments = Shipment.where("created_at >= ?", 30.days.ago)
+      @shipmentsongoing = Shipment.where("created_at >= ? AND actualdeparture IS NULL", 30.days.ago)
+      @shipmentsonwater = Shipment.where("created_at >= ? AND actualdeparture >= now() AND actualarrival IS NULL", 30.days.ago)
+      @shipmentsfinished = Shipment.where("created_at >= ? AND actualarrival >= now()", 30.days.ago)
     end
 
     if(!params[:datefrom].nil? && !params[:dateto].nil?)
@@ -62,6 +89,7 @@ class ShipmentsController < ApplicationController
   # GET /shipments/1 or /shipments/1.json
   def show
     @customer_array = []
+    @dooring_array = []
     @container = Container.where("shipment_id = ?", params[:id])
 
     @container.each do |container|
@@ -70,9 +98,14 @@ class ShipmentsController < ApplicationController
       @assignment = Assignment.where("container_id = ?", container_id)
       @assignment.each do |assignment|
         customer_id = assignment.customer_id
+        dooring_id = assignment.dooring_agent_id
         
         if(!@customer_array.include? customer_id)
           @customer_array.push(customer_id)
+        end
+
+        if(!@dooring_array.include? dooring_id)
+          @dooring_array.push(dooring_id)
         end
       end
     end

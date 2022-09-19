@@ -35,12 +35,20 @@
 				<tr>
 					<td style="padding-top:30px">Shipname</td>
 					<td style="padding-top:30px">:</td>
-					<td style="padding-top:30px"><%= @assignment.created_at.to_s(:long) %></td>
+					<% if @assignment.container_id.nil? %>
+						<td style="padding-top:30px">-</td>
+					<% else %>
+						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).name %></td>
+					<% end %>
 				</tr>
 				<tr>
 					<td>ETD/ETA</td>
 					<td>:</td>
-					<td><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %> / <%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimatedarrival.to_s(:long) %></td>
+					<% if @assignment.container_id.nil? %>
+						<td>-</td>
+					<% else %>
+						<td><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %> / <%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimatedarrival.to_s(:long) %></td>
+					<% end %>
 				</tr>
 				<tr>
 					<td>Pickup Location</td>
@@ -68,7 +76,11 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><%= Container.find(@assignment.container_id).number %></td>
+				<% if @assignment.container_id.nil? %>
+					<td>-</td>
+				<% else %>
+					<td><%= Container.find(@assignment.container_id).number %></td>
+				<% end %>
 				<td>IDR <%= number_with_delimiter(@assignment.total_price) %></td>
 				<td>-</td>
 			</tr>

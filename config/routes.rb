@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   resources :shipments do
     member do 
       get :document_packing_list
+      get :document_customer_packing_list
+      get :document_record
       get :depart
     end
   end

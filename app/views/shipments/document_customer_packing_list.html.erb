@@ -41,11 +41,11 @@
 				<% @assignments = Assignment.where("container_id = ? AND customer_id = ?", container.id, params[:customer_id]) %>
 			<% end %>
 
-			<% @assignments.each do |assignment| %>
+			<% @assignments.each do |assignment| %><!-- 
 				<%= link_to 'Print Record', document_record_shipment_url(params[:id], :assignment_id => assignment.id), class:"btn btn-success", target:"_blank" %>
 				<br>
 				<br>
-				
+				 -->
 				<table class="table">
 					<tbody>
 						<tr>
@@ -64,8 +64,6 @@
 						<th style="width:15%">Product/Category</th>
 						<th style="width:10%">Quantity</th>
 						<th style="width:10%">Unit</th>
-						<th style="width:20%">Pickup Agent</th>
-						<th style="width:20%">Dooring Agent</th>
 					</thead>
 					<tbody>
 						<% @assignment_details = AssignmentDetail.where("assignment_id = ?", assignment.id) %>
@@ -82,8 +80,6 @@
 									<%= assignment_detail.unit %>
 								<% end %>
 							</td>
-							<td><%= assignment_detail.assignment.agent.name %></td>
-							<td><%= Agent.find(assignment_detail.assignment.dooring_agent_id).name %></td>
 						</tr>
 						<% end %>
 					</tbody>

@@ -2,7 +2,7 @@
 
 <br>
 <div class="table-responsive table-wrap">
-  <table class="table">
+  <table class="table" id="myTable">
     <thead>
       <tr>
         <th style="width:15%;">UID</th>
@@ -45,14 +45,15 @@
 <br>
 <br>
 
-<h4>Unpaid Assignment with Finished Shipment (<%= @assignments.count %>)</h4>
+<h4>Unpaid Assignment with Finished Shipment</h4>
 
 <br>
 <div class="table-responsive table-wrap">
-  <table class="table">
+  <table class="table" id="myTable1">
     <thead>
       <tr>
         <th>UID</th>
+        <th>Shipname</th>
         <th>Pickup Agent</th>
         <th>Dooring Agent</th>
         <th>Customer</th>
@@ -76,87 +77,97 @@
 
     <tbody>
       <% @assignments.each do |assignment| %>
-        <tr>
-          <td><%= assignment.uid %></td>
-          <td><%= assignment.agent.name %></td>
-          <% if assignment.dooring_agent_id.nil? %>
-            <td>-</td>
-          <% else %>
-            <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
-          <% end %>
-          <td><%= assignment.customer.name %></td>
-          <% if assignment.container_id.nil? %>
-            <td><%= assignment.container_id %></td>
-          <% else %>
-            <td><%= Container.find(assignment.container_id).number %></td>
-          <% end %>
-          <% if !assignment.pickup_location.nil? %>
-            <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
-          <% elsif %>
-            <td>-</td>
-          <% end %>
-
-          <% if !assignment.pickup_location.nil? %>
-            <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
-          <% elsif %>
-            <td>-</td>
-          <% end %>
-
-          <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
-            <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
-          <% elsif %>
-            <td>-</td>
-          <% end %>
-
-          <td><%= assignment.pickuptime.to_s(:long) %></td>
-          <td><%= assignment.loadtype %></td>
-          <td><%= assignment.containertype %></td>
-          <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
-          <td><%= number_with_delimiter(assignment.total_price) %></td>
-          <td><%= number_with_delimiter(assignment.ppn) %></td>
-          <td><%= number_with_delimiter(assignment.grand_total) %></td>
-
-          <% if assignment.document_status.url.nil? %>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
-          <% elsif %>
-            <% if assignment.document_status.file.exists? %>
-              <td>
-                <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
-              </td>
+      <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? %>
+        <% if !Shipment.find(Container.find(assignment.container_id).shipment_id).actualarrival.nil? %>
+          <tr>
+            <td><%= assignment.uid %></td>
+            <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+              <td>-</td>
             <% else %>
-              <td style="color:red"><strong>Error</strong></td>
+              <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
             <% end %>
-          <% end %>
-
-          <% if assignment.dooring_status.url.nil? %>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
-          <% elsif %>
-            <% if assignment.dooring_status.file.exists? %>
-              <td>
-                <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
-              </td>
+            <td><%= assignment.agent.name %></td>
+            <% if assignment.dooring_agent_id.nil? %>
+              <td>-</td>
             <% else %>
-              <td style="color:red"><strong>Error</strong></td>
+              <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
             <% end %>
-          <% end %>
-
-          <% if assignment.payment_status.url.nil? %>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
-          <% elsif %>
-            <% if assignment.payment_status.file.exists? %>
-              <td>
-                <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
-              </td>
+            <td><%= assignment.customer.name %></td>
+            <% if assignment.container_id.nil? %>
+              <td><%= assignment.container_id %></td>
             <% else %>
-              <td style="color:red"><strong>Error</strong></td>
+              <td><%= Container.find(assignment.container_id).number %></td>
             <% end %>
-          <% end %>
+            <% if !assignment.pickup_location.nil? %>
+              <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+            <% elsif %>
+              <td>-</td>
+            <% end %>
 
-          <td style="width:5%; white-space: nowrap;">
-            <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
-            <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
-            <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
-        </tr>
+            <% if !assignment.pickup_location.nil? %>
+              <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+            <% elsif %>
+              <td>-</td>
+            <% end %>
+
+            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+              <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+            <% elsif %>
+              <td>-</td>
+            <% end %>
+
+            <td><%= assignment.pickuptime.to_s(:long) %></td>
+            <td><%= assignment.loadtype %></td>
+            <td><%= assignment.containertype %></td>
+            <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+            <td><%= number_with_delimiter(assignment.total_price) %></td>
+            <td><%= number_with_delimiter(assignment.ppn) %></td>
+            <td><%= number_with_delimiter(assignment.grand_total) %></td>
+
+            <% if assignment.document_status.url.nil? %>
+              <td style="color:red"><strong>Not Uploaded</strong></td>
+            <% elsif %>
+              <% if assignment.document_status.file.exists? %>
+                <td>
+                  <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
+                </td>
+              <% else %>
+                <td style="color:red"><strong>Error</strong></td>
+              <% end %>
+            <% end %>
+
+            <% if assignment.dooring_status.url.nil? %>
+              <td style="color:red"><strong>Not Uploaded</strong></td>
+            <% elsif %>
+              <% if assignment.dooring_status.file.exists? %>
+                <td>
+                  <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
+                </td>
+              <% else %>
+                <td style="color:red"><strong>Error</strong></td>
+              <% end %>
+            <% end %>
+
+            <% if assignment.payment_status.url.nil? %>
+              <td style="color:red"><strong>Not Uploaded</strong></td>
+            <% elsif %>
+              <% if assignment.payment_status.file.exists? %>
+                <td>
+                  <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
+                </td>
+              <% else %>
+                <td style="color:red"><strong>Error</strong></td>
+              <% end %>
+            <% end %>
+
+            <td style="width:5%; white-space: nowrap;">
+              <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
+              <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
+              <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
+          </tr>
+        <% end %>
+      <% end %>
+        
       <% end %>
     </tbody>
   </table>

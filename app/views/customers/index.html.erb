@@ -6,7 +6,7 @@
 <br>
 
 <div class="table-responsive">
-<table class="table">
+<table class="table" id="myTable">
   <thead>
     <tr>
       <th>Name</th>
@@ -20,7 +20,7 @@
     </tr>
   </thead>
 
-  <tbody>
+  <tbody role='datatable'>
     <% @customers.each do |customer| %>
       <tr>
         <td><%= customer.name %></td>

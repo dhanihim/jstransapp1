@@ -25,7 +25,11 @@
   <tbody>
     <% @customer_location_pricelists.each do |customer_location_pricelist| %>
       <% if customer_location_pricelist.location_id != @customer_locations.location_id %>
+        <% if customer_location_pricelist.expireddate.to_s < Date.today.to_s && !customer_location_pricelist.expireddate.blank? %>
+        <tr class="table-danger">  
+        <% else %>
         <tr>
+        <% end %>
           <td><%= customer_location_pricelist.location.name %></td>
           <td><%= number_with_delimiter(customer_location_pricelist.per20ft) %></td>
           <td><%= number_with_delimiter(customer_location_pricelist.per20fr) %></td>

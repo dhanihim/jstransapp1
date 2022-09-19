@@ -74,7 +74,7 @@ class AssignmentsController < ApplicationController
           pickup_location = CustomerLocation.find(@assignment.pickup_location)
           location = Location.find(CustomerLocation.find(@assignment.destination_location).location_id)
           
-          price = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ?", pickup_location, location)
+          price = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and expireddate >= ?", pickup_location, location, Date.today)
           container = @assignment.containertype
           priceused = 0
           ppncategory = 0

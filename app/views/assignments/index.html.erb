@@ -9,10 +9,11 @@
 <br>
 
 <div class="table-responsive table-wrap">
-  <table class="table">
+  <table class="table" id="myTable">
     <thead>
       <tr>
         <th>UID</th>
+        <th>Shipname</th>
         <th>Pickup Agent</th>
         <th>Dooring Agent</th>
         <th>Customer</th>
@@ -38,6 +39,11 @@
       <% @assignmentsfcl.each do |assignment| %>
         <tr>
           <td><%= assignment.uid %></td>
+          <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+          <% end %>
           <td><%= assignment.agent.name %></td>
           <% if assignment.dooring_agent_id.nil? %>
             <td>-</td>
@@ -136,10 +142,11 @@
 
 
 <div class="table-responsive table-wrap">
-  <table class="table">
+  <table class="table" id="myTable">
     <thead>
       <tr>
         <th>Uid</th>
+        <th>Shipname</th>
         <th>Pickup Agent</th>
         <th>Dooring Agent</th>
         <th>Customer</th>
@@ -164,6 +171,11 @@
       <% @assignmentslcl.each do |assignment| %>
         <tr>
           <td><%= assignment.uid %></td>
+          <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+          <% end %>
           <td><%= assignment.agent.name %></td>
           <% if assignment.dooring_agent_id.nil? %>
             <td>-</td>

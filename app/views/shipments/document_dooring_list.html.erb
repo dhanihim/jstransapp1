@@ -1,0 +1,58 @@
+<center>
+	<h3><strong><%= @shipment.uid %></strong></h3>
+	<h3><%= @shipment.shipname %> <%= @shipment.voyage %></h3>
+	<h5>
+		<% if @shipment.actualdeparture.nil? %>
+			(Not Yet Departed)
+		<% else %>
+			<%= @shipment.actualdeparture %>
+		<% end %>
+		 - 
+		<% if @shipment.actualarrival.nil? %>
+			(Not Yet Arrived)
+		<% else %>
+			<%= @shipment.actualarrival %>
+		<% end %>
+	</h5>
+</center>
+
+<br>
+<br>
+
+<table class="table table-borderless table-sm">
+	<tr>
+		<td>Dooring Agent <td>
+		<td><strong>: <%= @dooring_agent.name %></strong></td>
+	</tr>
+	<tr>
+		<td>POD <td>
+		<td><strong>: <%= Location.find(@shipment.pod).name %></strong></td>
+	</tr>
+</table>
+
+<br>
+
+<% @counter = 0; %>
+
+<table class="table table-sm">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Container Number</th>
+			<th>Type</th>
+			<th>Customer</th>
+		</tr>
+	</thead>
+	<% @containers.each do |container| %>
+		<% @assignments = Assignment.where("container_id = ? AND dooring_agent_id = ?", container.id, @dooring_agent.id) %>
+		<% @assignments.each do |assignment| %>
+			<% @counter = @counter+1; %>
+			<tr>
+				<td><%= @counter %></td>
+				<td><%= container.number %></td>
+				<td><%= assignment.containertype %></td>
+				<td><%= assignment.customer.name %></td>
+			</tr>
+		<% end %>
+	<% end %>
+</table>

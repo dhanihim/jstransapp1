@@ -35,6 +35,12 @@ class ShipmentsController < ApplicationController
     @customer = Customer.find(@assignment.customer_id)
   end
 
+  def document_dooring_list
+    @shipment = Shipment.find(params[:id])
+
+    @containers = Container.where("shipment_id = ?", @shipment.id)
+    @dooring_agent = Agent.find(params[:dooring])
+  end
 
   # GET /shipments or /shipments.json
   def index

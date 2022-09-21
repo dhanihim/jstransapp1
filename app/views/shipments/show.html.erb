@@ -104,7 +104,7 @@
             <% counter = counter+1 %>
             <td><%= counter %></td>
             <td><%= Agent.find(dooring).name %></td>
-            <td><%= link_to 'Record', document_packing_list_shipment_url(params[:id]), class:"btn btn-success", target:"_blank" %></td>
+            <td style="white-space: nowrap;"><%= link_to 'Dooring Packinglist', document_dooring_list_shipment_url(params[:id], :dooring => dooring), class:"btn btn-info", target:"_blank" %></td>
           </tr>
         <% end %>
       </tbody>

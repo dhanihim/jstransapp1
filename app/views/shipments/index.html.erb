@@ -53,6 +53,7 @@
   <table class="table" id="myTable">
     <thead>
       <tr>
+        <th>#</th>
         <th style="width:15%;">UID</th>
         <th>Shipname</th>
         <th>Voyage</th>
@@ -68,9 +69,12 @@
       </tr>
     </thead>
 
+    <% counter = 0 %>
+
     <tbody>
       <% @shipments.each do |shipment| %>
         <tr>
+          <td><%= counter = counter + 1 %></td>
           <td><%= shipment.uid %></td>
           <td><%= shipment.shipname %></td>
           <td><%= shipment.voyage %></td>

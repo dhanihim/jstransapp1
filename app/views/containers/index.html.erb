@@ -11,6 +11,7 @@
 <table class="table" id="myTable">
   <thead>
     <tr>
+      <th>#</th>
       <th>Number</th>
       <th>Seal Number</th>
       <th>Shipment</th>
@@ -22,9 +23,12 @@
     </tr>
   </thead>
 
+  <% counter = 0 %>
+  
   <tbody>
     <% @containers.each do |container| %>
       <tr>
+        <td><%= counter = counter + 1 %></td>
         <td><%= container.number %></td>
         <td><%= container.sealnumber %></td>
         <td>

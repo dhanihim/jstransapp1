@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :assignment_updates
   resources :customer_location_pricelists
   
   resources :assignment_details
@@ -8,6 +9,11 @@ Rails.application.routes.draw do
       get :update_assignment_container
       get :remove_assignment_container
       get :document_invoice
+      get :sync_assignment
+    end
+    collection do
+      get :sync_all_assignment
+      get :fetch_all_document
     end
   end
 
@@ -33,8 +39,26 @@ Rails.application.routes.draw do
   get 'dashboard/index'
   resources :customer_products
   resources :customer_locations
-  resources :customers
-  resources :agents
+  
+  resources :customers do 
+    member do 
+      get :sync_customer
+    end
+    collection do
+      get :sync_all_customer
+    end
+  end
+  
+  resources :agents do 
+    member do 
+      get :sync_agent
+    end
+    collection do
+      get :sync_all_agent
+    end
+  end
+
+
   resources :locations
 
   root 'dashboard#index'

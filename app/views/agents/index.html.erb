@@ -1,5 +1,18 @@
 <h4>Agents</h4>
 
+<div class="row">
+  <div class="col-md-2">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_agents.count %></h4>
+      <h6 class="textbox2">Unsync Agent(s)</h6>
+      <% if @unsync_agents.count!=0 %>
+        <%= link_to "Sync All", sync_all_agent_agents_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<br>
 <br>
 
 <%= link_to 'New Agent', new_agent_path, class:"btn btn-primary" %>
@@ -15,6 +28,7 @@
       <th>Contact</th>
       <th>Type</th>
       <th></th>
+      <th></th>
     </tr>
   </thead>
 
@@ -25,6 +39,11 @@
         <td><%= agent.address %></td>
         <td><%= agent.contact %></td>
         <td><%= agent.pickupordooring %></td>
+        <td style="width:5%; white-space: nowrap;">
+          <% if agent.sync_at.nil? || (agent.sync_at < agent.edited_at) %>
+            <%= link_to 'Sync', sync_agent_agent_url(agent), class:"btn btn-dark" %>
+          <% end %>
+        </td>
         <td style="width:5%; white-space:nowrap;"><%= link_to 'Edit', edit_agent_path(agent), class:"btn btn-info" %>
           <%= link_to 'X', agent, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
       </tr>

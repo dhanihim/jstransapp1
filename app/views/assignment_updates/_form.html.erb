@@ -1,0 +1,22 @@
+<%= form_with(model: assignment_update) do |form| %>
+  <% if assignment_update.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(assignment_update.errors.count, "error") %> prohibited this assignment_update from being saved:</h2>
+
+      <ul>
+        <% assignment_update.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :uid %>
+    <%= form.text_field :uid %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

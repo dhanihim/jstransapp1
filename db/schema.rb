@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_08_134755) do
+ActiveRecord::Schema.define(version: 2022_10_27_045906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.string "namespace"
+    t.text "body"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.string "author_type"
+    t.bigint "author_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+  end
+
+  create_table "admin_users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
 
   create_table "agents", force: :cascade do |t|
     t.string "name"
@@ -24,6 +50,8 @@ ActiveRecord::Schema.define(version: 2022_09_08_134755) do
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "edited_at"
+    t.datetime "sync_at"
   end
 
   create_table "assignment_details", force: :cascade do |t|
@@ -41,6 +69,14 @@ ActiveRecord::Schema.define(version: 2022_09_08_134755) do
     t.string "unit_description"
     t.index ["assignment_id"], name: "index_assignment_details_on_assignment_id"
     t.index ["customer_product_id"], name: "index_assignment_details_on_customer_product_id"
+  end
+
+  create_table "assignment_updates", force: :cascade do |t|
+    t.string "uid"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "document_path"
+    t.integer "document_type"
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -63,6 +99,12 @@ ActiveRecord::Schema.define(version: 2022_09_08_134755) do
     t.integer "grand_total"
     t.integer "dooring_agent_id"
     t.string "dooring_status"
+    t.datetime "edited_at"
+    t.datetime "sync_at"
+    t.string "description"
+    t.string "document_web_path"
+    t.string "dooring_web_path"
+    t.string "payment_web_path"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -80,25 +122,18 @@ ActiveRecord::Schema.define(version: 2022_09_08_134755) do
     t.integer "pod"
   end
 
-  create_table "containertypes", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "customer_location_pricelists", force: :cascade do |t|
+    t.integer "per20ft"
+    t.integer "per40ft"
+    t.integer "per20od"
+    t.integer "per21ft"
+    t.integer "per20fr"
+    t.integer "per40fr"
     t.integer "ppncategory"
     t.integer "active"
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "per40fr"
-    t.integer "per20fr"
-    t.integer "per21ft"
-    t.integer "per20od"
-    t.integer "per40ft"
-    t.integer "per20ft"
     t.integer "customer_location_id"
     t.integer "location_id"
     t.date "expireddate"
@@ -161,6 +196,8 @@ ActiveRecord::Schema.define(version: 2022_09_08_134755) do
     t.string "person_responsible_uid"
     t.string "npwp_file"
     t.string "person_responsible_file"
+    t.datetime "edited_at"
+    t.datetime "sync_at"
   end
 
   create_table "locations", force: :cascade do |t|

@@ -1,7 +1,30 @@
 <% if (params[:loadtype]=='1' || params[:loadtype].nil?) %>
 <h4>Full Container Load Assignments</h4>
 
+<div class="row">
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
+      <h6 class="textbox2">Unsynced FCL</h6>
+      <% if @unsync_assignmentsfcl.count!=0 %>
+        <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
+      <h6 class="textbox2">Unfetched Document</h6>
+      <% if @unsync_assignment!=0 %>
+        <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <br>
+<br>
+
 
 <%= link_to 'New Assignment',  new_assignment_path(:loadtype => 1), class:"btn btn-primary" %>
 
@@ -12,6 +35,7 @@
   <table class="table" id="myTable">
     <thead>
       <tr>
+        <th>#</th>
         <th>UID</th>
         <th>Shipname</th>
         <th>Pickup Agent</th>
@@ -28,16 +52,24 @@
         <th>Total Price</th>
         <th>PPN(1.1%)</th>
         <th>Grand Total</th>
+        <th>Web Travel Document</th>
+        <th>Web Dooring Document</th>
+        <th>Web Payment Document</th>
         <th>Travel Document</th>
         <th>Dooring Document</th>
         <th>Payment Document</th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
 
+    <% counter = 0 %>
+
     <tbody>
       <% @assignmentsfcl.each do |assignment| %>
+
         <tr>
+          <td><%= counter = counter + 1; %></td>
           <td><%= assignment.uid %></td>
           <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
             <td>-</td>
@@ -82,6 +114,28 @@
           <td><%= number_with_delimiter(assignment.ppn) %></td>
           <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
+          <% if assignment.document_web_path.nil? || assignment.document_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.document_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.dooring_web_path.nil? || assignment.dooring_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.dooring_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.payment_web_path.nil? || assignment.payment_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.payment_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+
           <% if assignment.document_status.url.nil? %>
             <td style="color:red"><strong>Not Uploaded</strong></td>
           <% elsif %>
@@ -119,6 +173,12 @@
           <% end %>
 
           <td style="width:5%; white-space: nowrap;">
+            <% if assignment.sync_at.nil? || (assignment.sync_at < assignment.edited_at) %>
+              <%= link_to 'Sync', sync_assignment_assignment_url(assignment, :loadtype => params[:loadtype]), class:"btn btn-dark" %>
+            <% end %>
+          </td>
+          
+          <td style="width:5%; white-space: nowrap;">
             <%= link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
             <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
             <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
@@ -134,7 +194,29 @@
 <% elsif (params[:loadtype]=='2') %>
 <h4>Less Container Load Assignments</h4>
 <br>
+<div class="row">
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentslcl.count %></h4>
+      <h6 class="textbox2">Unsynced FCL</h6>
+      <% if @unsync_assignmentslcl.count!=0 %>
+        <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
+      <h6 class="textbox2">Unfetched Document</h6>
+      <% if @unsync_assignment!=0 %>
+        <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+</div>
 
+<br>
+<br>
 <%= link_to 'New Assignment', new_assignment_path(:loadtype => 2), class:"btn btn-primary" %>
 
 <br>
@@ -145,6 +227,7 @@
   <table class="table" id="myTable">
     <thead>
       <tr>
+        <th>#</th>
         <th>Uid</th>
         <th>Shipname</th>
         <th>Pickup Agent</th>
@@ -160,6 +243,9 @@
         <th>Total Price</th>
         <th>PPN(1.1%)</th>
         <th>Grand Total</th>
+        <th>Web Travel Document</th>
+        <th>Web Dooring Document</th>
+        <th>Web Payment Document</th>
         <th>Travel Document</th>
         <th>Dooring Document</th>
         <th>Payment Document</th>
@@ -167,9 +253,12 @@
       </tr>
     </thead>
 
+    <% counter = 0 %>
+
     <tbody>
       <% @assignmentslcl.each do |assignment| %>
         <tr>
+          <td><%= counter = counter + 1; %></td>
           <td><%= assignment.uid %></td>
           <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
             <td>-</td>
@@ -212,6 +301,28 @@
           <td><%= number_with_delimiter(assignment.total_price) %></td>
           <td><%= number_with_delimiter(assignment.ppn) %></td>
           <td><%= number_with_delimiter(assignment.grand_total) %></td>
+          
+          <% if assignment.document_web_path.nil? || assignment.document_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.document_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.dooring_web_path.nil? || assignment.dooring_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.dooring_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.payment_web_path.nil? || assignment.payment_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.payment_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
 
           <% if assignment.document_status.url.nil? %>
             <td style="color:red"><strong>Not Uploaded</strong></td>

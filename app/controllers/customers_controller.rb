@@ -1,9 +1,65 @@
 class CustomersController < ApplicationController
   before_action :set_customer, only: %i[ show edit update destroy ]
 
+  def sync_all_customer
+    @customer = Customer.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+
+    @customer.each do |customer|
+      @link = "http://jstranslogistik.com/sync/?"+
+      "target=customer"+
+      "&id="+customer.id.to_s+
+      "&name="+customer.name.to_s+
+      "&active="+customer.active.to_s
+
+      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+      customer.description = @response['response']
+
+      if(@response['response']=="ok")
+        #saving sync datetime
+        customer.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        if(customer.edited_at.nil?)
+          customer.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        end
+      end
+
+      customer.save
+    end
+
+    redirect_to(customers_url)
+  end
+
+  def sync_customer
+    @customer = Customer.find(params[:id])
+
+    @link = "http://jstranslogistik.com/sync/?"+
+    "target=customer"+
+    "&id="+@customer.id.to_s+
+    "&name="+@customer.name.to_s+
+    "&active="+@customer.active.to_s
+
+    @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+    @customer.description = @response['response']
+
+    if(@response['response']=="ok")
+      #saving sync datetime
+      @customer.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      if(@customer.edited_at.nil?)
+        @customer.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      end
+    end
+
+    @customer.save
+
+    redirect_to(customers_url)
+  end
+
   # GET /customers or /customers.json
   def index
     @customers = Customer.where("active = 1")
+
+    @unsync_customers = Customer.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
   end
 
   # GET /customers/1 or /customers/1.json

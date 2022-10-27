@@ -1,9 +1,67 @@
 class AgentsController < ApplicationController
   before_action :set_agent, only: %i[ show edit update destroy ]
 
+  def sync_all_agent
+    @agent = Agent.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+
+    @agent.each do |agent|
+      @link = "http://jstranslogistik.com/sync/?"+
+      "target=agent"+
+      "&id="+agent.id.to_s+
+      "&name="+agent.name.to_s+
+      "&pickupordooring="+agent.pickupordooring.to_s+
+      "&active="+agent.active.to_s
+
+      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+      agent.description = @response['response']
+
+      if(@response['response']=="ok")
+        #saving sync datetime
+        agent.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        if(agent.edited_at.nil?)
+          agent.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        end
+      end
+
+      agent.save
+    end
+
+    redirect_to(agents_url)
+  end
+
+  def sync_agent
+    @agent = Agent.find(params[:id])
+
+    @link = "http://jstranslogistik.com/sync/?"+
+    "target=agent"+
+    "&id="+@agent.id.to_s+
+    "&name="+@agent.name.to_s+
+    "&pickupordooring="+@agent.pickupordooring.to_s+
+    "&active="+@agent.active.to_s
+
+    @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+    @agent.description = @response['response']
+
+    if(@response['response']=="ok")
+      #saving sync datetime
+      @agent.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      if(@agent.edited_at.nil?)
+        @agent.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      end
+    end
+
+    @agent.save
+
+    redirect_to(agents_url)
+  end
+
   # GET /agents or /agents.json
   def index
     @agents = Agent.where("active = 1")
+
+    @unsync_agents = Agent.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
   end
 
   # GET /agents/1 or /agents/1.json

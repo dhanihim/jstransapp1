@@ -1,6 +1,168 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
 
+  def fetch_all_document
+    @app_assignment_max = AssignmentUpdate.maximum(:id)
+    if(@app_assignment_max=='' || @app_assignment_max.nil?)
+      @app_assignment_max = 0
+    end
+
+    @link = "https://jstranslogistik.com/sync/assignment_update/?id="+@app_assignment_max.to_s
+
+    @response = HTTParty.get(@link, format: :json).parsed_response
+
+    #because there is 2 [[]] at the json, use array[0][0] to access
+    #the aray for each is refering to second [] then access the field such as 'id'
+    @response[0].each do |response|
+      @assignment_update = AssignmentUpdate.new
+
+      @assignment_update.id = response['id']
+      @assignment_update.uid = response['uid']
+      @assignment_update.document_type = response['document_type']
+      @assignment_update.document_path = response['document_path']
+
+      @assignment_update.save
+
+      @id = 0;
+      @uid = 0;
+      @assignment = Assignment.where("uid = ?", @assignment_update.uid)
+      @assignment.each do |assignment|
+        @id = assignment.id
+        @uid = assignment.uid
+        @link = "https://jstranslogistik.com/assets/uploads/"+@assignment_update.document_path
+        
+        if(@assignment_update.document_type==1)
+          assignment.document_web_path = @link
+        elsif (@assignment_update.document_type==2)
+          assignment.dooring_web_path = @link
+        elsif (@assignment_update.document_type==3)
+          assignment.payment_web_path = @link
+        end
+
+        assignment.save
+        
+      end
+    end
+
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+  end
+
+  def sync_all_assignment
+    @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1 AND loadtype = 'Full Container Load'")
+    
+    if(params[:loadtype]==2)
+      @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1 AND loadtype = 'Less Container Load'")
+    end
+
+    @assignment.each do |assignment|
+      @link = "http://jstranslogistik.com/sync/?"+
+      "target=assignment"+
+      "&id="+assignment.id.to_s+
+      "&uid="+assignment.uid.to_s
+
+      if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil?
+        @link += "&shipname="+Shipment.find(Container.find(assignment.container_id).shipment_id).shipname.to_s+
+        Shipment.find(Container.find(assignment.container_id).shipment_id).voyage.to_s
+      end
+
+      @link += 
+      "&pickup_agent="+assignment.agent.id.to_s+
+      "&dooring_agent="+assignment.dooring_agent_id.to_s+
+      "&customer="+assignment.customer.id.to_s
+
+      if !assignment.container_id.nil?
+        @link += "&container_number="+Container.find(assignment.container_id).number.to_s
+      end
+      
+      if !assignment.pickup_location.nil?
+        @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
+        "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
+      end 
+
+      if !assignment.destination_location.nil?
+        @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
+        "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
+      end
+
+      @link += "&pickuptime="+assignment.pickuptime.to_s(:long).to_s+
+      "&load_type="+assignment.loadtype.to_s+
+      "&container_type="+assignment.containertype.to_s+
+      "&total_product="+AssignmentDetail.where("assignment_id = ?", assignment.id).count.to_s+
+      "&total_price="+assignment.total_price.to_s+
+      "&ppn="+assignment.ppn.to_s+
+      "&grand_total="+assignment.grand_total.to_s+       
+      "&active="+assignment.active.to_s       
+
+      #saving sync datetime
+      assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      if(assignment.edited_at.nil?)
+        assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      end
+
+      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+      assignment.description = @response['response']
+      assignment.save
+    end
+
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+  end
+
+  def sync_assignment
+    @assignment = Assignment.find(params[:id])
+
+    @link = "http://jstranslogistik.com/sync/?"+
+    "target=assignment"+
+    "&id="+@assignment.id.to_s+
+    "&uid="+@assignment.uid.to_s
+
+    if !@assignment.container_id.nil? && !Container.find(@assignment.container_id).shipment_id.nil?
+      @link += "&shipname="+Shipment.find(Container.find(@assignment.container_id).shipment_id).shipname.to_s+
+      Shipment.find(Container.find(@assignment.container_id).shipment_id).voyage.to_s
+    end
+
+    @link += 
+    "&pickup_agent="+@assignment.agent.id.to_s+
+    "&dooring_agent="+@assignment.dooring_agent_id.to_s+
+    "&customer="+@assignment.customer.id.to_s
+
+    if !@assignment.container_id.nil?
+      @link += "&container_number="+Container.find(@assignment.container_id).number.to_s
+    end
+    
+    if !@assignment.pickup_location.nil?
+      @link += "&pickup_address="+CustomerLocation.find(@assignment.pickup_location).address.to_s+
+      "&pol="+Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name.to_s
+    end 
+
+    if !@assignment.destination_location.nil?
+      @link += "&destination_address="+CustomerLocation.find(@assignment.destination_location).address.to_s+
+      "&pod="+Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name.to_s
+    end
+
+    @link += "&pickuptime="+@assignment.pickuptime.to_s(:long).to_s+
+    "&load_type="+@assignment.loadtype.to_s+
+    "&container_type="+@assignment.containertype.to_s+
+    "&total_product="+AssignmentDetail.where("@assignment_id = ?", @assignment.id).count.to_s+
+    "&total_price="+@assignment.total_price.to_s+
+    "&ppn="+@assignment.ppn.to_s+
+    "&grand_total="+@assignment.grand_total.to_s+       
+    "&active="+@assignment.active.to_s       
+
+    #saving sync datetime
+    @assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    if(@assignment.edited_at.nil?)
+      @assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    end
+
+    @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+    @assignment.description = @response['response']
+    @assignment.save
+
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+  end
+
   def document_invoice
     @assignment = Assignment.find(params[:id])
   end
@@ -27,8 +189,21 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments or /assignments.json
   def index
-    @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load'").order("uid DESC")
-    @assignmentslcl = Assignment.where("loadtype = 'Less Container Load'").order("uid DESC")
+    @app_assignment_max = AssignmentUpdate.maximum(:id)
+    if(@app_assignment_max=='' || @app_assignment_max.nil?)
+      @app_assignment_max = 0
+    end
+
+    @response = HTTParty.get("http://jstranslogistik.com/sync/assignment_update/", format: :json).parsed_response 
+    @web_assignment_max = @response[0][0]['max_id']
+
+    @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
+
+    @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND (sync_at is NULL OR sync_at < edited_at)")
+    @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND (sync_at is NULL OR sync_at < edited_at)")
+
+    @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1").order("uid DESC")
+    @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1").order("uid DESC")
   end
 
   # GET /assignments/1 or /assignments/1.json
@@ -43,6 +218,10 @@ class AssignmentsController < ApplicationController
   # GET /assignments/1/edit
   def edit
     @assignment = Assignment.find(params[:id])
+
+    @assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
+    @assignment.save
   end
 
   # POST /assignments or /assignments.json
@@ -137,7 +316,11 @@ class AssignmentsController < ApplicationController
       loadtype = 1
     end
 
-    @assignment.destroy
+    @assignment = Assignment.find(params[:id])
+
+    @assignment.active = 0;
+
+    @assignment.save;
 
     respond_to do |format|
       format.html { redirect_to assignments_url(:loadtype => loadtype), notice: "Assignment was successfully destroyed." }

@@ -21,8 +21,8 @@ class ContainersController < ApplicationController
 
   # GET /containers/1 or /containers/1.json
   def show
-    @assignmentsavailable = Assignment.where("container_id IS NULL AND containertype = ?", Container.find(params[:id]).size)
-    @assignmentsassigned = Assignment.where("container_id = ?", params[:id])
+    @assignmentsavailable = Assignment.where("container_id IS NULL AND containertype = ? AND active = 1", Container.find(params[:id]).size)
+    @assignmentsassigned = Assignment.where("container_id = ? AND active = 1", params[:id])
 
     @containers = Container.find(params[:id])
   end

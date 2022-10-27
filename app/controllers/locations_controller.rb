@@ -3,7 +3,7 @@ class LocationsController < ApplicationController
 
   # GET /locations or /locations.json
   def index
-    @locations = Location.all
+    @locations = Location.where("active = 1").order("name ASC")
   end
 
   # GET /locations/1 or /locations/1.json
@@ -49,7 +49,11 @@ class LocationsController < ApplicationController
 
   # DELETE /locations/1 or /locations/1.json
   def destroy
-    @location.destroy
+    #@location.destroy
+    @location = Location.find(params[:id])
+
+    @location.active = 0
+    @location.save
 
     respond_to do |format|
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }

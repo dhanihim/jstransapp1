@@ -34,12 +34,8 @@
     </div>
 
     <div class="field form-group">
-      <label>Dooring Agent</label>
-      <% if !@assignment.dooring_agent_id.nil? %>
-        <input type="text" class="form-control" readonly="true" value="<%= Agent.find(@assignment.dooring_agent_id).name %>">
-      <% else %>
-        <input type="text" class="form-control" readonly="true" value="=== Not Yet Selected ===">
-      <% end %>
+      <%= form.label :dooring_agent_id, "Dooring Agent" %>
+      <%= form.collection_select :dooring_agent_id, Agent.where("active = 1 AND pickupordooring = 'Dooring'").order("name ASC"), :id, :name, { include_blank: '=== Select a Dooring Agent ===' }, {class:"form-control"} %>
     </div>
 
     <div class="field form-group">
@@ -122,6 +118,12 @@
   </div>
 
   <div class="field form-group">
+    <%= form.label :dooring_status, "Dooring Document" %>
+    <br>
+    <%= form.file_field :dooring_status %>
+  </div>
+
+  <div class="field form-group">
     <%= form.label :payment_status, "Payment Document" %>
     <br>
     <%= form.file_field :payment_status %>
@@ -129,21 +131,13 @@
 
   <div class="field">
     <%= form.number_field :active, type:"hidden", value:'1', hidden:"true" %>
+    <%= form.number_field :status, type:"hidden", value:'0', hidden:"true" %>
   </div>
 
   <br>
 
-  <% if !params[:id].nil? %>
-    <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
-      <div class="actions">
-        <%= form.submit class:"btn btn-primary" %>
-        <br>
-      </div>
-    <% end %>
-  <% else %>
-    <div class="actions">
-      <%= form.submit class:"btn btn-primary" %>
-      <br>
-    </div>
-  <% end %>
+  <div class="actions">
+    <%= form.submit class:"btn btn-primary" %>
+    <br>
+  </div>
 <% end %>

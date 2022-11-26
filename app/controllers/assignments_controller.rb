@@ -1,6 +1,38 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
 
+  def price_adjustment
+    assignment = Assignment.find(params[:id])
+
+    if assignment.ppn != 0
+      #ppn 1.1%
+      assignment.ppn = (params[:total_price].to_i - params[:price_adjustment].to_i)*0.011  
+    end
+
+    assignment.price_adjustment = params[:price_adjustment].to_i
+    assignment.grand_total = params[:total_price].to_i - params[:price_adjustment].to_i + assignment.ppn.to_i
+    assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    assignment.save
+
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+  end
+
+  def duplicate
+    assignment = Assignment.find(params[:id])
+    assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    assignment.save
+
+    params[:duplication].to_i.times do |i|
+      j = i+1
+      new_assignment = Assignment.find(params[:id]).dup
+      new_assignment.uid = new_assignment.uid+"0"+j.to_s
+
+      new_assignment.save
+    end
+
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+  end
+
   def fetch_all_document
     @app_assignment_max = AssignmentUpdate.maximum(:id)
     if(@app_assignment_max=='' || @app_assignment_max.nil?)
@@ -9,11 +41,11 @@ class AssignmentsController < ApplicationController
 
     @link = "https://jstranslogistik.com/sync/assignment_update/?id="+@app_assignment_max.to_s
 
-    @response = HTTParty.get(@link, format: :json).parsed_response
+    @response = [HTTParty.get(@link, format: :json).parsed_response]
 
     #because there is 2 [[]] at the json, use array[0][0] to access
     #the aray for each is refering to second [] then access the field such as 'id'
-    @response[0].each do |response|
+    @response[0][0].each do |response|
       @assignment_update = AssignmentUpdate.new
 
       @assignment_update.id = response['id']
@@ -29,14 +61,23 @@ class AssignmentsController < ApplicationController
       @assignment.each do |assignment|
         @id = assignment.id
         @uid = assignment.uid
-        @link = "https://jstranslogistik.com/assets/uploads/"+@assignment_update.document_path
+
+        if(@assignment_update.document_path!='')
+          @link = "https://jstranslogistik.com/assets/uploads/"+@assignment_update.document_path
         
-        if(@assignment_update.document_type==1)
-          assignment.document_web_path = @link
-        elsif (@assignment_update.document_type==2)
-          assignment.dooring_web_path = @link
-        elsif (@assignment_update.document_type==3)
-          assignment.payment_web_path = @link
+          if(@assignment_update.document_type==1)
+            assignment.document_web_path = @link
+          elsif (@assignment_update.document_type==2)
+            assignment.dooring_web_path = @link
+          elsif (@assignment_update.document_type==3)
+            assignment.payment_web_path = @link
+          end
+        end
+        
+        assignment.status = response['status']
+
+        if(response['description']!='')
+          assignment.description = response['description']
         end
 
         assignment.save
@@ -48,10 +89,10 @@ class AssignmentsController < ApplicationController
   end
 
   def sync_all_assignment
-    @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1 AND loadtype = 'Full Container Load'")
+    @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND loadtype = 'Full Container Load'")
     
     if(params[:loadtype]==2)
-      @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1 AND loadtype = 'Less Container Load'")
+      @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND loadtype = 'Less Container Load'")
     end
 
     @assignment.each do |assignment|
@@ -196,11 +237,12 @@ class AssignmentsController < ApplicationController
 
     @response = HTTParty.get("http://jstranslogistik.com/sync/assignment_update/", format: :json).parsed_response 
     @web_assignment_max = @response[0][0]['max_id']
+    #@web_assignment_max = 0
 
     @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
 
-    @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND (sync_at is NULL OR sync_at < edited_at)")
-    @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND (sync_at is NULL OR sync_at < edited_at)")
+    @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
+    @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
 
     @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1").order("uid DESC")
     @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1").order("uid DESC")
@@ -291,7 +333,8 @@ class AssignmentsController < ApplicationController
         end
 
         if(priceused == 0)
-          @assignment.destroy
+          @assignment.active = 0
+          @assignment.save
 
           format.html { redirect_to assignments_url(:loadtype => loadtype, :customer_id => customer_id), alert: "No contract available" }
           format.json { render json: @assignment.errors, status: :unprocessable_entity }
@@ -319,6 +362,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
 
     @assignment.active = 0;
+    @assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
 
     @assignment.save;
 
@@ -336,6 +380,6 @@ class AssignmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_params
-      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status)
+      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status, :status)
     end
 end

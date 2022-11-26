@@ -2,7 +2,7 @@ class CustomersController < ApplicationController
   before_action :set_customer, only: %i[ show edit update destroy ]
 
   def sync_all_customer
-    @customer = Customer.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+    @customer = Customer.where("(sync_at is NULL OR sync_at < edited_at)")
 
     @customer.each do |customer|
       @link = "http://jstranslogistik.com/sync/?"+
@@ -59,7 +59,7 @@ class CustomersController < ApplicationController
   def index
     @customers = Customer.where("active = 1")
 
-    @unsync_customers = Customer.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+    @unsync_customers = Customer.where("(sync_at is NULL OR sync_at < edited_at)")
   end
 
   # GET /customers/1 or /customers/1.json
@@ -78,6 +78,11 @@ class CustomersController < ApplicationController
 
   # GET /customers/1/edit
   def edit
+    @customers = Customer.find(params[:id])
+
+    @customers.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
+    @customers.save
   end
 
   # POST /customers or /customers.json
@@ -113,6 +118,8 @@ class CustomersController < ApplicationController
     @customer = Customer.find(params[:id])
 
     @customer.active = 0
+    @customer.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
     @customer.save
 
     respond_to do |format|

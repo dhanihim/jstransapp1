@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     collection do
       get :sync_all_assignment
       get :fetch_all_document
+      get :duplicate
+      get :price_adjustment
     end
   end
 

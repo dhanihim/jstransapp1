@@ -23,9 +23,9 @@
       <div class="field form-group">
         <%= form.label :customer_product_id, "Product/Category" %>
         <% if Assignment.find(params[:id]).loadtype != "Full Container Load" %>
-          <%= form.collection_select :customer_product_id, CustomerProduct.joins("INNER JOIN customer_product_pricelists ON customer_products.id = customer_product_pricelists.customer_product_id").where("customer_products.customer_id = ? AND customer_product_pricelists.expireddate > now() AND customer_product_pricelists.customer_location_id = ? AND customer_product_pricelists.location_id = ?", params[:cid], Assignment.find(params[:id]).pickup_location, CustomerLocation.find(Assignment.find(params[:id]).destination_location).location_id).order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+          <%= form.collection_select :customer_product_id, CustomerProduct.joins("INNER JOIN customer_product_pricelists ON customer_products.id = customer_product_pricelists.customer_product_id").where("customer_products.customer_id = ? AND customer_product_pricelists.expireddate > now() AND customer_product_pricelists.customer_location_id = ? AND customer_product_pricelists.location_id = ?", params[:cid], Assignment.find(params[:id]).pickup_location, CustomerLocation.find(Assignment.find(params[:id]).destination_location).location_id).order("name ASC"), :id, :name, {}, {class:"form-control", required:"true"} %>
         <% else %>
-          <%= form.collection_select :customer_product_id, CustomerProduct.where("customer_id = ?", params[:cid]).order("name ASC"), :id, :name, {}, {class:"form-control"} %>
+          <%= form.collection_select :customer_product_id, CustomerProduct.where("customer_id = ?", params[:cid]).order("name ASC"), :id, :name, {}, {class:"form-control", required:"true"} %>
         <% end %>
       </div>
     </div>

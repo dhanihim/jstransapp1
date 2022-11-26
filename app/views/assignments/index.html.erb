@@ -43,15 +43,15 @@
         <th>Customer</th>
         <th>Container</th>
         <th>Pickup Address</th>
-        <th>Destination Address</th>
         <th>POL - POD</th>
         <th>Pickuptime</th>
         <th>Load Type</th>
-        <th>Container</th>
         <th>Total Product</th>
         <th>Total Price</th>
+        <th>Price Adjustment</th>
         <th>PPN(1.1%)</th>
         <th>Grand Total</th>
+        <th>Status</th>
         <th>Web Travel Document</th>
         <th>Web Dooring Document</th>
         <th>Web Payment Document</th>
@@ -94,12 +94,6 @@
             <td>-</td>
           <% end %>
 
-          <% if !assignment.pickup_location.nil? %>
-            <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
-          <% elsif %>
-            <td>-</td>
-          <% end %>
-
           <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
             <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
           <% elsif %>
@@ -108,11 +102,21 @@
 
           <td><%= assignment.pickuptime.to_s(:long) %></td>
           <td><%= assignment.loadtype %></td>
-          <td><%= assignment.containertype %></td>
           <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
           <td><%= number_with_delimiter(assignment.total_price) %></td>
+          <td><%= number_with_delimiter(assignment.price_adjustment) %></td>
           <td><%= number_with_delimiter(assignment.ppn) %></td>
           <td><%= number_with_delimiter(assignment.grand_total) %></td>
+          
+          <% if assignment.status==0 %>
+            <td style="color:red"><strong>Booked</strong></td>
+          <% elsif assignment.status==1 %>
+            <td style="color:#fa8602"><strong>Picked Up</strong></td>
+          <% elsif assignment.status==2 %>
+            <td style="color:blue"><strong>Doored</strong></td>
+          <% elsif assignment.status==3 %>
+            <td style="color:green"><strong>Paid</strong></td>
+          <% end %>
 
           <% if assignment.document_web_path.nil? || assignment.document_web_path == ""%>
             <td style="color:red"><strong>Not Uploaded</strong></td>
@@ -179,6 +183,85 @@
           </td>
           
           <td style="width:5%; white-space: nowrap;">
+            <%= link_to 'Duplicate', duplicate_assignments_path(:loadtype => params[:loadtype]), class:"btn", style:"background-color:#E3F2FD;color:#003478", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+assignment.id.to_s %>
+            
+            <!-- Modal -->
+            <div id="duplicateModal<%= assignment.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Duplication Form - <%= assignment.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= form_with url: duplicate_assignments_path, method: :get do |form| %>
+                        <div class="row">
+                          <%= form.label :duplication, "Quantity" %>
+                          <%= form.text_field :duplication, class:"form-control", autocomplete:"off", autofocus:"true" %> 
+                          <%= form.hidden_field :loadtype, value:params[:loadtype] %> 
+                          <%= form.hidden_field :id, value:assignment.id.to_s %> 
+                        </div>
+                        <br>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                        <%= form.submit "Duplicate", class:"btn btn-primary" %>
+                      <% end %>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <%= link_to 'Price Adjustment', price_adjustment_assignments_path(assignment, :loadtype => params[:loadtype]), class:"btn btn-secondary", "data-toggle" => "modal", 'data-target' => '#adjustmentModal'+assignment.id.to_s %>
+
+            <!-- Modal -->
+            <div id="adjustmentModal<%= assignment.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Price Adjustment Form - <%= assignment.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= form_with url: price_adjustment_assignments_path, method: :get do |form| %>
+                        <div class="row">
+                          <%= form.label :total_price, "Total Price" %>
+                          <%= form.text_field :total_price, class:"form-control", autocomplete:"off", autofocus:"true", value: assignment.total_price, readonly:"true" %> 
+                        </div>
+                        <br>
+                        <div class="row">
+                          <%= form.label :price_adjustment, "Price Adjustment" %>
+                          <%= form.text_field :price_adjustment, class:"form-control", autocomplete:"off", autofocus:"true", value: assignment.price_adjustment %> 
+                        </div>
+                        <br>
+                        <div class="row">
+                          <%= form.label :ppn, "PPN Category" %>
+                          <% if assignment.ppn == 0 %>
+                            <%= form.text_field :ppncategory, class:"form-control", value: "Non PPN", readonly:"true" %> 
+                          <% else %>
+                            <%= form.text_field :ppncategory, class:"form-control", value: "PPN(1.1%)", readonly:"true" %>
+                          <% end %>
+                        </div>
+                        <br>
+                        <%= form.hidden_field :ppn, value: assignment.ppn %> 
+                        <%= form.hidden_field :loadtype, value:params[:loadtype] %> 
+                        <%= form.hidden_field :id, value:assignment.id.to_s %>                         
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                        <%= form.submit "Update Data", class:"btn btn-primary" %>
+                      <% end %>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             <%= link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
             <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
             <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>

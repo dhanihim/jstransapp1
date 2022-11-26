@@ -2,7 +2,7 @@ class AgentsController < ApplicationController
   before_action :set_agent, only: %i[ show edit update destroy ]
 
   def sync_all_agent
-    @agent = Agent.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+    @agent = Agent.where("(sync_at is NULL OR sync_at < edited_at)")
 
     @agent.each do |agent|
       @link = "http://jstranslogistik.com/sync/?"+
@@ -61,7 +61,7 @@ class AgentsController < ApplicationController
   def index
     @agents = Agent.where("active = 1")
 
-    @unsync_agents = Agent.where("(sync_at is NULL OR sync_at < edited_at) AND active = 1")
+    @unsync_agents = Agent.where("(sync_at is NULL OR sync_at < edited_at)")
   end
 
   # GET /agents/1 or /agents/1.json
@@ -75,6 +75,11 @@ class AgentsController < ApplicationController
 
   # GET /agents/1/edit
   def edit
+    @agents = Agent.find(params[:id])
+
+    @agents.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
+    @agents.save
   end
 
   # POST /agents or /agents.json
@@ -110,6 +115,8 @@ class AgentsController < ApplicationController
     @agent = Agent.find(params[:id])
 
     @agent.active = 0
+    @agent.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
     @agent.save
 
     respond_to do |format|

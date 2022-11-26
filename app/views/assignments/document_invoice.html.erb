@@ -53,12 +53,20 @@
 				<tr>
 					<td>Pickup Location</td>
 					<td>:</td>
-					<td><%= CustomerLocation.find(@assignment.pickup_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name %></strong></td>
+					<% if @assignment.pickup_location.nil? %>
+						<td>-</td>
+					<% else %>
+						<td><%= CustomerLocation.find(@assignment.pickup_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name %></strong></td>
+					<% end %>
 				</tr>
 				<tr>
 					<td>Destination Location</td>
 					<td>:</td>
-					<td><%= CustomerLocation.find(@assignment.destination_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name %></strong></td>
+					<% if @assignment.destination_location.nil? %>
+						<td>-</td>
+					<% else %>
+						<td><%= CustomerLocation.find(@assignment.destination_location).address %> - <strong><%= Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name %></strong></td>
+					<% end %>
 				</tr>
 			</tbody>
 		</table>

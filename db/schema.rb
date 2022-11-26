@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_27_045906) do
+ActiveRecord::Schema.define(version: 2022_11_25_145155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,8 @@ ActiveRecord::Schema.define(version: 2022_10_27_045906) do
     t.string "document_web_path"
     t.string "dooring_web_path"
     t.string "payment_web_path"
+    t.integer "status"
+    t.integer "price_adjustment", default: 0
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end

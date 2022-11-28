@@ -235,11 +235,15 @@ class AssignmentsController < ApplicationController
       @app_assignment_max = 0
     end
 
-    @response = HTTParty.get("http://jstranslogistik.com/sync/assignment_update/", format: :json).parsed_response 
-    @web_assignment_max = @response[0][0]['max_id']
-    #@web_assignment_max = 0
+    if Assignment.internet_connection
+      @response = HTTParty.get("http://jstranslogistik.com/sync/assignment_update/", format: :json).parsed_response 
+      @web_assignment_max = @response[0][0]['max_id']
+      #@web_assignment_max = 0
 
-    @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
+      @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
+    else
+      @unsync_assignment = -1
+    end
 
     @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
     @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")

@@ -1,30 +1,45 @@
 <% if (params[:loadtype]=='1' || params[:loadtype].nil?) %>
 <h4>Full Container Load Assignments</h4>
 
-<div class="row">
-  <div class="col-md-3">
-    <div class="informationbox3">
-      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
-      <h6 class="textbox2">Unsynced FCL</h6>
-      <% if @unsync_assignmentsfcl.count!=0 %>
-        <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
-      <% end %>
+<% if @unsync_assignment!=-1 %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+        <% if @unsync_assignmentsfcl.count!=0 %>
+          <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
+        <h6 class="textbox2">Unfetched Document</h6>
+        <% if @unsync_assignment!=0 %>
+          <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="informationbox3">
-      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
-      <h6 class="textbox2">Unfetched Document</h6>
-      <% if @unsync_assignment!=0 %>
-        <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
-      <% end %>
+<% else %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h5 class="textbox2" style="margin-bottom: 38px;color: red;">No Internet Connection</h5>
+        <h6 class="textbox2">Unfetched Document</h6>
+      </div>
     </div>
   </div>
-</div>
-
+<% end %>
 <br>
 <br>
-
 
 <%= link_to 'New Assignment',  new_assignment_path(:loadtype => 1), class:"btn btn-primary" %>
 
@@ -276,30 +291,47 @@
 
 <% elsif (params[:loadtype]=='2') %>
 <h4>Less Container Load Assignments</h4>
-<br>
-<div class="row">
-  <div class="col-md-3">
-    <div class="informationbox3">
-      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentslcl.count %></h4>
-      <h6 class="textbox2">Unsynced FCL</h6>
-      <% if @unsync_assignmentslcl.count!=0 %>
-        <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
-      <% end %>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="informationbox3">
-      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
-      <h6 class="textbox2">Unfetched Document</h6>
-      <% if @unsync_assignment!=0 %>
-        <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
-      <% end %>
-    </div>
-  </div>
-</div>
 
+<% if @unsync_assignment!=-1 %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentslcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+        <% if @unsync_assignmentslcl.count!=0 %>
+          <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
+        <h6 class="textbox2">Unfetched Document</h6>
+        <% if @unsync_assignment!=0 %>
+          <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 2), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentslcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h5 class="textbox2" style="margin-bottom: 38px;color: red;">No Internet Connection</h5>
+        <h6 class="textbox2">Unfetched Document</h6>
+      </div>
+    </div>
+  </div>
+<% end %>
 <br>
 <br>
+
 <%= link_to 'New Assignment', new_assignment_path(:loadtype => 2), class:"btn btn-primary" %>
 
 <br>
@@ -332,6 +364,7 @@
         <th>Travel Document</th>
         <th>Dooring Document</th>
         <th>Payment Document</th>
+        <th></th>
         <th></th>
       </tr>
     </thead>
@@ -443,8 +476,93 @@
             <% end %>
           <% end %>
 
-
           <td style="width:5%; white-space: nowrap;">
+            <% if assignment.sync_at.nil? || (assignment.sync_at < assignment.edited_at) %>
+              <%= link_to 'Sync', sync_assignment_assignment_url(assignment, :loadtype => params[:loadtype]), class:"btn btn-dark" %>
+            <% end %>
+          </td>
+          
+          <td style="width:5%; white-space: nowrap;">
+            <%= link_to 'Duplicate', duplicate_assignments_path(:loadtype => params[:loadtype]), class:"btn", style:"background-color:#E3F2FD;color:#003478", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+assignment.id.to_s %>
+            
+            <!-- Modal -->
+            <div id="duplicateModal<%= assignment.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Duplication Form - <%= assignment.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= form_with url: duplicate_assignments_path, method: :get do |form| %>
+                        <div class="row">
+                          <%= form.label :duplication, "Quantity" %>
+                          <%= form.text_field :duplication, class:"form-control", autocomplete:"off", autofocus:"true" %> 
+                          <%= form.hidden_field :loadtype, value:params[:loadtype] %> 
+                          <%= form.hidden_field :id, value:assignment.id.to_s %> 
+                        </div>
+                        <br>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                        <%= form.submit "Duplicate", class:"btn btn-primary" %>
+                      <% end %>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <%= link_to 'Price Adjustment', price_adjustment_assignments_path(assignment, :loadtype => params[:loadtype]), class:"btn btn-secondary", "data-toggle" => "modal", 'data-target' => '#adjustmentModal'+assignment.id.to_s %>
+
+            <!-- Modal -->
+            <div id="adjustmentModal<%= assignment.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Price Adjustment Form - <%= assignment.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= form_with url: price_adjustment_assignments_path, method: :get do |form| %>
+                        <div class="row">
+                          <%= form.label :total_price, "Total Price" %>
+                          <%= form.text_field :total_price, class:"form-control", autocomplete:"off", autofocus:"true", value: assignment.total_price, readonly:"true" %> 
+                        </div>
+                        <br>
+                        <div class="row">
+                          <%= form.label :price_adjustment, "Price Adjustment" %>
+                          <%= form.text_field :price_adjustment, class:"form-control", autocomplete:"off", autofocus:"true", value: assignment.price_adjustment %> 
+                        </div>
+                        <br>
+                        <div class="row">
+                          <%= form.label :ppn, "PPN Category" %>
+                          <% if assignment.ppn == 0 %>
+                            <%= form.text_field :ppncategory, class:"form-control", value: "Non PPN", readonly:"true" %> 
+                          <% else %>
+                            <%= form.text_field :ppncategory, class:"form-control", value: "PPN(1.1%)", readonly:"true" %>
+                          <% end %>
+                        </div>
+                        <br>
+                        <%= form.hidden_field :ppn, value: assignment.ppn %> 
+                        <%= form.hidden_field :loadtype, value:params[:loadtype] %> 
+                        <%= form.hidden_field :id, value:assignment.id.to_s %>                         
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                        <%= form.submit "Update Data", class:"btn btn-primary" %>
+                      <% end %>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <%= link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
             <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
             <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
             <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>

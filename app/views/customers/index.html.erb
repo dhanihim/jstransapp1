@@ -5,8 +5,12 @@
     <div class="informationbox3">
       <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_customers.count %></h4>
       <h6 class="textbox2">Unsync Customer(s)</h6>
-      <% if @unsync_customers.count!=0 %>
-        <%= link_to "Sync All", sync_all_customer_customers_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% if Assignment.internet_connection %>
+        <% if @unsync_customers.count!=0 %>
+          <%= link_to "Sync All", sync_all_customer_customers_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      <% else %>
+        <p style="color: red;float:right; margin-right:20px; margin-top: 25px"><strong>No Connection</strong></p>
       <% end %>
     </div>
   </div>

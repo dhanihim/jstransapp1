@@ -38,7 +38,11 @@
 					<% if @assignment.container_id.nil? %>
 						<td style="padding-top:30px">-</td>
 					<% else %>
-						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).name %></td>
+					    <% if !Shipment.find(Container.find(@assignment.container_id).shipment_id).nil? %>
+						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).shipname %></td>
+					    <% else %>
+						<td style="padding-top:30px">-</td>
+						<% end %>
 					<% end %>
 				</tr>
 				<tr>
@@ -89,7 +93,7 @@
 				<% else %>
 					<td><%= Container.find(@assignment.container_id).number %></td>
 				<% end %>
-				<td>IDR <%= number_with_delimiter(@assignment.total_price) %></td>
+				<td>IDR <%= number_with_delimiter(@assignment.total_price - @assignment.price_adjustment) %></td>
 				<td>-</td>
 			</tr>
 		</tbody>
@@ -101,7 +105,7 @@
 <table class="table">
 	<tr>
 		<td><h5>Total</h5></td>
-		<td><h5>IDR <%= number_with_delimiter(@assignment.total_price) %></h5></td>
+		<td><h5>IDR <%= number_with_delimiter(@assignment.total_price - @assignment.price_adjustment) %></h5></td>
 	</tr>
 	<tr>
 		<td><h5>PPN</h5></td>
@@ -128,8 +132,18 @@
 
 <br>
 <br>
+<% if @assignment.ppn.to_i == 0 %>
+<p>
+	Pembayaran bisa dilakukan ke rekening
+	<br>
+	BCA / 2160386765 / JONATHAN SUSILO
+	<br>
+	BRI / 1160 0101 6626 500 / JONATHAN SUSILO 
+</p>
+<% else %>
 <p>
 	Pembayaran bisa dilakukan ke rekening
 	<br>
 	BCA / 2168077888 / JS TRANS DAN LOGISTIK CV 
-</p>
+</p>	
+<% end %>

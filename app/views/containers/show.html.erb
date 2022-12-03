@@ -60,40 +60,42 @@
 
         <tbody>
           <% @assignmentsavailable.each do |assignment| %>
-            <% if Location.find(CustomerLocation.find(assignment.pickup_location).location_id) == Location.find(@container.pol) && Location.find(CustomerLocation.find(assignment.destination_location).location_id) == Location.find(@container.pod) %>
-              <tr>
-                <td><%= assignment.uid %></td>
-                <td><%= assignment.agent.name %></td>
-                <td><%= assignment.customer.name %></td>
+            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+              <% if Location.find(CustomerLocation.find(assignment.pickup_location).location_id) == Location.find(@container.pol) && Location.find(CustomerLocation.find(assignment.destination_location).location_id) == Location.find(@container.pod) %>
+                <tr>
+                  <td><%= assignment.uid %></td>
+                  <td><%= assignment.agent.name %></td>
+                  <td><%= assignment.customer.name %></td>
 
-                <% if !assignment.pickup_location.nil? %>
-                  <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
-                <% elsif %>
-                  <td>-</td>
-                <% end %>
+                  <% if !assignment.pickup_location.nil? %>
+                    <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+                  <% elsif %>
+                    <td>-</td>
+                  <% end %>
 
-                <% if !assignment.pickup_location.nil? %>
-                  <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
-                <% elsif %>
-                  <td>-</td>
-                <% end %>
+                  <% if !assignment.pickup_location.nil? %>
+                    <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+                  <% elsif %>
+                    <td>-</td>
+                  <% end %>
 
-                <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
-                  <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
-                <% elsif %>
-                  <td>-</td>
-                <% end %>
+                  <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+                    <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+                  <% elsif %>
+                    <td>-</td>
+                  <% end %>
 
-                <td><%= assignment.pickuptime.to_s(:long) %></td>
-                <td><%= assignment.loadtype %></td>
-                <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
-                <td><%= number_with_delimiter(assignment.total_price) %></td>
-                <td><%= number_with_delimiter(assignment.ppn) %></td>
-                <td><%= number_with_delimiter(assignment.grand_total) %></td>
+                  <td><%= assignment.pickuptime.to_s(:long) %></td>
+                  <td><%= assignment.loadtype %></td>
+                  <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
+                  <td><%= number_with_delimiter(assignment.total_price) %></td>
+                  <td><%= number_with_delimiter(assignment.ppn) %></td>
+                  <td><%= number_with_delimiter(assignment.grand_total) %></td>
 
-                <td style="width:5%; white-space: nowrap;">
-                  <%= link_to 'Add', update_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
-              </tr>
+                  <td style="width:5%; white-space: nowrap;">
+                    <%= link_to 'Add', update_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
+                </tr>
+              <% end %>
             <% end %>
           <% end %>
         </tbody>

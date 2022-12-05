@@ -94,6 +94,7 @@
 
                   <td style="width:5%; white-space: nowrap;">
                     <%= link_to 'Add', update_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
+                  </td>
                 </tr>
               <% end %>
             <% end %>
@@ -162,6 +163,7 @@
 
               <td style="width:5%; white-space: nowrap;">
                 <%= link_to 'X', remove_assignment_container_assignment_url(assignment, :container_id => params[:id]), class:"btn btn-danger", style:"white-space:nowrap;" %>
+              </td>
             </tr>
           <% end %>
         </tbody>

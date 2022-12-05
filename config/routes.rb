@@ -27,6 +27,10 @@ Rails.application.routes.draw do
       get :document_record
       get :depart
     end
+    collection do 
+      get :update_container_shipment
+      get :remove_container_shipment
+    end
   end
 
   resources :customer_product_pricelists

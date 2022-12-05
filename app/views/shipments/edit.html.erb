@@ -8,3 +8,80 @@
 <%= render 'form', shipment: @shipment %>
 
 <br>
+<br>
+
+<h5>Container List(s)</h5>
+<hr>
+<br>
+
+<div class="container-fluid" style="margin-bottom:100px;">
+  	<div class="row">
+		<div class="col-6">	
+			<div style="padding:20px; background-color: #f5f5f5; border-radius:10px">
+				<h5>Available Container</h5>
+			    <div class="table-responsive" style="margin-top:15px">
+			      <table class="table">
+			        <thead>
+			          <tr>
+			            <th>Number</th>
+			            <th>Seal Number</th>
+			            <th>POL</th>
+			            <th>POD</th>
+			            <th></th>
+			          </tr>
+			        </thead>
+
+			        <tbody>
+			          <% @containeravailable.each do |container| %>
+			            <% if !container.pol.nil? && !container.pod.nil? %>
+			            	<% if Shipment.find(params[:id]).pol == container.pol && Shipment.find(params[:id]).pod == container.pod %>
+				                <tr>
+				                  <td><%= container.number %></td>
+				                  <td><%= container.sealnumber %></td>
+				                  <td><%= Location.find(container.pol).name %></td>
+				                  <td><%= Location.find(container.pod).name %></td>
+				                  <td style="width:5%; white-space: nowrap;">
+				                    <%= link_to 'Add', update_container_shipment_shipments_url(:container_id => container.id, :shipment_id => params[:id]), class:"btn btn-primary", style:"white-space:nowrap;" %>
+				                  </td>
+				                </tr>
+			            	<% end %>
+			            <% end %>
+			          <% end %>
+			        </tbody>
+			      </table>
+			    </div>
+			</div>
+		</div>
+		<div class="col-6">
+			<div>
+		    <h5>Container Assigned to Shipment</h5>
+		    <div class="table-responsive" style="margin-top: 15px;">
+		      <table class="table">
+		        <thead>
+		          <tr>
+		            <th>Number</th>
+		            <th>Seal Number</th>
+		            <th></th>
+		          </tr>
+		        </thead>
+
+		        <tbody>
+		          <% @containerassigned.each do |container| %>
+		            <% if !container.pol.nil? && !container.pod.nil? %>
+		                <tr>
+		                  <td><%= container.number %></td>
+		                  <td><%= container.sealnumber %></td>
+		                  <td style="width:5%; white-space: nowrap;">
+		                  	<%= link_to 'X', remove_container_shipment_shipments_url(:container_id => container.id), class:"btn btn-danger", style:"white-space:nowrap;" %>
+		                  </td>
+		                </tr>
+		            <% end %>
+		          <% end %>
+		        </tbody>
+		      </table>
+		    </div>
+		  </div> 
+		</div>
+	</div>
+  </div> 
+</div>

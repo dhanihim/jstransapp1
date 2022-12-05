@@ -1,6 +1,33 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
+  def remove_container_shipment
+    container_id = params[:container_id]
+
+    @container = Container.find(container_id)
+
+    shipment = Shipment.find(@container.shipment_id)
+    @container.shipment_id = nil
+
+    @container.save
+
+    redirect_to(edit_shipment_url(shipment))
+  end
+
+  def update_container_shipment
+    container_id = params[:container_id]
+    shipment_id = params[:shipment_id]
+
+    @container = Container.find(container_id)
+    shipment = Shipment.find(shipment_id)
+
+    @container.shipment_id = shipment_id
+
+    @container.save
+
+    redirect_to(edit_shipment_url(shipment))
+  end
+
   def depart
     @shipments = Shipment.find(params[:id])
     @shipments.actualdeparture = DateTime.current.to_date
@@ -44,7 +71,6 @@ class ShipmentsController < ApplicationController
 
   # GET /shipments or /shipments.json
   def index
-
     keyword = ""
 
     if(!params[:keyword].nil?)
@@ -124,6 +150,8 @@ class ShipmentsController < ApplicationController
 
   # GET /shipments/1/edit
   def edit
+    @containeravailable = Container.where("(shipment_id = 0 OR shipment_id is NULL) AND active = 1")
+    @containerassigned = Container.where("shipment_id = ? AND active = 1",params[:id])
   end
 
   # POST /shipments or /shipments.json

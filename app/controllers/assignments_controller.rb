@@ -1,5 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def price_adjustment
     assignment = Assignment.find(params[:id])
@@ -39,8 +41,8 @@ class AssignmentsController < ApplicationController
       @app_assignment_max = 0
     end
 
-    @link = "https://jstranslogistik.com/sync/assignment_update/?id="+@app_assignment_max.to_s
-
+    @link = $urlpath.to_s+"sync/assignment_update/?id="+@app_assignment_max.to_s
+    
     @response = [HTTParty.get(@link, format: :json).parsed_response]
 
     #because there is 2 [[]] at the json, use array[0][0] to access
@@ -52,6 +54,7 @@ class AssignmentsController < ApplicationController
       @assignment_update.uid = response['uid']
       @assignment_update.document_type = response['document_type']
       @assignment_update.document_path = response['document_path']
+      @assignment_update.container = response['container']
 
       @assignment_update.save
 
@@ -59,12 +62,37 @@ class AssignmentsController < ApplicationController
       @uid = 0;
       @assignment = Assignment.where("uid = ?", @assignment_update.uid)
       @assignment.each do |assignment|
+
+        #search for container
+        count_container = Container.where("number = ?",@assignment_update.container).count
+        if count_container != 0
+          container = Container.where("number = ?",@assignment_update.container)
+          container.each do |container|
+            assignment.container_id = container.id
+          end
+        else
+          create_container = Container.new
+
+          create_container.number = @assignment_update.container
+          create_container.size = assignment.containertype
+          create_container.active = 1
+          create_container.pol = CustomerLocation.find(assignment.pickup_location).location_id
+          create_container.pod = CustomerLocation.find(assignment.destination_location).location_id
+
+          create_container.save
+
+          selected_container = Container.where("number = ?",@assignment_update.container)
+          selected_container.each do |selected_container|
+            assignment.container_id = selected_container.id
+          end
+        end
+
         @id = assignment.id
         @uid = assignment.uid
 
         if(@assignment_update.document_path!='')
-          @link = "https://jstranslogistik.com/assets/uploads/"+@assignment_update.document_path
-        
+          @link = $urlpath.to_s+"assets/uploads/"+@assignment_update.document_path
+          
           if(@assignment_update.document_type==1)
             assignment.document_web_path = @link
           elsif (@assignment_update.document_type==2)
@@ -96,7 +124,7 @@ class AssignmentsController < ApplicationController
     end
 
     @assignment.each do |assignment|
-      @link = "http://jstranslogistik.com/sync/?"+
+      @link = $urlpath.to_s+"sync/?"+
       "target=assignment"+
       "&id="+assignment.id.to_s+
       "&uid="+assignment.uid.to_s
@@ -152,7 +180,7 @@ class AssignmentsController < ApplicationController
   def sync_assignment
     @assignment = Assignment.find(params[:id])
 
-    @link = "http://jstranslogistik.com/sync/?"+
+    @link = $urlpath.to_s+"sync/?"+
     "target=assignment"+
     "&id="+@assignment.id.to_s+
     "&uid="+@assignment.uid.to_s
@@ -236,7 +264,7 @@ class AssignmentsController < ApplicationController
     end
 
     if Assignment.internet_connection
-      @response = HTTParty.get("http://jstranslogistik.com/sync/assignment_update/", format: :json).parsed_response 
+      @response = HTTParty.get($urlpath.to_s+"sync/assignment_update/", format: :json).parsed_response 
       @web_assignment_max = @response[0][0]['max_id']
       #@web_assignment_max = 0
 

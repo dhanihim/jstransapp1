@@ -45,7 +45,7 @@
     
     <div class="field form-group">
       <%= form.label :pickuptime, "Pickup Time" %>
-      <%= form.date_field :pickuptime, class:'form-control', required:'true', readonly:"true" %>
+      <%= form.date_field :pickuptime, class:'form-control', required:'true' %>
     </div>
 
     <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>

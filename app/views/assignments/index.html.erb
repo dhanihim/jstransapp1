@@ -86,7 +86,7 @@
         <tr>
           <td><%= counter = counter + 1; %></td>
           <td><%= assignment.uid %></td>
-          <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+          <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? || Container.find(assignment.container_id).shipment_id == 0 %>
             <td>-</td>
           <% else %>
             <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>

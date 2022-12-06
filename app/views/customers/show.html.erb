@@ -158,7 +158,11 @@
             <% end %>
 
             <% if !assignment.pickup_location.nil? %>
-              <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+              <% if !CustomerLocation.find(assignment.destination_location).nil? %>
+                <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+              <% else %>
+                <td style="font-style: italic">[Deleted Location]</td>
+              <% end %>
             <% elsif %>
               <td>-</td>
             <% end %>

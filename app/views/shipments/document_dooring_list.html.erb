@@ -44,7 +44,7 @@
 		</tr>
 	</thead>
 	<% @containers.each do |container| %>
-		<% @assignments = Assignment.where("container_id = ? AND dooring_agent_id = ?", container.id, @dooring_agent.id) %>
+		<% @assignments = Assignment.where("container_id = ? AND dooring_agent_id = ? AND active = 1", container.id, @dooring_agent.id) %>
 		<% @assignments.each do |assignment| %>
 			<% @counter = @counter+1; %>
 			<tr>

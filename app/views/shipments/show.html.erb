@@ -1,4 +1,4 @@
-<%= link_to 'Back', shipments_path, class:"btn btn-secondary" %>
+ <%= link_to 'Back', shipments_path, class:"btn btn-secondary" %>
 <br>
 <br>
 
@@ -42,16 +42,16 @@
             <% counter = counter+1 %>
             <td><strong><%= counter %></strong></td>
             <td><strong><%= container.number %></strong></td>
-            <td><strong>Total : <%= Assignment.where("container_id = ?",container.id).count %></strong></td>
+            <td><strong>Total : <%= Assignment.where("container_id = ? AND active = 1",container.id).count %></strong></td>
             <td><%= link_to 'Packinglist', document_packing_list_shipment_url(params[:id], :container_id => container.id), class:"btn btn-primary", target:"_blank" %></td>
           </tr>
 
-          <% @assignments = Assignment.select(:customer_id).where("container_id = ?", container.id).group("customer_id") %>
+          <% @assignments = Assignment.select(:customer_id).where("container_id = ? AND active = 1", container.id).group("customer_id") %>
           <% @assignments.each do |assignment| %>
           <tr class="table-active">
             <td></td>
             <td><%= Customer.find(assignment.customer_id).name %></td>
-            <td><%= Assignment.where("container_id = ? AND customer_id = ?", container.id, assignment.customer_id).count %></td>
+            <td><%= Assignment.where("container_id = ? AND customer_id = ? AND active = 1", container.id, assignment.customer_id).count %></td>
             <td><%= link_to 'Record', document_packing_list_shipment_url(params[:id], :customer_id => assignment.customer_id, :container_id => container.id), class:"btn btn-success", target:"_blank" %></td>
           </tr>
           <% end %>

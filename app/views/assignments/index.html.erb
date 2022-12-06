@@ -110,7 +110,19 @@
           <% end %>
 
           <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
-            <td><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name+" - "+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></td>
+            <td>
+              <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+               - 
+              <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+            </td>
           <% elsif %>
             <td>-</td>
           <% end %>

@@ -144,13 +144,21 @@ class AssignmentsController < ApplicationController
       end
       
       if !assignment.pickup_location.nil?
-        @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
+    if  CustomerLocation.where("id = ?",assignment.pickup_location).count > 0
+      @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
         "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
+    else
+      @link += "&pickup_address=null&pol=null"
+    end
       end 
 
       if !assignment.destination_location.nil?
-        @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
+    if CustomerLocation.where("id = ?",assignment.destination_location).count > 0
+      @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
         "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
+    else
+      @link += "&pickup_address=null&pol=null"
+    end
       end
 
       @link += "&pickuptime="+assignment.pickuptime.to_s(:long).to_s+
@@ -200,14 +208,22 @@ class AssignmentsController < ApplicationController
     end
     
     if !@assignment.pickup_location.nil?
+    if  CustomerLocation.where("id = ?",@assignment.pickup_location).count > 0
       @link += "&pickup_address="+CustomerLocation.find(@assignment.pickup_location).address.to_s+
-      "&pol="+Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name.to_s
-    end 
-
-    if !@assignment.destination_location.nil?
-      @link += "&destination_address="+CustomerLocation.find(@assignment.destination_location).address.to_s+
-      "&pod="+Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name.to_s
+    "&pol="+Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name.to_s
+    else
+      @link += "&pickup_address=null&pol=null"
     end
+  end 
+
+  if !@assignment.destination_location.nil?
+    if CustomerLocation.where("id = ?",@assignment.destination_location).count > 0
+      @link += "&destination_address="+CustomerLocation.find(@assignment.destination_location).address.to_s+
+    "&pod="+Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name.to_s
+    else
+      @link += "&pickup_address=null&pol=null"
+    end
+  end
 
     @link += "&pickuptime="+@assignment.pickuptime.to_s(:long).to_s+
     "&load_type="+@assignment.loadtype.to_s+

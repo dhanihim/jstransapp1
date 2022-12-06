@@ -40,9 +40,9 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.find(params[:id])
 
     if(!params[:container_id].nil?)
-      @containers = Container.where("id = ?", params[:container_id])
+      @containers = Container.where("id = ? AND active = 1", params[:container_id])
     else
-      @containers = Container.where("shipment_id = ?", @shipment.id)
+      @containers = Container.where("shipment_id = ? AND active = 1", @shipment.id)
     end
   end
 
@@ -50,9 +50,9 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.find(params[:id])
 
     if(!params[:container_id].nil?)
-      @containers = Container.where("id = ?", params[:container_id])
+      @containers = Container.where("id = ? AND active = 1", params[:container_id])
     else
-      @containers = Container.where("shipment_id = ?", @shipment.id)
+      @containers = Container.where("shipment_id = ? AND active = 1", @shipment.id)
     end
   end
 
@@ -65,7 +65,7 @@ class ShipmentsController < ApplicationController
   def document_dooring_list
     @shipment = Shipment.find(params[:id])
 
-    @containers = Container.where("shipment_id = ?", @shipment.id)
+    @containers = Container.where("shipment_id = ? AND active = 1", @shipment.id)
     @dooring_agent = Agent.find(params[:dooring])
   end
 
@@ -122,12 +122,12 @@ class ShipmentsController < ApplicationController
   def show
     @customer_array = []
     @dooring_array = []
-    @container = Container.where("shipment_id = ?", params[:id])
+    @container = Container.where("shipment_id = ? AND active = 1", params[:id])
 
     @container.each do |container|
       container_id = container.id
 
-      @assignment = Assignment.where("container_id = ?", container_id)
+      @assignment = Assignment.where("container_id = ? AND active = 1", container_id)
       @assignment.each do |assignment|
         customer_id = assignment.customer_id
         dooring_id = assignment.dooring_agent_id

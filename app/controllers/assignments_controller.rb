@@ -108,6 +108,8 @@ class AssignmentsController < ApplicationController
           assignment.description = response['description']
         end
 
+        assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
         assignment.save
         
       end

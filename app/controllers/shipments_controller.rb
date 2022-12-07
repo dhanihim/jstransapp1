@@ -1,6 +1,11 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
+  def document_invoice
+    @shipment = Assignment.find(params[:shipment_id])
+    @customer = Assignment.find(params[:customer])
+  end
+
   def remove_container_shipment
     container_id = params[:container_id]
 

@@ -129,7 +129,7 @@ class AssignmentsController < ApplicationController
       "&id="+assignment.id.to_s+
       "&uid="+assignment.uid.to_s
 
-      if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil?
+      if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0
         @link += "&shipname="+Shipment.find(Container.find(assignment.container_id).shipment_id).shipname.to_s+
         Shipment.find(Container.find(assignment.container_id).shipment_id).voyage.to_s
       end

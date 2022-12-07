@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       get :document_packing_list
       get :document_customer_packing_list
       get :document_record
+      get :document_invoice
       get :depart
     end
     collection do 

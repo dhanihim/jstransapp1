@@ -1,0 +1,127 @@
+<br>
+
+<%= image_tag 'logo.png', alt: 'icon', style:"width:12%" %>
+<br>
+<br>
+<br>
+
+<table class="table">
+	<tr>
+		<td><h5>UID</h5></td>
+		<td><h5>#<%= @finance.uid %></h5></td>
+	</tr>
+	<tr>
+		<td><h5>Total Billing</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(@finance.total_billing) %></h5></td>
+	</tr>
+</table>
+
+<br>
+<div class="container-fluid" style="padding: 15px; background-color: #f5f5f5; border-radius:10px">
+	<br>
+	<% is_ppn = -1 %>
+	<% @customer_lists.each do |customer| %>
+		<div class="col-md-6">
+			<table class="table">
+				<tr>
+					<td><h6>Customer</h6></td>
+					<td><h6>:</h6></td>
+					<td><h6><%= Customer.find(customer.customer_id).name %></h6></td>
+				</tr>
+				<tr>
+					<td><h6>Address</h6></td>
+					<td><h6>:</h6></td>
+					<td><h6><%= Customer.find(customer.customer_id).address %></h6></td>
+				</tr>
+			</table>
+		</div>
+		<div class="container-fluid" style="padding: 10px;">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>UID</th>
+						<th>Container</th>
+						<th>Shipname</th>
+						<th>Price</th>
+						<th>Order Pickup</th>
+						<th>Pickup Location</th>
+						<th>Destination Location</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @assignments.each do |assignment| %>
+						<% if assignment.customer_id == customer.customer_id %>
+						<% if is_ppn == -1 %>
+							<% is_ppn = assignment.ppn %>
+						<% end %>
+						<tr>
+							<td><%= assignment.uid %></td>
+
+							<% if assignment.container_id.nil? || assignment.container_id == 0 %>
+								<td>-</td>
+							<% else %>
+								<td><%= Container.find(assignment.container_id).number %></td>
+							<% end %>
+
+							<% if !assignment.container_id.nil? && assignment.container_id != 0 %>
+								<% if !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
+									<td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> - <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+								<% else %>
+									<td>-</td>
+								<% end %> 
+							<% else %>
+								<td>-</td>
+							<% end %>
+							
+							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %>,-</td>
+							<td><%= assignment.pickuptime.to_date.to_s(:long)%></td>
+							<% if assignment.pickup_location.nil? %>
+									<td>-</td>
+								<% else %>
+									<td><%= CustomerLocation.find(assignment.pickup_location).address %> - <strong><%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %></strong></td>
+								<% end %>
+
+							<% if assignment.destination_location.nil? %>
+									<td>-</td>
+								<% else %>
+									<td><%= CustomerLocation.find(assignment.destination_location).address %> - <strong><%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %></strong></td>
+								<% end %>
+						</tr>
+						<% end %>
+					<% end %>
+				</tbody>
+			</table>
+		</div>
+	<% end %>
+</div>
+
+<br>
+<br>
+<br>
+<div class="col-md-6 offset-6">
+	<p>
+		<center>
+		Jonathan Susilo
+		<br>
+		__________________________
+		</center>
+	</p>
+</div>
+
+<br>
+<br>
+<% if is_ppn == 0 %>
+<p>
+	Pembayaran bisa dilakukan ke rekening
+	<br>
+	BCA / 2160386765 / JONATHAN SUSILO
+	<br>
+	BRI / 1160 0101 6626 500 / JONATHAN SUSILO 
+</p>
+<% else %>
+<p>
+	Pembayaran bisa dilakukan ke rekening
+	<br>
+	BCA / 2168077888 / JS TRANS DAN LOGISTIK CV 
+</p>	
+<% end %>

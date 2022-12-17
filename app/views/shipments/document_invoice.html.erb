@@ -9,20 +9,20 @@
 				<tr>
 					<td>Bill To</td>
 					<td>:</td>
-					<td><%= @assignment.customer.name %></td>
+					<td><%= @customer.name %></td>
 				</tr>
 				<tr>
 					<td>Address</td>
 					<td>:</td>
-					<td><%= @assignment.customer.address %></td>
+					<td><%= @customer.address %></td>
 				</tr>
 				<tr>
 					<td style="padding-top:30px">Invoice Date</td>
 					<td style="padding-top:30px">:</td>
-					<% if Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.nil? %>
-						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %></td>
+					<% if @shipment.actualdeparture.nil? %>
+						<td style="padding-top:30px"><%= @shipment.estimateddeparture.to_s(:long) %></td>
 					<% else %>
-						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.to_s(:long) %></td>
+						<td style="padding-top:30px"><%= @shipment.actualdeparture.to_s(:long) %></td>
 					<% end %>
 				</tr>
 				<tr>

@@ -1,0 +1,13 @@
+<br>
+
+<%= form_with url: "", method: :get do |form| %>
+<center>
+  <div class="row">
+    <%= form.text_field :keyword, placeholder:"Search by Assignment UID / Customer", class:"form-control", style:"text-align:center;", autocomplete:"off", autofocus:"true" %> 
+  </div>
+  
+  <br>
+  
+  <%= form.submit "Search Assignment", class:"btn btn-primary btn-sm" %>
+</center>
+<% end %>

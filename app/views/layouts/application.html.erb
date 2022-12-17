@@ -51,8 +51,18 @@
 
   <script type="text/javascript">
     $(document).ready( function () {
-        $('#myTable').DataTable().destroy();
         $('#myTable').DataTable();
+
+        $('#myTable1').DataTable();
+        $('#myTable2').DataTable();
+        $('#myTable3').DataTable();
+
+        $('#fcldatatable').DataTable({
+          order: [[9, 'desc']],
+        });
+        $('#lcldatatable').DataTable({
+          order: [[9, 'desc']],
+        });
     } );
   </script>
 </html>

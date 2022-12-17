@@ -430,6 +430,6 @@ class AssignmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_params
-      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status, :status)
+      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status, :status, :finance_reference)
     end
 end

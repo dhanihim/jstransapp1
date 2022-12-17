@@ -19,10 +19,18 @@
 				<tr>
 					<td style="padding-top:30px">Invoice Date</td>
 					<td style="padding-top:30px">:</td>
-					<% if Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.nil? %>
-						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %></td>
+					<% if !@assignment.container_id.nil? && @assignment.container_id != 0 %>
+						<% if !Container.find(@assignment.container_id).shipment_id.nil? && Container.find(@assignment.container_id).shipment_id != 0 %>
+							<% if Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.nil? %>
+								<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s(:long) %></td>
+							<% else %>
+								<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.to_s(:long) %></td>
+							<% end %>
+						<% else %>
+							<td style="padding-top:30px">-</td>
+						<% end %>
 					<% else %>
-						<td style="padding-top:30px"><%= Shipment.find(Container.find(@assignment.container_id).shipment_id).actualdeparture.to_s(:long) %></td>
+						<td style="padding-top:30px">-</td>
 					<% end %>
 				</tr>
 				<tr>

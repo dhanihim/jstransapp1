@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Uid:</strong>
+  <%= @finance.uid %>
+</p>
+
+<p>
+  <strong>Total billing:</strong>
+  <%= @finance.total_billing %>
+</p>
+
+<p>
+  <strong>Payment date:</strong>
+  <%= @finance.payment_date %>
+</p>
+
+<p>
+  <strong>Payment document:</strong>
+  <%= @finance.payment_document %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @finance.description %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @finance.active %>
+</p>
+
+<%= link_to 'Edit', edit_finance_path(@finance) %> |
+<%= link_to 'Back', finances_path %>

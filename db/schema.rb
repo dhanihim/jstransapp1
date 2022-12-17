@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_05_152904) do
+ActiveRecord::Schema.define(version: 2022_12_08_085712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -108,6 +108,7 @@ ActiveRecord::Schema.define(version: 2022_12_05_152904) do
     t.string "payment_web_path"
     t.integer "status"
     t.integer "price_adjustment", default: 0
+    t.integer "finance_reference"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -201,6 +202,17 @@ ActiveRecord::Schema.define(version: 2022_12_05_152904) do
     t.string "person_responsible_file"
     t.datetime "edited_at"
     t.datetime "sync_at"
+  end
+
+  create_table "finances", force: :cascade do |t|
+    t.string "uid"
+    t.string "total_billing"
+    t.date "payment_date"
+    t.string "payment_document"
+    t.string "description"
+    t.integer "active"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "locations", force: :cascade do |t|

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  uid: MyString
+  total_billing: MyString
+  payment_date: 2022-12-08
+  payment_document: MyString
+  description: MyString
+  active: 1
+
+two:
+  uid: MyString
+  total_billing: MyString
+  payment_date: 2022-12-08
+  payment_document: MyString
+  description: MyString
+  active: 1

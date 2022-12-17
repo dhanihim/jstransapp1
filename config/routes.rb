@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  resources :finances do
+    member do
+      get :document_invoice
+    end
+    collection do 
+      get :attach_assignment
+      get :remove_assignment
+    end
+  end
   resources :assignment_updates
   resources :customer_location_pricelists
   

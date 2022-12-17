@@ -47,7 +47,7 @@
 <br>
 
 <div class="table-responsive table-wrap">
-  <table class="table" id="myTable">
+  <table class="table" id="fcldatatable">
     <thead>
       <tr>
         <th>#</th>
@@ -69,10 +69,11 @@
         <th>Status</th>
         <th>Web Travel Document</th>
         <th>Web Dooring Document</th>
-        <th>Web Payment Document</th>
+        <!-- <th>Web Payment Document</th> -->
         <th>Travel Document</th>
         <th>Dooring Document</th>
-        <th>Payment Document</th>
+        <!-- <th>Payment Document</th> -->
+        <th>Invoice</th>
         <th></th>
         <th></th>
       </tr>
@@ -127,7 +128,7 @@
             <td>-</td>
           <% end %>
 
-          <td><%= assignment.pickuptime.to_s(:long) %></td>
+          <td><%= assignment.pickuptime.strftime("%Y-%m-%d") %> (<%= assignment.pickuptime.to_date.to_s(:long) %>)</td>
           <td><%= assignment.loadtype %></td>
           <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
           <td><%= number_with_delimiter(assignment.total_price) %></td>
@@ -159,14 +160,6 @@
               <%= link_to 'View', assignment.dooring_web_path, target: "_blank", class:"btn btn-info btn-block" %>
             </td>
           <% end %>
-          <% if assignment.payment_web_path.nil? || assignment.payment_web_path == ""%>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
-          <% elsif %>              
-            <td>
-              <%= link_to 'View', assignment.payment_web_path, target: "_blank", class:"btn btn-info btn-block" %>
-            </td>
-          <% end %>
-
           <% if assignment.document_status.url.nil? %>
             <td style="color:red"><strong>Not Uploaded</strong></td>
           <% elsif %>
@@ -191,15 +184,13 @@
             <% end %>
           <% end %>
 
-          <% if assignment.payment_status.url.nil? %>
-            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% if assignment.finance_reference.nil? %>
+            <td style="color:red"><strong>Not Yet Generated</strong></td>
           <% elsif %>
-            <% if assignment.payment_status.file.exists? %>
-              <td>
-                <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
-              </td>
+            <% if Finance.find(assignment.finance_reference).payment_date.nil? %>
+              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
             <% else %>
-              <td style="color:red"><strong>Error</strong></td>
+              <td style="color:green"><strong>Paid #<%= Finance.find(assignment.finance_reference).uid %></strong></td>
             <% end %>
           <% end %>
 
@@ -210,7 +201,8 @@
           </td>
           
           <td style="width:5%; white-space: nowrap;">
-            <%= link_to 'Duplicate', duplicate_assignments_path(:loadtype => params[:loadtype]), class:"btn", style:"background-color:#E3F2FD;color:#003478", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+assignment.id.to_s %>
+            <!-- style:"background-color:#E3F2FD;color:#003478" -->
+            <%= link_to 'Duplicate', duplicate_assignments_path(:loadtype => params[:loadtype]), class:"btn btn-primary", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+assignment.id.to_s %>
             
             <!-- Modal -->
             <div id="duplicateModal<%= assignment.id.to_s %>" class="modal fade" role="dialog">
@@ -290,7 +282,7 @@
               </div>
             </div>
 
-            <%= link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
+            <% #link_to 'Invoice', document_invoice_assignment_url(assignment), class:"btn btn-primary", target:"_blank" %>
             <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
             <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
             <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
@@ -352,7 +344,7 @@
 
 
 <div class="table-responsive table-wrap">
-  <table class="table" id="myTable">
+  <table class="table" id="lcldatatable">
     <thead>
       <tr>
         <th>#</th>

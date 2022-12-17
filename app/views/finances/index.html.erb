@@ -1,0 +1,83 @@
+<h4>Finances</h4>
+<br>
+
+<%= link_to 'New Finance', new_finance_path, class:"btn btn-primary" %>
+<br>
+<br>
+
+<div class="table-responsive">
+  <table class="table" id="myTable">
+    <thead>
+      <tr>
+        <th>Uid</th>
+        <th>Total billing</th>
+        <th>Payment date</th>
+        <th>Payment document</th>
+        <th>Description</th>
+        <th style="width:1px;"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @finances.each do |finance| %>
+        <tr>
+          <td><%= finance.uid %></td>
+          <td><%= number_with_delimiter(finance.total_billing) %></td>
+
+          <% if finance.payment_date.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= finance.payment_date.to_s(:long) %></td>
+          <% end %>
+          
+          <% if finance.payment_document.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if finance.payment_document.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', finance.payment_document.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <td><%= finance.description %></td>
+          <td style="white-space:nowrap">
+            <%= link_to 'Update Payment', finance, class:"btn btn-success", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+finance.id.to_s %>
+
+            <!-- Modal -->
+            <div id="duplicateModal<%= finance.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Payment Form - <%= finance.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= render 'paymentform', finance: finance %>
+                      <br>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <%= link_to 'Invoice', document_invoice_finance_path(finance), class:"btn btn-primary", target:"_blank" %>
+            <%= link_to 'Assignment List', edit_finance_path(finance), class:"btn btn-info" %>
+
+            <% if finance.payment_date.nil? %>
+              <%= link_to 'X', finance, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
+            <% end %>
+            
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<br>

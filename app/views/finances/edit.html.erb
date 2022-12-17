@@ -1,0 +1,97 @@
+<h4>Editing Finance <strong>#<%= @finance.uid %></strong></h4>
+
+<br>
+
+<%= link_to 'Back', finances_path, class:"btn btn-secondary" %>
+<br>
+<br>
+
+<div class="row">
+	<div class="col-md-6">
+		<div style="padding:30px; background-color: #f5f5f5; border-radius:10px">
+			<center><h5>Available Assignment List</h5></center>
+			<%= render 'searchform'%>
+		</div>
+		<div style="padding:15px; background-color: #f5f5f5; border-radius:10px">
+			<div class="table-responsive" style="background-color: white; padding:35px; border-radius: 10px;">
+				<table class="table" id="myTable">
+					<thead>
+						<tr>
+							<th>UID</th>
+							<th>Shipname</th>
+							<th>Customer</th>
+							<th>Total</th>
+							<th>Pickup</th>
+							<th style="width:1px"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @availableassignments.each do |assignment| %>
+						<tr>
+							<td><%= assignment.uid %></td>
+							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+								<% if !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
+									<td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> - <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+								<% else %>
+									<td>-</td>
+								<% end %>
+							<% else %>
+								<td>-</td>
+							<% end %>
+							<td><%= Customer.find(assignment.customer_id).name %></td>
+							<td><%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %></td>
+							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
+							<td>
+								<%= link_to "Add", attach_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-success btn-sm" %>
+							</td>
+						</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>	
+	<div class="col-md-6">
+		<center><h3>Total Billing : <strong>Rp. <%= number_with_delimiter(@finance.total_billing) %>,-</strong></h3></center>
+		<hr>
+		<br>
+		<center><h5>Assignment List</h5></center>
+		<br>
+		<div class="table-responsive">
+			<table class="table" id="myTable1">
+					<thead>
+						<tr>
+							<th>UID</th>
+							<th>Shipname</th>
+							<th>Customer</th>
+							<th>Total</th>
+							<th>Pickup</th>
+							<th style="width:1px"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @financed_assignments.each do |assignment| %>
+						<tr>
+							<td><%= assignment.uid %></td>
+							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+								<% if !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
+									<td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> - <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+								<% else %>
+									<td>-</td>
+								<% end %>
+							<% else %>
+								<td>-</td>
+							<% end %>
+							<td><%= Customer.find(assignment.customer_id).name %></td>
+							<td><%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %></td>
+							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
+							<td>
+								<%= link_to "X", remove_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-danger btn-sm" %>
+							</td>
+						</tr>
+						<% end %>
+					</tbody>
+				</table>
+		</div>
+	</div>
+</div>

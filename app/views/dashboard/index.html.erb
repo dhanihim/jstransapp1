@@ -45,11 +45,19 @@
 <br>
 <br>
 
-<h4>Unpaid Assignment with Finished Shipment</h4>
+<% @total_unpaid = 0 %>
+<% @assignments.each do |assignment| %>
+  <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
+      <% @total_unpaid = @total_unpaid + assignment.grand_total %>
+  <% end %>
+<% end %>
 
+<h4>Unpaid Assignment with ETD +30 Days <font style="color:red">(Rp. <%= number_with_delimiter(@total_unpaid) %>,-)</font></h4>
+
+<!-- <h4>Unpaid Assignment with Finished Shipment</h4> -->
 <br>
 <div class="table-responsive table-wrap">
-  <table class="table" id="myTable1">
+  <table class="table" id="fcldatatable">
     <thead>
       <tr>
         <th>UID</th>
@@ -62,22 +70,18 @@
         <th>Destination Address</th>
         <th>POL - POD</th>
         <th>Pickuptime</th>
-        <th>Load Type</th>
-        <th>Container</th>
-        <th>Total Product</th>
         <th>Total Price</th>
         <th>PPN(1.1%)</th>
         <th>Grand Total</th>
-        <th>Travel Document</th>
-        <th>Dooring Document</th>
         <th>Payment Document</th>
+        <th>Finance Reference</th>
         <th></th>
       </tr>
     </thead>
 
     <tbody>
       <% @assignments.each do |assignment| %>
-      <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0%>
+      <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 && (assignment.finance_reference.nil? || Finance.find(assignment.finance_reference).payment_date.nil?) %>
         <% if !Shipment.find(Container.find(assignment.container_id).shipment_id).actualarrival.nil? %>
           <tr>
             <td><%= assignment.uid %></td>
@@ -137,36 +141,9 @@
       <% end %>
 
             <td><%= assignment.pickuptime.to_s(:long) %></td>
-            <td><%= assignment.loadtype %></td>
-            <td><%= assignment.containertype %></td>
-            <td><%= number_with_delimiter(AssignmentDetail.where("assignment_id = ?", assignment.id).count) %></td>
-            <td><%= number_with_delimiter(assignment.total_price) %></td>
+            <td><%= number_with_delimiter(assignment.total_price - assignment.price_adjustment) %></td>
             <td><%= number_with_delimiter(assignment.ppn) %></td>
             <td><%= number_with_delimiter(assignment.grand_total) %></td>
-
-            <% if assignment.document_status.url.nil? %>
-              <td style="color:red"><strong>Not Uploaded</strong></td>
-            <% elsif %>
-              <% if assignment.document_status.file.exists? %>
-                <td>
-                  <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
-                </td>
-              <% else %>
-                <td style="color:red"><strong>Error</strong></td>
-              <% end %>
-            <% end %>
-
-            <% if assignment.dooring_status.url.nil? %>
-              <td style="color:red"><strong>Not Uploaded</strong></td>
-            <% elsif %>
-              <% if assignment.dooring_status.file.exists? %>
-                <td>
-                  <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
-                </td>
-              <% else %>
-                <td style="color:red"><strong>Error</strong></td>
-              <% end %>
-            <% end %>
 
             <% if assignment.payment_status.url.nil? %>
               <td style="color:red"><strong>Not Uploaded</strong></td>
@@ -180,10 +157,18 @@
               <% end %>
             <% end %>
 
+            <% if assignment.finance_reference.nil? %>
+              <td style="color:red"><strong>Not Yet Generated</strong></td>
+            <% elsif %>
+              <% if Finance.find(assignment.finance_reference).payment_date.nil? %>
+                <td style="color:orange;"><strong>Waiting for Payment</strong></td>
+              <% else %>
+                <td style="color:green"><strong>Paid</strong></td>
+              <% end %>
+            <% end %>
+
             <td style="width:5%; white-space: nowrap;">
               <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
-              <%= link_to 'Edit', edit_assignment_path(assignment, :customer_id => assignment.customer_id), class:"btn btn-info" %>
-              <%= link_to 'X', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>
           </tr>
         <% end %>
       <% end %>
@@ -191,4 +176,64 @@
       <% end %>
     </tbody>
   </table>
+</div>
+
+<br>
+<br>
+<br>
+
+<h4>Total Customer Transaction </h4>
+<h5>(<%= @beginning.to_date.to_s(:long) %> - <%= @ending.to_date.to_s(:long) %>)</h5>
+<br>
+<div class="row">
+  <div class="col-md-6">
+  <h5 style="margin-bottom: 15px;"><strong>with PPN(1.1%)</strong></h5>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Customer</th>
+            <th>Grand Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @customer_transaction_ppn.each do |assignment| %>
+            <tr>
+              <td><%= Customer.find(assignment.customer_id).name %></td>
+              <% if assignment.transaction_total == "" %>
+                <td>0</td>  
+              <% else %>
+                <td><%= number_with_delimiter(assignment.transaction_total) %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h5 style="margin-bottom: 15px;"><strong>No PPN</strong></h5>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>Customer</th>
+              <th>Grand Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @customer_transaction_noppn.each do |assignment| %>
+              <tr>
+                <td><%= Customer.find(assignment.customer_id).name %></td>
+                <% if assignment.transaction_total == "" %>
+                  <td>0</td>  
+                <% else %>
+                  <td><%= number_with_delimiter(assignment.transaction_total) %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
 </div>

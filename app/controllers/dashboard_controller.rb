@@ -23,5 +23,7 @@ class DashboardController < ApplicationController
 
     @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn != 0", @beginning, @ending).group("customer_id")
     @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn = 0", @beginning, @ending).group("customer_id")
+  
+    @adjustedassignments = Assignment.where("price_adjustment != 0 AND active = 1 AND created_at >= ?", Time.now.in_time_zone("Jakarta") - 30.days)
   end
 end

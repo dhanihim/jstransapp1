@@ -45,6 +45,83 @@
 <br>
 <br>
 
+<h4>Assignment with Price Adjustment in last 30 days (<%= @adjustedassignments.count %>)</h4>
+<br>
+<div class="table-responsive table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>UID</th>
+        <th>Shipname</th>
+        <th>Pickup Agent</th>
+        <th>Dooring Agent</th>
+        <th>Customer</th>
+        <th>Container</th>
+        <th>POL - POD</th>
+        <th>Pickup Date</th>
+        <th>Total Price</th>
+        <th>Price Adjustment</th>
+        <th>PPN(1.1%)</th>
+        <th>Grand Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @adjustedassignments.each do |assignment| %>
+          <tr>
+            <td><%= assignment.uid %></td>
+            <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+              <td>-</td>
+            <% else %>
+              <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+            <% end %>
+            <td><%= assignment.agent.name %></td>
+            <% if assignment.dooring_agent_id.nil? %>
+              <td>-</td>
+            <% else %>
+              <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
+            <% end %>
+            <td><%= assignment.customer.name %></td>
+            <% if assignment.container_id.nil? %>
+              <td><%= assignment.container_id %></td>
+            <% else %>
+              <td><%= Container.find(assignment.container_id).number %></td>
+            <% end %>
+
+            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+            <td>
+              <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+               - 
+              <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+            </td>
+            <% elsif %>
+              <td>-</td>
+            <% end %>
+
+            <td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
+            <td><%= number_with_delimiter(assignment.total_price) %></td>
+            <td><%= number_with_delimiter(assignment.price_adjustment) %></td>
+            <td><%= number_with_delimiter(assignment.ppn) %></td>
+            <td><%= number_with_delimiter(assignment.grand_total) %></td>
+          </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+<br>
+<br>
+<br>
+
 <% @total_unpaid = 0 %>
 <% @assignments.each do |assignment| %>
   <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
@@ -168,7 +245,7 @@
             <% end %>
 
             <td style="width:5%; white-space: nowrap;">
-              <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %>
+              <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %></td>
           </tr>
         <% end %>
       <% end %>

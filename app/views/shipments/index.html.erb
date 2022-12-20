@@ -78,7 +78,7 @@
           <td><%= shipment.uid %></td>
           <td><%= shipment.shipname %></td>
           <td><%= shipment.voyage %></td>
-          <td><%= shipment.created_at.to_s(:long) %></td>
+          <td><%= shipment.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
           <td>
           <% if !shipment.estimateddeparture.nil? %>
             <%= shipment.estimateddeparture.to_s(:long)  %>

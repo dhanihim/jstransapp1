@@ -23,7 +23,7 @@
           <td><%= shipment.uid %></td>
           <td><%= shipment.shipname %></td>
           <td><%= shipment.voyage %></td>
-          <td><%= shipment.created_at.to_s(:long) %></td>
+          <td><%= shipment.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
           <td>
           <% if !shipment.estimateddeparture.nil? %>
             <%= shipment.estimateddeparture.to_s(:long)  %>
@@ -190,7 +190,7 @@
   <h5 style="margin-bottom: 15px;"><strong>with PPN(1.1%)</strong></h5>
     <div class="table-responsive">
       <table class="table table-striped">
-        <thead class="thead-dark">
+        <thead style="color: white;background-color: #003478;">
           <tr>
             <th>Customer</th>
             <th>Grand Total</th>
@@ -215,7 +215,7 @@
     <h5 style="margin-bottom: 15px;"><strong>No PPN</strong></h5>
       <div class="table-responsive">
         <table class="table table-striped">
-          <thead class="thead-dark">
+          <thead style="color: white;background-color: #003478;">
             <tr>
               <th>Customer</th>
               <th>Grand Total</th>

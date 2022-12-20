@@ -11,6 +11,10 @@
 		<td><h5>#<%= @finance.uid %></h5></td>
 	</tr>
 	<tr>
+		<td><h5>Date</h5></td>
+		<td><h5><%= @finance.created_at.to_date.to_s(:long) %></h5></td>
+	</tr>
+	<tr>
 		<td><h5>Total Billing</h5></td>
 		<td><h5>IDR <%= number_with_delimiter(@finance.total_billing) %></h5></td>
 	</tr>

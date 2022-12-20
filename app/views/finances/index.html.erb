@@ -9,18 +9,22 @@
   <table class="table" id="myTable">
     <thead>
       <tr>
+        <th>#</th>
         <th>Uid</th>
         <th>Total billing</th>
         <th>Payment date</th>
         <th>Payment document</th>
         <th>Description</th>
+        <th>Created At</th>
         <th style="width:1px;"></th>
       </tr>
     </thead>
 
+    <% counter = 0 %>
     <tbody>
       <% @finances.each do |finance| %>
         <tr>
+          <td><%= counter = counter + 1 %></td>
           <td><%= finance.uid %></td>
           <td><%= number_with_delimiter(finance.total_billing) %></td>
 
@@ -43,6 +47,7 @@
           <% end %>
 
           <td><%= finance.description %></td>
+          <td><%= finance.created_at.to_s(:long) %></td>
           <td style="white-space:nowrap">
             <%= link_to 'Update Payment', finance, class:"btn btn-success", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+finance.id.to_s %>
 

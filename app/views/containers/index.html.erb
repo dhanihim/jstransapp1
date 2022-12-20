@@ -38,7 +38,7 @@
           -
         <% end %> 
         </td>
-        <td><%= Assignment.where("container_id = ?",container.id).count %></td>
+        <td><%= Assignment.where("container_id = ? AND active = 1",container.id).count %></td>
         <td><%= container.size %></td>
         <td><%= Location.find(container.pol).name %></td>
         <td><%= Location.find(container.pod).name %></td>

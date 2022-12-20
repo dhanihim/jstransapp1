@@ -63,7 +63,7 @@ class FinancesController < ApplicationController
       end
     end
 
-    @finances = Finance.where("active = 1")
+    @finances = Finance.where("active = 1").order("created_at DESC")
   end
 
   # GET /finances/1 or /finances/1.json

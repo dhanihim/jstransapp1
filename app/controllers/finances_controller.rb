@@ -73,6 +73,18 @@ class FinancesController < ApplicationController
     end
 
     @finances = Finance.where("active = 1").order("created_at DESC")
+
+    @unpaid_finances = Finance.where("active = 1 AND payment_date is NULL")
+    @unpaid_finances.each do |unpaid_finance|
+      #Calculate Total Billing
+      total_billing = 0
+      included_assignment = Assignment.where("finance_reference = ?", unpaid_finance.id)
+      included_assignment.each do |assignment|
+        total_billing = total_billing + assignment.grand_total
+      end
+      unpaid_finance.total_billing = total_billing
+      unpaid_finance.save
+    end
   end
 
   # GET /finances/1 or /finances/1.json

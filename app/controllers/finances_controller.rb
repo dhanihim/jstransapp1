@@ -6,6 +6,15 @@ class FinancesController < ApplicationController
     @assignments = Assignment.where("finance_reference = ? and active = 1", params[:id])
 
     @finance = Finance.find(params[:id])
+
+    #Calculate Total Billing
+    total_billing = 0
+    included_assignment = Assignment.where("finance_reference = ?", @finance.id)
+    included_assignment.each do |assignment|
+      total_billing = total_billing + assignment.grand_total
+    end
+    @finance.total_billing = total_billing
+    @finance.save
   end
 
   def remove_assignment

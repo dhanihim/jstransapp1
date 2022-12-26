@@ -117,7 +117,7 @@ class FinancesController < ApplicationController
         @customer_id.push(customer.id)
       end
 
-      @availableassignments = Assignment.where(customer_id: @customer_id).or(Assignment.where("uid LIKE ? ", "%#{keyword}%")).order("pickuptime DESC").and(Assignment.where("finance_reference = 0 OR finance_reference is NULL"))
+      @availableassignments = Assignment.where(customer_id: @customer_id).or(Assignment.where("uid LIKE ? AND grand_total > 0", "%#{keyword}%")).order("pickuptime DESC").and(Assignment.where("finance_reference = 0 OR finance_reference is NULL"))
     else
       @availableassignments = []
     end

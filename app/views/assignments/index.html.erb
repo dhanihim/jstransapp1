@@ -184,7 +184,7 @@
             <% end %>
           <% end %>
 
-          <% if assignment.finance_reference.nil? %>
+          <% if assignment.finance_reference.nil? || assignment.finance_reference==0 %>
             <td style="color:red"><strong>Not Yet Generated</strong></td>
           <% elsif %>
             <% if Finance.find(assignment.finance_reference).payment_date.nil? %>

@@ -5,6 +5,19 @@ class FinancesController < ApplicationController
     @customer_lists = Assignment.select("customer_id").where("finance_reference = ? and active = 1", params[:id]).group("customer_id")
     @assignments = Assignment.where("finance_reference = ? and active = 1", params[:id])
 
+    @targeted_assignment = Assignment.where("finance_reference = ? and active = 1", params[:id]).first 
+
+    @invoice_date = "-"
+    if !@targeted_assignment.container_id.nil? && @targeted_assignment.container_id != 0
+      if !Container.find(@targeted_assignment.container_id).shipment_id.nil? && Container.find(@targeted_assignment.container_id).shipment_id != 0
+        @targeted_shipment = Shipment.find(Container.find(@targeted_assignment.container_id).shipment_id)
+
+        if(!@targeted_shipment.actualdeparture.nil?)
+          @invoice_date = @targeted_shipment.actualdeparture
+        end
+      end
+    end
+
     @finance = Finance.find(params[:id])
 
     #Calculate Total Billing

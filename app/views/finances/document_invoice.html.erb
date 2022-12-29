@@ -12,7 +12,11 @@
 	</tr>
 	<tr>
 		<td><h5>Date</h5></td>
-		<td><h5><%= @finance.created_at.in_time_zone("Jakarta").to_date.to_s(:long) %></h5></td>
+		<% if @invoice_date!="-" %>
+			<td><h5><%= @invoice_date.in_time_zone("Jakarta").to_date.to_s(:long) %></h5></td>
+		<% else %>
+			<td></td>
+		<% end %>
 	</tr>
 	<tr>
 		<td><h5>Total Billing</h5></td>

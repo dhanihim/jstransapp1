@@ -11,6 +11,7 @@
       <tr>
         <th>#</th>
         <th>Uid</th>
+        <th>Customer</th>
         <th>Total billing</th>
         <th>Payment date</th>
         <th>Payment document</th>
@@ -26,6 +27,17 @@
         <tr>
           <td><%= counter = counter + 1 %></td>
           <td><%= finance.uid %></td>
+          <td style="white-space:nowrap">
+            <% @counter = 0; %>
+            <% @selected_assignments = Assignment.select("customer_id").where("finance_reference = ?",finance.id).group("customer_id") %>
+            <% @selected_assignments.each do |a| %>
+              <% if @counter>0 %>
+                <br>
+              <% end %>
+              <%= Customer.find(a.customer_id).name %>
+              <% @counter = @counter + 1 %>
+            <% end %>
+          </td>
           <td><%= number_with_delimiter(finance.total_billing) %></td>
 
           <% if finance.payment_date.nil? %>

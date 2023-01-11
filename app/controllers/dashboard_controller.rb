@@ -17,9 +17,15 @@ class DashboardController < ApplicationController
 
     @assignments = Assignment.where("payment_status IS NULL AND active = 1").and(Assignment.where(container_id: @container_id))
 
-    @beginning = Time.now.year.to_s+"-"+(Time.now.month - 1).to_s+"-01"
-    @ending = Time.now.year.to_s+"-"+(Time.now.month).to_s+"-1"
-    @ending = @ending.to_date - 1.days
+    if(Time.now.month!=1)
+      @beginning = Time.now.year.to_s+"-"+(Time.now.month - 1).to_s+"-01"
+
+      @ending = Time.now.year.to_s+"-"+(Time.now.month).to_s+"-1"
+      @ending = @ending.to_date - 1.days
+    else
+      @beginning = (Time.now.year - 1).to_s+"-"+"12-01"
+      @ending = (Time.now.year - 1).to_s+"-"+"12-31"
+    end
 
     @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn != 0", @beginning, @ending).group("customer_id")
     @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn = 0", @beginning, @ending).group("customer_id")

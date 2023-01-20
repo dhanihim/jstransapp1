@@ -158,7 +158,7 @@
 
     <tbody>
       <% @assignments.each do |assignment| %>
-      <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 && (assignment.finance_reference.nil? || Finance.find(assignment.finance_reference).payment_date.nil?) %>
+      <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 && (assignment.finance_reference.nil? || Finance.find(assignment.finance_reference).payment_date.nil?) && assignment.finance_reference != 0 %>
         <% if !Shipment.find(Container.find(assignment.container_id).shipment_id).actualarrival.nil? %>
           <tr>
             <td><%= assignment.uid %></td>

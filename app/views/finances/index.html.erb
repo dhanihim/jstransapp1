@@ -1,6 +1,39 @@
 <h4>Finances</h4>
 <br>
+<div class="row">
+  <div class="col-md-12">
+    <center><h5>Search by Date</h5></center>
 
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+
+      <div class="row">
+        <div class="col-md-4">
+          <%= form.date_field :datefrom, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.date_field :dateto, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.select :datetype, ["Created At"], {}, class:"form-control", style:"margin-top:15px;", placeholder:"datetype", autocomplete:"off"   %>
+        </div>
+      </div>
+      <br>
+
+      <%= form.submit "Load Assignment Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+</div>
+
+<br>
+<br>
+<% if params[:datefrom].nil? %>
+  <h5>Finance Created within 30 Days</h5>
+<% elsif %>
+  <h5>Finance Created between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
+<% end %>
+<br>
 <%= link_to 'New Finance', new_finance_path, class:"btn btn-primary" %>
 <br>
 <br>
@@ -61,6 +94,12 @@
           <td><%= finance.description %></td>
           <td><%= finance.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
           <td style="white-space:nowrap">
+            <div class="form-group" style="display: inline-block;">
+              <form action="http://localhost/sendemail/" method="POST" target="_blank">
+                <input type="hidden" name="invoicenumber" value="<%= finance.uid %>">
+                <!-- <input type="submit" class="btn btn-dark" value="Send to Email"> -->
+              </form>
+            </div>
             <%= link_to 'Update Payment', finance, class:"btn btn-success", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+finance.id.to_s %>
 
             <!-- Modal -->

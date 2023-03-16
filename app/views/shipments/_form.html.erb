@@ -12,10 +12,6 @@
   <% end %>
 
   <div class="field form-group">
-    <%= form.text_field :uid, class:"form-control", placeholder:"Shipment UID", autocomplete:"off", value:"JST-"+DateTime.now.strftime("%Y%m%d%H%M"), readonly:"true"   %>
-  </div>
-
-  <div class="field form-group">
     <%= form.text_field :shipname, class:"form-control", placeholder:"Ship's Name", autocomplete:"off", required:"true"   %>
   </div>
 

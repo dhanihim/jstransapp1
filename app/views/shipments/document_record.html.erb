@@ -94,7 +94,7 @@
 				<td><%= assignment_detail.quantity %></td>
 				<td>
 					<% if assignment_detail.unit == "UOM" %>
-						<%= assignment_detail.customer_product.uom %>
+						<%= assignment_detail.unit_description %>
 					<% else %>
 						<%= assignment_detail.unit %>
 					<% end %>

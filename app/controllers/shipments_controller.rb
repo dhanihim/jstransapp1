@@ -1,6 +1,120 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
+  def rename
+    @shipment = Shipment.find(params[:id])
+
+    @new_shipment = @shipment.dup
+
+    @new_shipment.uid = params[:uid]
+    @new_shipment.shipname = params[:shipname]
+    @new_shipment.voyage = params[:voyage]
+
+    @new_shipment.save
+
+    @containers = Container.where("shipment_id = ?", params[:id])
+
+    @containers.each do |container|
+      container.shipment_id = @new_shipment.id 
+      container.save
+    end
+
+    #deactive old shipment
+    @shipment.active = 0
+    @shipment.save
+
+    #insert into shipment history
+    @shipment_history = ShipmentHistory.new 
+    @shipment_history.shipment_from_id = @shipment.id
+    @shipment_history.shipment_to_id = @new_shipment.id
+    @shipment_history.description = "Rename"
+    @shipment_history.save
+
+    redirect_to(shipments_url)
+  end
+
+  def merge
+    if(!params[:target].nil?)
+      @shipment = Shipment.find(params[:target])
+    else
+      @shipment_1 = Shipment.find(params[:shipment_from_id_1])
+      @shipment_2 = Shipment.find(params[:shipment_from_id_2])
+
+      #Old code for moving container from 2 ship
+      #@container = Container.where("shipment_id = ? OR shipment_id = ?", @shipment_1.id, @shipment_2.id)
+      
+      #New code, move only shipment 1 to shipment 2
+      @container = Container.where("shipment_id = ?", @shipment_1.id)
+    end
+  end
+
+  def merge_action
+    @shipment_1 = Shipment.find(params[:shipment_from_id_1])
+    @shipment_2 = Shipment.find(params[:shipment_from_id_2])
+
+    shipment = Shipment.new 
+
+    shipment.uid = params[:uid]
+    shipment.shipname = params[:shipname]
+    shipment.voyage = params[:voyage]
+    shipment.estimateddeparture = params[:estimateddeparture]
+    shipment.estimatedarrival = params[:estimatedarrival]
+    shipment.actualdeparture = params[:actualdeparture]
+    shipment.actualarrival = params[:actualarrival]
+    shipment.pol = params[:pol]
+    shipment.pod = params[:pod]
+    shipment.active = params[:active]
+    shipment.description = params[:description]
+
+    shipment.save
+
+    shipment_history1 = ShipmentHistory.new 
+    shipment_history1.shipment_from_id = @shipment_1.id
+    shipment_history1.shipment_to_id = shipment.id
+    shipment_history1.description = "Merge"
+    shipment_history1.save
+
+    shipment_history2 = ShipmentHistory.new 
+    shipment_history2.shipment_from_id = @shipment_2.id
+    shipment_history2.shipment_to_id = shipment.id
+    shipment_history2.description = "Merge"
+    shipment_history2.save
+
+    #moving checked container
+    counter = 1
+    lastcounter = params[:lastcounter]
+
+    for i in 1..params[:lastcounter].to_i
+      value = params[:checkbox.to_s+i.to_s]
+      if !value.nil?
+        container = Container.find(value)
+        container.shipment_id = shipment.id
+        container.save
+
+        assignment = Assignment.where("container_id = ?", container.id)
+        assignment.each do |assignment|
+          assignment.edited_at = DateTime.now
+          assignment.save
+        end
+      end
+    end
+
+    @container_from_shipment_2 = Container.where("shipment_id = ?",@shipment_2)
+    @container_from_shipment_2.each do |container|
+      container.shipment_id = shipment.id
+      container.save
+
+      assignment = Assignment.where("container_id = ?", container.id)
+      assignment.each do |assignment|
+        assignment.edited_at = DateTime.now
+        assignment.save
+      end
+    end
+
+    redirect_to shipments_url, flash: {notice: "Shipment successfully merged"}
+
+  end
+
   def document_invoice
     @shipment = Assignment.find(params[:shipment_id])
     @customer = Assignment.find(params[:customer])
@@ -81,44 +195,44 @@ class ShipmentsController < ApplicationController
     if(!params[:keyword].nil?)
       keyword = params[:keyword].upcase
     
-      @shipments = Shipment.where("uid LIKE ? OR UPPER(shipname) LIKE ?", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsongoing = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture IS NULL", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsonwater = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL", "%#{keyword}%", "%#{keyword}%")
-      @shipmentsfinished = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualarrival >= now()", "%#{keyword}%", "%#{keyword}%")
+      @shipments = Shipment.where("uid LIKE ? OR UPPER(shipname) LIKE ? AND active = 1", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsongoing = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture IS NULL AND active = 1", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsonwater = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualdeparture >= now() AND actualarrival IS NULL AND active = 1", "%#{keyword}%", "%#{keyword}%")
+      @shipmentsfinished = Shipment.where("(uid LIKE ? OR UPPER(shipname) LIKE ?) AND actualarrival >= now() AND active = 1", "%#{keyword}%", "%#{keyword}%")
     else
-      @shipments = Shipment.where("created_at >= ?", 30.days.ago)
-      @shipmentsongoing = Shipment.where("created_at >= ? AND actualdeparture IS NULL", 30.days.ago)
-      @shipmentsonwater = Shipment.where("created_at >= ? AND actualdeparture >= now() AND actualarrival IS NULL", 30.days.ago)
-      @shipmentsfinished = Shipment.where("created_at >= ? AND actualarrival >= now()", 30.days.ago)
+      @shipments = Shipment.where("created_at >= ? AND active = 1", 30.days.ago).order("created_at DESC")
+      @shipmentsongoing = Shipment.where("created_at >= ? AND actualdeparture IS NULL AND active = 1", 30.days.ago)
+      @shipmentsonwater = Shipment.where("created_at >= ? AND actualdeparture >= now() AND actualarrival IS NULL AND active = 1", 30.days.ago)
+      @shipmentsfinished = Shipment.where("created_at >= ? AND actualarrival >= now() AND active = 1", 30.days.ago)
     end
 
     if(!params[:datefrom].nil? && !params[:dateto].nil?)
 
       if(params[:datetype]=="Created At")
-        @shipments = Shipment.where("created_at >= ? AND created_at <= ?", params[:datefrom], params[:dateto])
-        @shipmentsongoing = Shipment.where("created_at >= ? AND created_at <= ? AND actualdeparture IS NULL", params[:datefrom], params[:dateto])
-        @shipmentsonwater = Shipment.where("created_at >= ? AND created_at <= ? AND actualdeparture <= now()", params[:datefrom], params[:dateto])
-        @shipmentsfinished = Shipment.where("created_at >= ? AND created_at <= ? AND actualarrival <= now()", params[:datefrom], params[:dateto])
+        @shipments = Shipment.where("created_at >= ? AND created_at <= ? AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsongoing = Shipment.where("created_at >= ? AND created_at <= ? AND actualdeparture IS NULL AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsonwater = Shipment.where("created_at >= ? AND created_at <= ? AND actualdeparture <= now() AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsfinished = Shipment.where("created_at >= ? AND created_at <= ? AND actualarrival <= now() AND active = 1", params[:datefrom], params[:dateto])
       elsif(params[:datetype]=="Estimated Departure")
         @shipments = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ?", params[:datefrom], params[:dateto])
-        @shipmentsongoing = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualdeparture IS NULL", params[:datefrom], params[:dateto])
-        @shipmentsonwater = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualdeparture <= now()", params[:datefrom], params[:dateto])
-        @shipmentsfinished = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualarrival <= now()", params[:datefrom], params[:dateto])
+        @shipmentsongoing = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualdeparture IS NULL AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsonwater = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualdeparture <= now() AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsfinished = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ? AND actualarrival <= now() AND active = 1", params[:datefrom], params[:dateto])
       elsif(params[:datetype]=="Estimated Arrival")
         @shipments = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ?", params[:datefrom], params[:dateto])
-        @shipmentsongoing = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualdeparture IS NULL", params[:datefrom], params[:dateto])
-        @shipmentsonwater = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualdeparture <= now()", params[:datefrom], params[:dateto])
-        @shipmentsfinished = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualarrival <= now()", params[:datefrom], params[:dateto])
+        @shipmentsongoing = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualdeparture IS NULL AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsonwater = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualdeparture <= now() AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsfinished = Shipment.where("estimatedarrival >= ? AND estimatedarrival <= ? AND actualarrival <= now() AND active = 1", params[:datefrom], params[:dateto])
       elsif(params[:datetype]=="Actual Departure")
         @shipments = Shipment.where("actualdeparture >= ? AND actualdeparture <= ?", params[:datefrom], params[:dateto])
-        @shipmentsongoing = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualdeparture IS NULL", params[:datefrom], params[:dateto])
-        @shipmentsonwater = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualdeparture <= now()", params[:datefrom], params[:dateto])
-        @shipmentsfinished = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualarrival <= now()", params[:datefrom], params[:dateto])
+        @shipmentsongoing = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualdeparture IS NULL AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsonwater = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualdeparture <= now() AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsfinished = Shipment.where("actualdeparture >= ? AND actualdeparture <= ? AND actualarrival <= now() AND active = 1", params[:datefrom], params[:dateto])
       elsif(params[:datetype]=="Actual Arrival")
         @shipments = Shipment.where("actualarrival >= ? AND actualarrival <= ?", params[:datefrom], params[:dateto])
-        @shipmentsongoing = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualdeparture IS NULL", params[:datefrom], params[:dateto])
-        @shipmentsonwater = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualdeparture <= now()", params[:datefrom], params[:dateto])
-        @shipmentsfinished = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualarrival <= now()", params[:datefrom], params[:dateto])
+        @shipmentsongoing = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualdeparture IS NULL AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsonwater = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualdeparture <= now() AND active = 1", params[:datefrom], params[:dateto])
+        @shipmentsfinished = Shipment.where("actualarrival >= ? AND actualarrival <= ? AND actualarrival <= now() AND active = 1", params[:datefrom], params[:dateto])
       end
     end
   end
@@ -162,6 +276,7 @@ class ShipmentsController < ApplicationController
   # POST /shipments or /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
+    @shipment.uid = "JST-"+DateTime.now.strftime("%Y%m%d%H%M")
 
     respond_to do |format|
       if @shipment.save

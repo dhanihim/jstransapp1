@@ -1,0 +1,128 @@
+<% if !params[:target].nil? %>
+  <%= form_with url: merge_shipments_path, method: :get do |form| %>
+    <div class="form-group">
+      <%= form.label :shipment_from_id_1, "First Shipment" %>
+      <%= form.collection_select :shipment_from_1_select, Shipment.where("id = ?",@shipment.id), :id, :shipname_with_uid, {}, {class:"form-control", disabled:true}  %> 
+      <%= form.text_field :shipment_from_id_1, type:"hidden", value:params[:target]  %> 
+    </div>
+    <div class="form-group">
+      <%= form.label :shipment_from_id_2, "Second Shipment" %>
+      <%= form.collection_select :shipment_from_id_2, Shipment.where("active = 1 AND pod = ? AND actualarrival is NULL AND id NOT IN (?)", @shipment.pod, @shipment.id).order("uid DESC"), :id, :shipname_with_uid, {}, {class:"form-control"}  %> 
+    </div>
+    <br>
+    <%= form.submit "Merge", class:"btn btn-primary" %>
+  <% end %>
+<% else %>
+  <%= form_with url: merge_action_shipments_path, method: :get do |form| %>
+    <h4>Merged Shipment</h4>
+    <br>
+    <div class="form-group">
+      <%= form.label :shipment_from_id_1, "First Shipment" %>
+      <%= form.collection_select :shipment_from_1_select, Shipment.where("id = ?",@shipment_1.id), :id, :shipname_with_uid, {}, {class:"form-control", disabled:true}  %> 
+      <%= form.text_field :shipment_from_id_1, type:"hidden", value:params[:shipment_from_id_1]  %> 
+    </div>
+    <div class="form-group">
+      <%= form.label :shipment_from_id_2, "Second Shipment" %>
+      <%= form.collection_select :shipment_from_2_select, Shipment.where("id = ?",@shipment_2.id), :id, :shipname_with_uid, {}, {class:"form-control", disabled:true}  %> 
+      <%= form.text_field :shipment_from_id_2, type:"hidden", value:params[:shipment_from_id_2]  %> 
+    </div>
+
+    <br>
+    <br>
+    <h4>New Shipment Data</h4>
+    <br>
+    <div class="row">
+      <div class="field form-group col-md-12">
+        <%= form.text_field :uid, class:"form-control", placeholder:"Shipment UID", autocomplete:"off", value:"JST-"+DateTime.now.strftime("%Y%m%d%H%M"), readonly:"true"   %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field form-group col-md-6">
+        <%= form.text_field :shipname, class:"form-control", placeholder:"Ship's Name", autocomplete:"off", required:"true", value:@shipment_2.shipname  %>
+      </div>
+
+      <div class="field form-group col-md-6">
+        <%= form.text_field :voyage, class:"form-control", placeholder:"Voyage", autocomplete:"off", required:"true", value:@shipment_2.voyage    %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field form-group col-md-3">
+        <%= form.label :estimateddeparture, "Estimated Departure" %>
+        <%= form.date_field :estimateddeparture, class:'form-control', required:'true', value:@shipment_2.estimateddeparture  %>
+      </div>
+
+      <div class="field form-group col-md-3">
+        <%= form.label :estimatedarrival, "Estimated Arrival" %>
+        <%= form.date_field :estimatedarrival, class:'form-control', required:'true', value:@shipment_2.estimatedarrival  %>
+      </div>
+
+      <div class="field form-group col-md-3">
+        <%= form.label :actualdeparture, "Actual Departure" %>
+        <%= form.date_field :actualdeparture, class:'form-control', value:@shipment_2.actualdeparture %>
+      </div>
+
+      <div class="field form-group col-md-3">
+        <%= form.label :actualarrival, "Actual Arrival" %>
+        <%= form.date_field :actualarrival, class:'form-control', value:@shipment_2.actualarrival %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="field form-group">
+          <%= form.label :pol, "Port of Loading" %>
+          <%= form.collection_select :pol, Location.all.order("name ASC"), :id, :name, {:selected => @shipment_1.pol}, {class:"form-control"} %>
+        </div>
+      </div>
+
+      <div class="col-md-6">  
+        <div class="field form-group">
+          <%= form.label :pod, "Port of Discharge" %>
+          <%= form.collection_select :pod, Location.all.order("name ASC"), :id, :name, {:selected => @shipment_1.pod}, {class:"form-control"} %>
+        </div>
+      </div>
+    </div>
+      
+    <div class="field form-group">
+      <%= form.text_field :active, class:"form-control", placeholder:"Active", value:"1", readonly:"true", hidden:"true" %>
+    </div>
+
+    <div class="field form-group">
+      <%= form.text_area :description, class:"form-control", placeholder:"Description", autocomplete:"off"  %>
+    </div>
+    <br>
+
+    <br>
+    <br>
+    <div class="container-fluid"> 
+      <h4>Container List</h4>
+      <br>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Number</th>
+            <th>Seal</th>
+            <th>Shipname</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% counter = 0 %>
+          <% @container.each do |container| %>
+          <tr>
+            <td><input type="checkbox" name="checkbox<%= counter = counter + 1 %>" checked value="<%= container.id %>"></td>
+            <td><%= container.number %></td>
+            <td><%= container.sealnumber %></td>
+            <td><%= Shipment.find(container.shipment_id).shipname %>, <%= Shipment.find(container.shipment_id).voyage %></td>
+          </tr>
+          <% end %>
+          <input type="hidden" name="lastcounter" value="<%= counter %>">
+        </tbody>
+      </table>
+    </div>
+
+    <br>
+    <%= form.submit "Merge and Move Container", class:"btn btn-primary btn-block" %>
+  <% end %>
+<% end %>

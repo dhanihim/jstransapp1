@@ -30,6 +30,7 @@
       <th>Name</th>
       <th>Address</th>
       <th>Contact</th>
+      <th>Email</th>
       <th>NPWP</th>
       <th>Person Responsible (PR)</th>
       <th>NPWP File</th>
@@ -45,6 +46,7 @@
         <td><%= customer.name %></td>
         <td><%= customer.address %></td>
         <td><%= customer.contact %></td>
+        <td><%= customer.email %></td>
         <td><%= customer.npwp %></td>
         <td><%= customer.person_responsible %></td>
         <% if customer.npwp_file.url.nil? %>

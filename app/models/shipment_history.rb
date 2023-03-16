@@ -1,0 +1,2 @@
+class ShipmentHistory < ApplicationRecord
+end

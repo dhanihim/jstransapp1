@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_08_085712) do
+ActiveRecord::Schema.define(version: 2023_02_15_142540) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,8 @@ ActiveRecord::Schema.define(version: 2022_12_08_085712) do
     t.integer "status"
     t.integer "price_adjustment", default: 0
     t.integer "finance_reference"
+    t.string "code"
+    t.integer "subcode"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -202,6 +204,7 @@ ActiveRecord::Schema.define(version: 2022_12_08_085712) do
     t.string "person_responsible_file"
     t.datetime "edited_at"
     t.datetime "sync_at"
+    t.string "email"
   end
 
   create_table "finances", force: :cascade do |t|
@@ -218,6 +221,14 @@ ActiveRecord::Schema.define(version: 2022_12_08_085712) do
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.integer "active"
+    t.string "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "shipment_histories", force: :cascade do |t|
+    t.integer "shipment_from_id"
+    t.integer "shipment_to_id"
     t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :shipment_histories
   resources :finances do
     member do
       get :document_invoice
@@ -38,6 +39,9 @@ Rails.application.routes.draw do
       get :depart
     end
     collection do 
+      get :rename
+      get :merge
+      get :merge_action
       get :update_container_shipment
       get :remove_container_shipment
     end
@@ -52,7 +56,10 @@ Rails.application.routes.draw do
   end
 
   devise_for :users
+  
   get 'dashboard/index'
+  get 'dashboard/unpaid_assignment_list'
+
   resources :customer_products
   resources :customer_locations
   

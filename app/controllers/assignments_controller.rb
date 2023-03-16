@@ -128,7 +128,6 @@ class AssignmentsController < ApplicationController
     @assignment.each do |assignment|
       @link = $urlpath.to_s+"sync/?"+
       "target=assignment"+
-      "&id="+assignment.id.to_s+
       "&uid="+assignment.uid.to_s
 
       if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0
@@ -146,21 +145,21 @@ class AssignmentsController < ApplicationController
       end
       
       if !assignment.pickup_location.nil?
-    if  CustomerLocation.where("id = ?",assignment.pickup_location).count > 0
-      @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
-        "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
-    else
-      @link += "&pickup_address=null&pol=null"
-    end
+        if  CustomerLocation.where("id = ?",assignment.pickup_location).count > 0
+          @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
+            "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
+        else
+          @link += "&pickup_address=null&pol=null"
+        end
       end 
 
       if !assignment.destination_location.nil?
-    if CustomerLocation.where("id = ?",assignment.destination_location).count > 0
-      @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
-        "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
-    else
-      @link += "&pickup_address=null&pol=null"
-    end
+        if CustomerLocation.where("id = ?",assignment.destination_location).count > 0
+          @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
+            "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
+        else
+          @link += "&pickup_address=null&pol=null"
+        end
       end
 
       @link += "&pickuptime="+assignment.pickuptime.to_s(:long).to_s+
@@ -170,7 +169,19 @@ class AssignmentsController < ApplicationController
       "&total_price="+assignment.total_price.to_s+
       "&ppn="+assignment.ppn.to_s+
       "&grand_total="+assignment.grand_total.to_s+       
-      "&active="+assignment.active.to_s       
+      "&active="+assignment.active.to_s+      
+      "&code=server"+      
+      "&subcode="+assignment.id.to_s       
+
+      product_description = "";
+
+      #product_description for packinglist
+      assignment_detail = AssignmentDetail.where("assignment_id = ?", assignment.id)
+      assignment_detail.each do |detail|
+        product_description = product_description.to_s+detail.description.to_s+"_"+CustomerProduct.find(detail.customer_product_id).name+"_"+detail.quantity.to_s+"_"+detail.unit_description.to_s+"|"
+      end
+
+      @link += "&product_description="+product_description.to_s
 
       #saving sync datetime
       assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
@@ -192,7 +203,6 @@ class AssignmentsController < ApplicationController
 
     @link = $urlpath.to_s+"sync/?"+
     "target=assignment"+
-    "&id="+@assignment.id.to_s+
     "&uid="+@assignment.uid.to_s
 
     if !@assignment.container_id.nil? && !Container.find(@assignment.container_id).shipment_id.nil?
@@ -234,7 +244,19 @@ class AssignmentsController < ApplicationController
     "&total_price="+@assignment.total_price.to_s+
     "&ppn="+@assignment.ppn.to_s+
     "&grand_total="+@assignment.grand_total.to_s+       
-    "&active="+@assignment.active.to_s       
+    "&active="+@assignment.active.to_s+   
+    "&code=server"+
+    "&subcode="+@assignment.id.to_s 
+
+    product_description = "";
+
+    #product_description for packinglist
+    assignment_detail = AssignmentDetail.where("assignment_id = ?", @assignment.id)
+    assignment_detail.each do |detail|
+      product_description = product_description.to_s+detail.description.to_s+"_"+CustomerProduct.find(detail.customer_product_id).name+"_"+detail.quantity.to_s+"_"+detail.unit_description.to_s+"|"
+    end
+
+    @link += "&product_description="+product_description.to_s
 
     #saving sync datetime
     @assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
@@ -294,8 +316,13 @@ class AssignmentsController < ApplicationController
     @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
     @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
 
-    @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1").order("uid DESC")
-    @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1").order("uid DESC")
+    if !params[:datefrom].nil?
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
+    else
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
+    end
   end
 
   # GET /assignments/1 or /assignments/1.json

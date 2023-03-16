@@ -12,7 +12,7 @@ class Assignment < ApplicationRecord
 
 	def self.internet_connection
 	  begin
-	    true if open("http://www.google.com/")
+	    true if open("http://jstranslogistik.com/")
 	  rescue
 	    false
 	  end

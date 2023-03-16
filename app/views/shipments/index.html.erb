@@ -65,6 +65,8 @@
         <th>POL</th>
         <th>POD</th>
         <th>Total Container</th>
+        <th>Modified</th>
+        <th></th>
         <th></th>
       </tr>
     </thead>
@@ -103,6 +105,93 @@
           <td><%= Location.find(shipment.pod).name %></td>
           <td><%= Container.where("shipment_id = ?",shipment.id).count %></td>
           <td style="width:5%; white-space:nowrap">
+            <% @shipment_histories = ShipmentHistory.where("shipment_to_id = ?", shipment.id) %>
+            <% if @shipment_histories.count > 0 %>
+              <button class="btn" style="background-color: #007bff; color:white;" data-toggle="modal", data-target="#historyModal<%= shipment.id.to_s %>">History</button>
+
+              <!-- Modal -->
+              <div id="historyModal<%= shipment.id.to_s %>" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h6 class="modal-title">History - <%= shipment.uid.to_s %></h6>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container-fluid">
+                        <% history = ShipmentHistory.where("shipment_to_id = ?", shipment.id) %>
+                        <% history.each do |history| %>
+                          <strong><%= history.description %></strong>
+                          <br>
+                          <br>
+                          <center><%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+                          <br><strong>to</strong><br>
+                          <%= Shipment.find(history.shipment_to_id).uid %> - <%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %></center>
+                          <hr>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            <% end %>
+          </td>
+          <td style="width:5%; white-space:nowrap">
+            <% if shipment.actualarrival.nil? %>
+              <%= link_to 'Merge', merge_shipments_path(:target => shipment.id), class:"btn btn-primary" %>
+            <% end %>
+          </td>
+          <td style="width:5%; white-space:nowrap">
+            <%= link_to 'Rename', rename_shipments_path(:target => shipment.id), class:"btn btn-dark", "data-toggle" => "modal", 'data-target' => '#renameModal'+shipment.id.to_s %>
+            
+            <!-- Modal -->
+            <div id="renameModal<%= shipment.id.to_s %>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title">Rename Form - <%= shipment.uid.to_s %></h6>
+                  </div>
+                  <div class="modal-body">
+                    <div class="container-fluid">
+                      <%= form_with url: rename_shipments_path, method: :get do |form| %>
+                        <%= form.text_field :id, type:'hidden', value:shipment.id %> 
+                        <div class="form-group">
+                          <%= form.label :uid, "UID" %>
+                          <%= form.text_field :uid, class:"form-control", readonly:"true", value:"JST-"+DateTime.now.strftime("%Y%m%d%H%M") %> 
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :shipname, "Shipname" %>
+                          <%= form.text_field :shipname, class:"form-control", autocomplete:"off", autofocus:"true" %> 
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :voyage, "Voyage" %>
+                          <%= form.text_field :voyage, class:"form-control", autocomplete:"off" %>
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :pol, "POL" %>
+                          <%= form.text_field :pol, class:"form-control", autocomplete:"off", readonly:"true", value:Location.find(shipment.pol).name %>
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :pod, "POD" %>
+                          <%= form.text_field :pod, class:"form-control", autocomplete:"off", readonly:"true", value:Location.find(shipment.pod).name %>
+                        </div>
+                        <br>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                        <%= form.submit "Rename", class:"btn btn-primary" %>
+                      <% end %>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
             <%= link_to 'Overview', shipment_path(shipment), class:"btn btn-success" %>
             <%= link_to 'Edit', edit_shipment_path(shipment), class:"btn btn-info" %>
             <%= link_to 'X', shipment, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %>

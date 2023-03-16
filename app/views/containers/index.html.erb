@@ -1,7 +1,60 @@
 <h4>Containers</h4>
 
 <br>
+<div class="row">
+  <div class="col-md-6">
+    <center><h5>Search by Keyword</h5></center>
 
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+      <div class="row">
+        <%= form.text_field :keyword, placeholder:"Search by Container Number / Seal Number", class:"form-control", style:"text-align:center; margin-top:15px;", autocomplete:"off", autofocus:"true" %> 
+      </div>
+      
+      <br>
+      
+      <%= form.submit "Load Container Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+  <div class="col-md-6">
+    <center><h5>Search by Date</h5></center>
+
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+
+      <div class="row">
+        <div class="col-md-4">
+          <%= form.date_field :datefrom, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.date_field :dateto, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.select :datetype, ["Created At"], {}, class:"form-control", style:"margin-top:15px;", placeholder:"datetype", autocomplete:"off"   %>
+        </div>
+      </div>
+      <br>
+
+      <%= form.submit "Load Container Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+</div>
+
+<br>
+<br>
+
+<% if params[:datefrom].nil? && params[:keyword].nil? %>
+  <h5>Container Created within 30 Days</h5>
+<% elsif %>
+  <% if !params[:keyword].nil? && params[:datefrom].nil? %>
+    <h5>Searching for "<%= params["keyword"] %>"</h5>
+  <% elsif params[:keyword].nil? && !params[:datefrom].nil? %>
+    <h5>Container Created between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
+  <% end %>
+<% end %>
+<br>
 <%= link_to 'New Container', new_container_path, class:"btn btn-primary" %>
 
 <br>
@@ -19,6 +72,7 @@
       <th>Size</th>
       <th>POL</th>
       <th>POD</th>
+      <th>Created At</th>
       <th></th>
     </tr>
   </thead>
@@ -42,6 +96,7 @@
         <td><%= container.size %></td>
         <td><%= Location.find(container.pol).name %></td>
         <td><%= Location.find(container.pod).name %></td>
+        <td><%= container.created_at.in_time_zone("Jakarta").to_s(:long).to_date %></td>
         <td style="width:5%; white-space:nowrap;">
           <%= link_to 'Assignment List', container, class:"btn btn-success", style:"white-space:nowrap;", style:"white-space:nowrap;" %>
           <%= link_to 'Edit', edit_container_path(container), class:"btn btn-info" %>

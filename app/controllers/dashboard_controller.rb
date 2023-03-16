@@ -5,7 +5,7 @@ class DashboardController < ApplicationController
     @container_id = [1]
     @shipment_id = Array.new
       
-    @departuredshipments = Shipment.where("estimateddeparture < ?", Date.today - 30.days)
+    @departuredshipments = Shipment.where("estimateddeparture < ?", Date.today - 10.days)
     @departuredshipments.each do |shipmment|
       @shipment_id.push(shipmment.id)
 
@@ -27,9 +27,27 @@ class DashboardController < ApplicationController
       @ending = (Time.now.year - 1).to_s+"-"+"12-31"
     end
 
-    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn != 0", @beginning, @ending).group("customer_id")
-    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("created_at >= ? AND created_at <= ? AND ppn = 0", @beginning, @ending).group("customer_id")
+    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("pickuptime >= ? AND pickuptime <= ? AND ppn != 0", @beginning, @ending).group("customer_id")
+    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("pickuptime >= ? AND pickuptime <= ? AND ppn = 0", @beginning, @ending).group("customer_id")
   
     @adjustedassignments = Assignment.where("price_adjustment != 0 AND active = 1 AND created_at >= ?", Time.now.in_time_zone("Jakarta") - 30.days)
+  end
+
+  def unpaid_assignment_list
+    @container_id = [1]
+    
+    @shipment_id = Array.new
+      
+    @departuredshipments = Shipment.where("estimateddeparture < ?", Date.today - 10.days)
+    @departuredshipments.each do |shipmment|
+      @shipment_id.push(shipmment.id)
+
+      selected_container = Container.where("shipment_id = ?", shipmment.id)
+      selected_container.each do |container|
+        @container_id.push(container.id)
+      end
+    end
+
+    @assignments = Assignment.where("payment_status IS NULL AND active = 1").and(Assignment.where(container_id: @container_id))
   end
 end

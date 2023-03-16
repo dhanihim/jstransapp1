@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Shipment Histories</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Shipment from</th>
+      <th>Shipment to</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @shipment_histories.each do |shipment_history| %>
+      <tr>
+        <td><%= shipment_history.shipment_from_id %></td>
+        <td><%= shipment_history.shipment_to_id %></td>
+        <td><%= shipment_history.description %></td>
+        <td><%= link_to 'Show', shipment_history %></td>
+        <td><%= link_to 'Edit', edit_shipment_history_path(shipment_history) %></td>
+        <td><%= link_to 'Destroy', shipment_history, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Shipment History', new_shipment_history_path %>

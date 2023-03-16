@@ -1,6 +1,34 @@
 <% if (params[:loadtype]=='1' || params[:loadtype].nil?) %>
 <h4>Full Container Load Assignments</h4>
+<br>
+<div class="row">
+  <div class="col-md-12">
+    <center><h5>Search by Date</h5></center>
 
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+
+      <div class="row">
+        <div class="col-md-4">
+          <%= form.date_field :datefrom, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.date_field :dateto, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.select :datetype, ["Pickup Date"], {}, class:"form-control", style:"margin-top:15px;", placeholder:"datetype", autocomplete:"off"   %>
+        </div>
+      </div>
+      <br>
+
+      <%= form.submit "Load Assignment Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+</div>
+
+<br>
+<br>
 <% if @unsync_assignment!=-1 %>
   <div class="row">
     <div class="col-md-3">
@@ -41,6 +69,12 @@
 <br>
 <br>
 
+<% if params[:datefrom].nil? %>
+  <h5>Assignment Pickup Date within 30 Days</h5>
+<% elsif %>
+  <h5>Assignment Pickup Date between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
+<% end %>
+<br>
 <%= link_to 'New Assignment',  new_assignment_path(:loadtype => 1), class:"btn btn-primary" %>
 
 <br>
@@ -272,7 +306,6 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                        <% #form.submit "Update Data", class:"btn btn-primary" %>
                         <input type="submit" class="btn btn-primary btn-sm" value="Update">
                       <% end %>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -72,16 +72,23 @@ class FinancesController < ApplicationController
 
   # GET /finances or /finances.json
   def index
-    @selectedfinance = Finance.where("total_billing = '0'")
+    @selectedfinance = Finance.where("total_billing = '0' and active = 1")
 
     @selectedfinance.each do |finance|
-      finance.active = 0
-      finance.save
+  
+      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
+      
+      if check_assignments == 0
+      
+        finance.active = 0
+        finance.save
 
-      assignments = Assignment.where("finance_reference = ?",finance.id)
-      assignments.each do |assignment|
+        assignments = Assignment.where("finance_reference = ?",finance.id)
+        assignments.each do |assignment|
         assignment.finance_reference = nil
         assignment.save
+        end
+      
       end
     end
 
@@ -97,7 +104,11 @@ class FinancesController < ApplicationController
       unpaid_finance.save
     end
 
-    @finances = Finance.where("active = 1").order("created_at DESC")
+    if !params[:datefrom].nil?
+      @finances = Finance.where("created_at >= ? AND created_at <= ? AND active = 1", params[:datefrom], params[:dateto]).order("created_at DESC")  
+    else
+      @finances = Finance.where("active = 1").order("created_at DESC")
+    end
   end
 
   # GET /finances/1 or /finances/1.json

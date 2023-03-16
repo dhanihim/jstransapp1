@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Shipment from:</strong>
+  <%= @shipment_history.shipment_from_id %>
+</p>
+
+<p>
+  <strong>Shipment to:</strong>
+  <%= @shipment_history.shipment_to_id %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @shipment_history.description %>
+</p>
+
+<%= link_to 'Edit', edit_shipment_history_path(@shipment_history) %> |
+<%= link_to 'Back', shipment_histories_path %>

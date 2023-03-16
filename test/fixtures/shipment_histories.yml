@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shipment_from_id: 1
+  shipment_to_id: 1
+  description: MyString
+
+two:
+  shipment_from_id: 1
+  shipment_to_id: 1
+  description: MyString

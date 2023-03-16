@@ -1,0 +1,32 @@
+<%= form_with(model: shipment_history) do |form| %>
+  <% if shipment_history.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(shipment_history.errors.count, "error") %> prohibited this shipment_history from being saved:</h2>
+
+      <ul>
+        <% shipment_history.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :shipment_from_id %>
+    <%= form.number_field :shipment_from_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :shipment_to_id %>
+    <%= form.number_field :shipment_to_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_field :description %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

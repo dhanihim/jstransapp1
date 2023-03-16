@@ -16,7 +16,13 @@ class ContainersController < ApplicationController
 
   # GET /containers or /containers.json
   def index
-    @containers = Container.all
+    if !params[:keyword].nil?
+      @containers = Container.where("LOWER(number) LIKE LOWER(?) or LOWER(sealnumber) LIKE LOWER(?)", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+    elsif !params[:datefrom].nil?
+      @containers = Container.where("created_at >= ? and created_at <= ? and active = 1", params[:datefrom], params[:dateto])
+    else
+      @containers = Container.where("created_at >= ? and active = 1",30.days.ago)
+    end
   end
 
   # GET /containers/1 or /containers/1.json

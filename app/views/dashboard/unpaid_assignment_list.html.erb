@@ -10,7 +10,7 @@
 <!-- <h4>Unpaid Assignment with Finished Shipment</h4> -->
 <br>
 <div class="table-responsive table-wrap">
-  <table class="table" id="fcldatatable">
+  <table class="table" id="myTable">
     <thead>
       <tr>
         <th>UID</th>
@@ -34,96 +34,101 @@
 
     <tbody>
       <% @assignments.each do |assignment| %>
-	  <% if assignment.finance_reference != 0 %>
-		  <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 && (assignment.finance_reference.nil? || Finance.find(assignment.finance_reference).payment_date.nil?) %>
-			<% if !Shipment.find(Container.find(assignment.container_id).shipment_id).actualarrival.nil? %>
-			  <tr>
-				<td><%= assignment.uid %></td>
-				<% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
-				  <td>-</td>
-				<% else %>
-				  <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
-				<% end %>
-				<td><%= assignment.agent.name %></td>
-				<% if assignment.dooring_agent_id.nil? %>
-				  <td>-</td>
-				<% else %>
-				  <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
-				<% end %>
-				<td><%= assignment.customer.name %></td>
-				<% if assignment.container_id.nil? %>
-				  <td><%= assignment.container_id %></td>
-				<% else %>
-				  <td><%= Container.find(assignment.container_id).number %></td>
-				<% end %>
-				<% if !assignment.pickup_location.nil? %>
-			<% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
-			 <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
-			<% else %>
-			<td style="font-style: italic; color:red">[Deleted Location]</td>
-			<% end %>
-		  <% elsif %>
-			<td>-</td>
-		  <% end %>
-      <% end %>
+      <% if assignment.finance_reference != 0 %>
+        <% if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 && (assignment.finance_reference.nil? || Finance.find(assignment.finance_reference).payment_date.nil?) %>
+          
+          <tr>
+          <td><%= assignment.uid %></td>
+
+          <% if assignment.container_id.nil? || Container.find(assignment.container_id).shipment_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+          <% end %>
+
+          <td><%= assignment.agent.name %></td>
+
+          <% if assignment.dooring_agent_id.nil? %>
+            <td>-</td>
+          <% else %>
+            <td><%= Agent.find(assignment.dooring_agent_id).name %></td>
+          <% end %>
+
+          <td><%= assignment.customer.name %></td>
+
+          <% if assignment.container_id.nil? %>
+            <td><%= assignment.container_id %></td>
+          <% else %>
+            <td><%= Container.find(assignment.container_id).number %></td>
+          <% end %>
+
+          <% if !assignment.pickup_location.nil? %>
+            <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+              <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+            <% else %>
+              <td style="font-style: italic; color:red">[Deleted Location]</td>
+            <% end %>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
 	  
 
-      <% if !assignment.destination_location.nil? %>
-        <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
-        <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
-        <% else %>
-        <td style="font-style: italic; color:red">[Deleted Location]</td>
-        <% end %>
-      <% elsif %>
-        <td>-</td>
-      <% end %>
-
-      <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
-        <td>
-        <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
-          <%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %>
-        <% else %>
-          <font style="font-style: italic; color:red">[Deleted Location]</font>
-        <% end %>
-         - 
-        <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
-          <%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %>
-        <% else %>
-          <font style="font-style: italic; color:red">[Deleted Location]</font>
-        <% end %>
-        </td>
-        <% elsif %>
-        <td>-</td>
-      <% end %>
-
-            <td><%= assignment.pickuptime.to_s(:long) %></td>
-            <td><%= number_with_delimiter(assignment.total_price - assignment.price_adjustment) %></td>
-            <td><%= number_with_delimiter(assignment.ppn) %></td>
-            <td><%= number_with_delimiter(assignment.grand_total) %></td>
-
-            <% if assignment.payment_status.url.nil? %>
-              <td style="color:red"><strong>Not Uploaded</strong></td>
-            <% elsif %>
-              <% if assignment.payment_status.file.exists? %>
-                <td>
-                  <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
-                </td>
-              <% else %>
-                <td style="color:red"><strong>Error</strong></td>
-              <% end %>
+          <% if !assignment.destination_location.nil? %>
+            <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
+            <td><%= CustomerLocation.find(assignment.destination_location).address %></td>
+            <% else %>
+            <td style="font-style: italic; color:red">[Deleted Location]</td>
             <% end %>
+          <% elsif %>
+            <td>-</td>
+          <% end %>
 
-            <% if assignment.finance_reference.nil? %>
-              <td style="color:red"><strong>Not Yet Generated</strong></td>
-            <% elsif %>
-              <% if Finance.find(assignment.finance_reference).payment_date.nil? %>
-                <td style="color:orange;"><strong>Waiting for Payment</strong></td>
-              <% else %>
-                <td style="color:green"><strong>Paid</strong></td>
-              <% end %>
+          <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+            <td>
+            <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+              <%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %>
+            <% else %>
+              <font style="font-style: italic; color:red">[Deleted Location]</font>
             <% end %>
+             - 
+            <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
+              <%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %>
+            <% else %>
+              <font style="font-style: italic; color:red">[Deleted Location]</font>
+            <% end %>
+            </td>
+            <% elsif %>
+            <td>-</td>
+          <% end %>
 
-            <td style="width:5%; white-space: nowrap;">
+          <td><%= assignment.pickuptime.to_s(:long) %></td>
+          <td><%= number_with_delimiter(assignment.total_price - assignment.price_adjustment) %></td>
+          <td><%= number_with_delimiter(assignment.ppn) %></td>
+          <td><%= number_with_delimiter(assignment.grand_total) %></td>
+
+          <% if assignment.payment_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.payment_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.payment_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <% if assignment.finance_reference.nil? %>
+            <td style="color:red"><strong>Not Yet Generated</strong></td>
+          <% elsif %>
+            <% if Finance.find(assignment.finance_reference).payment_date.nil? %>
+              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
+            <% else %>
+              <td style="color:green"><strong>Paid</strong></td>
+            <% end %>
+          <% end %>
+
+          <td style="width:5%; white-space: nowrap;">
               <%= link_to 'Product List', assignment_details_url(:id => assignment, :cid => assignment.customer_id), class:"btn btn-success", style:"white-space:nowrap;" %></td>
           </tr>
         <% end %>

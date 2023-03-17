@@ -24,6 +24,7 @@
 							<th>UID</th>
 							<th>Shipname</th>
 							<th>Customer</th>
+							<th>Container</th>
 							<th>Total</th>
 							<th>Pickup</th>
 							<th style="width:1px"></th>
@@ -43,6 +44,11 @@
 								<td>-</td>
 							<% end %>
 							<td><%= Customer.find(assignment.customer_id).name %></td>
+							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+								<td><%= Container.find(assignment.container_id).number %></td>
+							<% else %>
+								<td>-</td>
+							<% end %>
 							<td><%= number_with_delimiter(assignment.grand_total.to_i - assignment.price_adjustment.to_i) %></td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
 							<td>
@@ -68,6 +74,7 @@
 							<th>UID</th>
 							<th>Shipname</th>
 							<th>Customer</th>
+							<th>Container</th>
 							<th>Total</th>
 							<th>Pickup</th>
 							<th style="width:1px"></th>
@@ -87,6 +94,11 @@
 								<td>-</td>
 							<% end %>
 							<td><%= Customer.find(assignment.customer_id).name %></td>
+							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+								<td><%= Container.find(assignment.container_id).number %></td>
+							<% else %>
+								<td>-</td>
+							<% end %>
 							<td><%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %></td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
 							<td>

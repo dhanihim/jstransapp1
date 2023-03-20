@@ -27,8 +27,21 @@ class DashboardController < ApplicationController
       @ending = (Time.now.year - 1).to_s+"-"+"12-31"
     end
 
-    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("pickuptime >= ? AND pickuptime <= ? AND ppn != 0", @beginning, @ending).group("customer_id")
-    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("pickuptime >= ? AND pickuptime <= ? AND ppn = 0", @beginning, @ending).group("customer_id")
+    @shipment_id_2 = []
+    @container_id_2 = []
+    @shipment_2 = Shipment.where("estimateddeparture >= ? AND estimateddeparture <= ?", @beginning, @ending)
+
+    @shipment_2.each do |shipment|
+      @shipment_id_2.push(shipment.id)
+    end
+
+    @container_2 = Container.where(shipment_id: @shipment_id_2)
+    @container_2.each do |container|
+      @container_id_2.push(container.id)
+    end
+
+    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn != 0", @beginning, @ending).and(Assignment.where(container_id: @container_id_2)).group("customer_id")
+    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn = 0", @beginning, @ending).and(Assignment.where(container_id: @container_id_2)).group("customer_id")
   
     @adjustedassignments = Assignment.where("price_adjustment != 0 AND active = 1 AND created_at >= ?", Time.now.in_time_zone("Jakarta") - 30.days)
   end

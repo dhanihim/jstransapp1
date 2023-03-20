@@ -312,7 +312,8 @@ class ShipmentsController < ApplicationController
       container.save
     end
 
-    @shipment.destroy
+    @shipment.active = 0
+    @shipment.save
 
     respond_to do |format|
       format.html { redirect_to shipments_path, notice: "Shipment was successfully destroyed." }

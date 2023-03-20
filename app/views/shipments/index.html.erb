@@ -124,9 +124,19 @@
                           <strong><%= history.description %></strong>
                           <br>
                           <br>
-                          <center><%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+                          <center>
+                            <% if Shipment.where("id = ?",history.shipment_from_id).count == 0 %>
+                              <i>Deleted Shipment</i>
+                            <% else %>
+                              <%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+                            <% end %>
                           <br><strong>to</strong><br>
-                          <%= Shipment.find(history.shipment_to_id).uid %> - <%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %></center>
+                            <% if Shipment.where("id = ?",history.shipment_to_id).count == 0 %>
+                                <i>Deleted Shipment</i>
+                            <% else %>
+                              <%= Shipment.find(history.shipment_to_id).uid %> - <%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %>
+                            <% end %>
+                          </center>
                           <hr>
                         <% end %>
                       </div>

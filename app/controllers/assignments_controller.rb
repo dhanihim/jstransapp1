@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def price_adjustment
     assignment = Assignment.find(params[:id])
@@ -183,6 +183,9 @@ class AssignmentsController < ApplicationController
         product_description = product_description.to_s+detail.description.to_s+"_"+CustomerProduct.find(detail.customer_product_id).name+"_"+detail.quantity.to_s+"_"+detail.unit_description.to_s+"|"
       end
 
+      product_description = product_description.gsub("&","%26")
+      product_description = product_description.gsub(" ","%20")
+
       @link += "&product_description="+product_description.to_s
 
       @linkurl.push(@link)
@@ -193,14 +196,13 @@ class AssignmentsController < ApplicationController
         assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
       end
 
-      #@response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
 
-      
-      #assignment.description = @response['response']
-      #assignment.save
+      assignment.description = @response['response']
+      assignment.save
     end
 
-    #redirect_to(assignments_url(:loadtype => params[:loadtype]))
+    redirect_to(assignments_url(:loadtype => params[:loadtype]))
   end
 
   def sync_assignment
@@ -260,6 +262,9 @@ class AssignmentsController < ApplicationController
     assignment_detail.each do |detail|
       product_description = product_description.to_s+detail.description.to_s+"_"+CustomerProduct.find(detail.customer_product_id).name+"_"+detail.quantity.to_s+"_"+detail.unit_description.to_s+"|"
     end
+
+    product_description = product_description.gsub("&","%26")
+    product_description = product_description.gsub(" ","%20")
 
     @link += "&product_description="+product_description.to_s
 

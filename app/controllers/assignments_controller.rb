@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def price_adjustment
     assignment = Assignment.find(params[:id])
@@ -125,6 +125,8 @@ class AssignmentsController < ApplicationController
       @assignment = Assignment.where("(sync_at is NULL OR sync_at < edited_at) AND loadtype = 'Less Container Load'")
     end
 
+    @linkurl = []
+
     @assignment.each do |assignment|
       @link = $urlpath.to_s+"sync/?"+
       "target=assignment"+
@@ -173,7 +175,7 @@ class AssignmentsController < ApplicationController
       "&code=server"+      
       "&subcode="+assignment.id.to_s       
 
-      product_description = "";
+      product_description = "-".to_s
 
       #product_description for packinglist
       assignment_detail = AssignmentDetail.where("assignment_id = ?", assignment.id)
@@ -183,19 +185,22 @@ class AssignmentsController < ApplicationController
 
       @link += "&product_description="+product_description.to_s
 
+      @linkurl.push(@link)
+
       #saving sync datetime
       assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
       if(assignment.edited_at.nil?)
         assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
       end
 
-      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+      #@response = HTTParty.get(@link.to_s, format: :json).parsed_response 
 
-      assignment.description = @response['response']
-      assignment.save
+      
+      #assignment.description = @response['response']
+      #assignment.save
     end
 
-    redirect_to(assignments_url(:loadtype => params[:loadtype]))
+    #redirect_to(assignments_url(:loadtype => params[:loadtype]))
   end
 
   def sync_assignment
@@ -320,8 +325,8 @@ class AssignmentsController < ApplicationController
       @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
       @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
     else
-      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
-      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 90.days.ago).order("uid DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 90.days.ago).order("uid DESC")
     end
   end
 

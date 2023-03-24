@@ -40,8 +40,8 @@ class DashboardController < ApplicationController
       @container_id_2.push(container.id)
     end
 
-    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn != 0", @beginning, @ending).and(Assignment.where(container_id: @container_id_2)).group("customer_id")
-    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn = 0", @beginning, @ending).and(Assignment.where(container_id: @container_id_2)).group("customer_id")
+    @customer_transaction_ppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn != 0").and(Assignment.where(container_id: @container_id_2)).group("customer_id")
+    @customer_transaction_noppn = Assignment.select("customer_id, SUM(grand_total) as transaction_total").where("ppn = 0").and(Assignment.where(container_id: @container_id_2)).group("customer_id")
   
     @adjustedassignments = Assignment.where("price_adjustment != 0 AND active = 1 AND created_at >= ?", Time.now.in_time_zone("Jakarta") - 30.days)
   end

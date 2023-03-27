@@ -23,6 +23,15 @@ class ContainersController < ApplicationController
     else
       @containers = Container.where("created_at >= ? and active = 1",30.days.ago)
     end
+
+    @containers.each do |container|
+      if(!container.shipment_id.nil?)
+        if(Shipment.find(container.shipment_id).active == 0)
+          container.shipment_id = 0
+          container.save
+        end
+      end
+    end
   end
 
   # GET /containers/1 or /containers/1.json

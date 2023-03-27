@@ -25,7 +25,7 @@ class ContainersController < ApplicationController
     end
 
     @containers.each do |container|
-      if(!container.shipment_id.nil?)
+      if(!container.shipment_id.nil? && container.shipment_id != 0)
         if(Shipment.find(container.shipment_id).active == 0)
           container.shipment_id = 0
           container.save

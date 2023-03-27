@@ -81,7 +81,7 @@
 								<td>-</td>
 							<% end %>
 							
-							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total) %>,-</td>
+							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %>,-</td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long)%></td>
 							<% if assignment.pickup_location.nil? %>
 									<td>-</td>

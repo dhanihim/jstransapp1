@@ -10,7 +10,7 @@
       <%= form_with url: update_container_shipment_container_url, method: :get do |form| %>
         <div class="form-group">
           <%= form.label :shipment_id, "Attach to Shipment" %>
-          <%= form.collection_select :shipment_id, Shipment.where("pol = ? AND pod = ?", @container.pol, @container.pod).order("shipname ASC"), :id, :shipname_with_uid, {}, {class:"form-control"} %> 
+          <%= form.collection_select :shipment_id, Shipment.where("pol = ? AND pod = ? AND active = 1", @container.pol, @container.pod).order("shipname ASC"), :id, :shipname_with_uid, {}, {class:"form-control"} %> 
         </div>
         <div class="field form-group">
           <%= form.submit "Update", class:"btn btn-primary" %>

@@ -59,6 +59,8 @@
 						<th>Container</th>
 						<th>Shipname</th>
 						<th>Price</th>
+						<th>PPN</th>
+						<th>Grand Total</th>
 						<th>Order Pickup</th>
 						<th>Pickup Location</th>
 						<th>Destination Location</th>
@@ -89,6 +91,8 @@
 								<td>-</td>
 							<% end %>
 							
+							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total - assignment.ppn) %>,-</td>
+							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.ppn) %>,-</td>
 							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total) %>,-</td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long)%></td>
 							<% if assignment.pickup_location.nil? %>

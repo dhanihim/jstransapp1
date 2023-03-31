@@ -128,6 +128,10 @@
                             <% if Shipment.where("id = ?",history.shipment_from_id).count == 0 %>
                               <i>Deleted Shipment</i>
                             <% else %>
+                              <%= simple_format check_history(history.shipment_from_id) %>
+                              <% if(check_history(history.shipment_from_id)!="") %>
+                                <br>
+                              <% end %>
                               <%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
                             <% end %>
                           <br><strong>to</strong><br>
@@ -151,8 +155,16 @@
             <% end %>
           </td>
           <td style="width:5%; white-space:nowrap">
-            <% if shipment.actualarrival.nil? %>
-              <%= link_to 'Merge', merge_shipments_path(:target => shipment.id), class:"btn btn-primary" %>
+            <% @shipment_histories = ShipmentHistory.where("shipment_from_id = ?", shipment.id) %>
+            <% if @shipment_histories.count > 0 %>
+              <% @shipment_histories.each do |history| %>
+                <strong><%= "Merged to "+Shipment.find(history.shipment_to_id).shipname.to_s+" "+Shipment.find(history.shipment_to_id).voyage.to_s %></strong>
+                <br>
+              <% end %>
+            <% else %>
+              <% if shipment.actualarrival.nil? %>
+                <%= link_to 'Merge', merge_shipments_path(:target => shipment.id), class:"btn btn-primary btn-block" %>
+              <% end %>
             <% end %>
           </td>
           <td style="width:5%; white-space:nowrap">

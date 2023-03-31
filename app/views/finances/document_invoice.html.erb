@@ -19,6 +19,14 @@
 		<% end %>
 	</tr>
 	<tr>
+		<td><h5>Total</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(Assignment.where("finance_reference = ? ",@finance).sum(:grand_total) - Assignment.where("finance_reference = ? ",@finance).sum(:ppn)) %></h5></td>
+	</tr>
+	<tr>
+		<td><h5>PPN</h5></td>
+		<td><h5>IDR <%= number_with_delimiter(Assignment.where("finance_reference = ? ",@finance).sum(:ppn)) %></h5></td>
+	</tr>
+	<tr>
 		<td><h5>Total Billing</h5></td>
 		<td><h5>IDR <%= number_with_delimiter(@finance.total_billing) %></h5></td>
 	</tr>
@@ -81,7 +89,7 @@
 								<td>-</td>
 							<% end %>
 							
-							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %>,-</td>
+							<td style="white-space:nowrap;">Rp. <%= number_with_delimiter(assignment.grand_total) %>,-</td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long)%></td>
 							<% if assignment.pickup_location.nil? %>
 									<td>-</td>

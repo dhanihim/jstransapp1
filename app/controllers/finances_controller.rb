@@ -24,7 +24,7 @@ class FinancesController < ApplicationController
     total_billing = 0
     included_assignment = Assignment.where("finance_reference = ?", @finance.id)
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total - assignment.price_adjustment
+      total_billing = total_billing + assignment.grand_total
     end
     @finance.total_billing = total_billing
     @finance.save
@@ -42,7 +42,7 @@ class FinancesController < ApplicationController
     finance = Finance.find(params[:finance_reference])
     included_assignment = Assignment.where("finance_reference = ?", params[:finance_reference])
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total - assignment.price_adjustment
+      total_billing = total_billing + assignment.grand_total
     end
     finance.total_billing = total_billing
     finance.save
@@ -62,7 +62,7 @@ class FinancesController < ApplicationController
     finance = Finance.find(params[:finance_reference])
     included_assignment = Assignment.where("finance_reference = ?", params[:finance_reference])
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total - assignment.price_adjustment
+      total_billing = total_billing + assignment.grand_total
     end
     finance.total_billing = total_billing
     finance.save
@@ -98,7 +98,7 @@ class FinancesController < ApplicationController
       total_billing = 0
       included_assignment = Assignment.where("finance_reference = ?", unpaid_finance.id)
       included_assignment.each do |assignment|
-        total_billing = total_billing + assignment.grand_total - assignment.price_adjustment
+        total_billing = total_billing + assignment.grand_total
       end
       unpaid_finance.total_billing = total_billing
       unpaid_finance.save

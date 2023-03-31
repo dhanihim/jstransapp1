@@ -223,7 +223,7 @@
             <td style="color:red"><strong>Not Yet Generated</strong></td>
           <% elsif %>
             <% if Finance.find(assignment.finance_reference).payment_date.nil? %>
-              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
+              <td style="color:orange;"><strong>Waiting for Payment #<%= Finance.find(assignment.finance_reference).uid %></strong></td>
             <% else %>
               <td style="color:green"><strong>Paid #<%= Finance.find(assignment.finance_reference).uid %></strong></td>
             <% end %>

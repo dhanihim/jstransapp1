@@ -49,7 +49,7 @@
 							<% else %>
 								<td>-</td>
 							<% end %>
-							<td><%= number_with_delimiter(assignment.grand_total.to_i - assignment.price_adjustment.to_i) %></td>
+							<td><%= number_with_delimiter(assignment.grand_total.to_i) %></td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
 							<td>
 								<%= link_to "Add", attach_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-success btn-sm" %>
@@ -99,7 +99,7 @@
 							<% else %>
 								<td>-</td>
 							<% end %>
-							<td><%= number_with_delimiter(assignment.grand_total - assignment.price_adjustment) %></td>
+							<td><%= number_with_delimiter(assignment.grand_total) %></td>
 							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
 							<td>
 								<%= link_to "X", remove_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-danger btn-sm" %>

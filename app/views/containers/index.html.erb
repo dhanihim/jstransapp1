@@ -67,12 +67,18 @@
       <th>#</th>
       <th>Number</th>
       <th>Seal Number</th>
-      <th>Shipment</th>
-      <th>Total Assignment</th>
       <th>Size</th>
       <th>POL</th>
       <th>POD</th>
+      <th>Shipment</th>
+      <th>ETD</th>
+      <th>Cargo</th>
+      <th>Customer</th>
+      <th>Trucking</th>
+      <th>Agent Door</th>
+      <th>Grand Total</th>
       <th>Created At</th>
+      <th>Payment</th>
       <th></th>
     </tr>
   </thead>
@@ -85,18 +91,96 @@
         <td><%= counter = counter + 1 %></td>
         <td><%= container.number %></td>
         <td><%= container.sealnumber %></td>
-        <td>
+        <td><%= container.size %></td>
+        <td><%= Location.find(container.pol).name %></td>
+        <td><%= Location.find(container.pod).name %></td>
+        <td style="white-space:nowrap">
         <% if !container.shipment_id.nil? && container.shipment_id != 0 %>
-          <%= Shipment.find(container.shipment_id).shipname_with_uid %>   
+          <% #Shipment.find(container.shipment_id).shipname_with_uid %>   
+          <%= Shipment.find(container.shipment_id).shipname %> <%= Shipment.find(container.shipment_id).voyage %>
         <% else %>
           -
         <% end %> 
         </td>
-        <td><%= Assignment.where("container_id = ? AND active = 1",container.id).count %></td>
-        <td><%= container.size %></td>
-        <td><%= Location.find(container.pol).name %></td>
-        <td><%= Location.find(container.pod).name %></td>
-        <td><%= container.created_at.in_time_zone("Jakarta").to_s(:long).to_date %></td>
+        <td style="white-space:nowrap;">
+        <% if !container.shipment_id.nil? && container.shipment_id != 0 %>
+          <% #Shipment.find(container.shipment_id).shipname_with_uid %>   
+          <%= Shipment.find(container.shipment_id).estimateddeparture.to_s(:long) %>
+        <% else %>
+          -
+        <% end %> 
+        </td>
+        <td style="white-space:nowrap">
+          <% @counter = 0; %>
+          <% @selected_assignments = Assignment.select("pickup_location").where("container_id = ?",container.id).group("pickup_location") %>
+          <% @selected_assignments.each do |a| %>
+            <% if @counter>0 %>
+              <br>
+            <% end %>
+            <%= CustomerLocation.find(a.pickup_location).address %>
+            <% @counter = @counter + 1 %>
+          <% end %>
+        </td>
+        <td style="white-space:nowrap">
+          <% @counter = 0; %>
+          <% @selected_assignments = Assignment.select("customer_id").where("container_id = ?",container.id).group("customer_id") %>
+          <% @selected_assignments.each do |a| %>
+            <% if @counter>0 %>
+              <br>
+            <% end %>
+            <%= Customer.find(a.customer_id).name %>
+            <% @counter = @counter + 1 %>
+          <% end %>
+        </td>
+        <td style="white-space:nowrap">
+          <% @counter = 0; %>
+          <% @selected_assignments = Assignment.select("agent_id").where("container_id = ?",container.id).group("agent_id") %>
+          <% @selected_assignments.each do |a| %>
+            <% if @counter>0 %>
+              <br>
+            <% end %>
+            <%= Agent.find(a.agent_id).name %>
+            <% @counter = @counter + 1 %>
+          <% end %>
+        </td>
+        <td style="white-space:nowrap">
+          <% @counter = 0; %>
+          <% @selected_assignments = Assignment.select("dooring_agent_id").where("container_id = ?",container.id).group("dooring_agent_id") %>
+          <% @selected_assignments.each do |a| %>
+            <% if @counter>0 %>
+              <br>
+            <% end %>
+            <% if !a.dooring_agent_id.nil? %>
+              <%= Agent.find(a.dooring_agent_id).name %>
+            <% else %>
+              -
+            <% end %>
+            <% @counter = @counter + 1 %>
+          <% end %>
+        </td>
+        <td>
+          <%= number_with_delimiter(Assignment.where("container_id = ? AND active = 1",container.id).sum(:grand_total)) %>
+        </td>
+        <td style="white-space:nowrap"><%= container.created_at.in_time_zone("Jakarta").to_date.to_s(:long) %></td>
+
+        <!-- Pengambilan cepat dengan assignment pertama saja yang memiliki nomer container berikut -->
+        
+        <% if Assignment.where("container_id = ? AND active = 1",container.id).count > 0 %>
+          <% invoicedassignment = Assignment.where("container_id = ? AND active = 1",container.id).first %>
+
+          <% if invoicedassignment.finance_reference.nil? || invoicedassignment.finance_reference==0 %>
+            <td style="color:red"><strong>Not Yet Generated</strong></td>
+          <% elsif %>
+            <% if Finance.find(invoicedassignment.finance_reference).payment_date.nil? %>
+              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
+            <% else %>
+              <td style="color:green"><strong>Paid #<%= Finance.find(invoicedassignment.finance_reference).uid %></strong></td>
+            <% end %>
+          <% end %>
+        <% else %>
+          <td>-</td>
+        <% end %>
+        
         <td style="width:5%; white-space:nowrap;">
           <%= link_to 'Assignment List', container, class:"btn btn-success", style:"white-space:nowrap;", style:"white-space:nowrap;" %>
           <%= link_to 'Edit', edit_container_path(container), class:"btn btn-info" %>

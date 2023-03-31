@@ -41,6 +41,7 @@
 			<th>Container Number</th>
 			<th>Type</th>
 			<th>Customer</th>
+			<th>Pickup Address</th>
 		</tr>
 	</thead>
 	<% @containers.each do |container| %>
@@ -52,6 +53,11 @@
 				<td><%= container.number %></td>
 				<td><%= assignment.containertype %></td>
 				<td><%= assignment.customer.name %></td>
+				<% if !assignment.pickup_location.nil? %>
+		            <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+				<% elsif %>
+					<td>-</td>
+				<% end %>
 			</tr>
 		<% end %>
 	<% end %>

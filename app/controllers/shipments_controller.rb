@@ -1,6 +1,49 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
+
+  def recursive_factorial(n)
+    # Base case
+    return 1 if n <= 1
+    # Recursive call
+    
+    t = n + 15
+
+    total = n * recursive_factorial(n-1)
+
+    return total
+  end
+
+  def testing_recursive(shipment_id)
+    isthere = shipment_id - 1
+
+    return "end of tracking" if isthere == 0
+
+    sentence = "You are currently tracking "+shipment_id.to_s+"\n"
+    sentence += testing_recursive(isthere)
+  end
+
+  def check_history(shipment_id, sentence = "")
+    isthere = ShipmentHistory.where("shipment_to_id = ?", shipment_id).count
+
+    return "" if isthere <= 0
+
+    shipmenthistory = ShipmentHistory.where("shipment_to_id = ?", shipment_id)
+
+    passing_id = 0
+    shipmenthistory.each do |history|
+      sentence += Shipment.find(history.shipment_from_id).uid+" - "+Shipment.find(history.shipment_from_id).shipname+" "+Shipment.find(history.shipment_from_id).voyage+"\nchanged to\n"+Shipment.find(history.shipment_to_id).uid+" - "+Shipment.find(history.shipment_to_id).shipname+" "+Shipment.find(history.shipment_to_id).voyage+"\n"
+
+      sentence += check_history(history.shipment_from_id, sentence)+"\n".to_s
+    end
+
+     sentence 
+  end
+
+  helper_method :check_history
+  helper_method :testing_recursive
+  helper_method :recursive_factorial
+
   def rename
     @shipment = Shipment.find(params[:id])
 
@@ -51,6 +94,9 @@ class ShipmentsController < ApplicationController
   def merge_action
     @shipment_1 = Shipment.find(params[:shipment_from_id_1])
     @shipment_2 = Shipment.find(params[:shipment_from_id_2])
+
+    @shipment_2.active = 0
+    @shipment_2.save
 
     shipment = Shipment.new 
 

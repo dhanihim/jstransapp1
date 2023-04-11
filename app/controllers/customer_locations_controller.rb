@@ -80,7 +80,9 @@ class CustomerLocationsController < ApplicationController
 
   # DELETE /customer_locations/1 or /customer_locations/1.json
   def destroy
-    @customer_location.destroy
+
+    @customer_locations.active = 0
+    @customer_locations.save
 
     respond_to do |format|
       format.html { redirect_to customer_path(@customer_location.customer_id), notice: "Customer location was successfully destroyed." }

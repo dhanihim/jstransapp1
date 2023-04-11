@@ -64,8 +64,8 @@ class CustomersController < ApplicationController
 
   # GET /customers/1 or /customers/1.json
   def show
-    @customer_location_pickup = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:id])
-    @customer_location_dooring = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:id])
+    @customer_location_pickup = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup' AND active = 1", params[:id])
+    @customer_location_dooring = CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring' AND active = 1", params[:id])
     @customer_products = CustomerProduct.where("customer_id = ?", params[:id])
 
     @assignments = Assignment.where("customer_id = ?",params[:id])

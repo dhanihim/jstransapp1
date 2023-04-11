@@ -140,9 +140,13 @@
             <td><%= Container.find(assignment.container_id).number %></td>
           <% end %>
           <% if !assignment.pickup_location.nil? %>
-            <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
-          <% elsif %>
-            <td>-</td>
+            <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+              <td><%= CustomerLocation.find(assignment.pickup_location).address %></td>
+            <% elsif %>
+              <td>-</td>
+            <% end %>
+          <% else %>
+            <td><i>Deleted Address</i></td>
           <% end %>
 
           <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>

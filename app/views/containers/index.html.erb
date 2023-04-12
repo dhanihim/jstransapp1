@@ -117,7 +117,15 @@
             <% if @counter>0 %>
               <br>
             <% end %>
-            <%= CustomerLocation.find(a.pickup_location).address %>
+            <% if !a.pickup_location.nil? %>
+              <% if CustomerLocation.where("id = ?",a.pickup_location).count > 0 %>
+                <%= CustomerLocation.find(a.pickup_location).address %>
+              <% elsif %>
+                -
+              <% end %>
+            <% else %>
+              <i>Deleted Address</i>
+            <% end %>
             <% @counter = @counter + 1 %>
           <% end %>
         </td>

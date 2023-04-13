@@ -60,7 +60,7 @@
 
         <tbody>
           <% @assignmentsavailable.each do |assignment| %>
-            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? && CustomerLocation.where("id = ?",assignment.pickup_location).count > 0%>
               <% if Location.find(CustomerLocation.find(assignment.pickup_location).location_id) == Location.find(@container.pol) && Location.find(CustomerLocation.find(assignment.destination_location).location_id) == Location.find(@container.pod) %>
                 <tr>
                   <td><%= assignment.uid %></td>

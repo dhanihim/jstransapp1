@@ -3,8 +3,11 @@ Rails.application.routes.draw do
   resources :finances do
     member do
       get :document_invoice
+      get :undo_payment
     end
     collection do 
+      get :sync_all
+      get :sync
       get :attach_assignment
       get :remove_assignment
     end

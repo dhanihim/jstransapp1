@@ -26,6 +26,17 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_finance %></h4>
+      <h6 class="textbox2">Unsynced Finance</h6>
+      <% if @unsync_finance!=0 %>
+        <%= link_to "Sync All", sync_all_finances_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+</div>
 <br>
 <br>
 <% if params[:datefrom].nil? %>
@@ -48,8 +59,8 @@
         <th>Total billing</th>
         <th>Payment date</th>
         <th>Payment document</th>
-        <th>Description</th>
         <th>Created At</th>
+        <th style="width:1px;"></th>
         <th style="width:1px;"></th>
       </tr>
     </thead>
@@ -90,9 +101,12 @@
               <td style="color:red"><strong>Error</strong></td>
             <% end %>
           <% end %>
-
-          <td><%= finance.description %></td>
           <td><%= finance.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
+          <td>
+            <% if !finance.payment_date.nil? %>
+              <%= link_to 'Undo', undo_payment_finance_path(finance), class:"btn", style:"background-color:#d30000 !important; color:white" %>
+            <% end %>
+          </td>
           <td style="white-space:nowrap">
             <div class="form-group" style="display: inline-block;">
               <form action="http://localhost/sendemail/" method="POST" target="_blank">

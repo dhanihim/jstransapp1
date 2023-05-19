@@ -1,5 +1,108 @@
 class FinancesController < ApplicationController
   before_action :set_finance, only: %i[ show edit update destroy ]
+  $urlpath = "http://jstranslogistik.com/"
+  #$urlpath = "http://localhost/jstranswebapp/"
+
+  def undo_payment
+    @finance = Finance.find(params[:id])
+
+    @finance.payment_date = nil
+    @finance.payment_document = nil
+    @finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+
+    @finance.save
+
+    redirect_to(finances_url)
+  end
+
+  def sync_all
+    @finances = Finance.where("sync_at is NULL OR sync_at < edited_at")
+
+    @linkurl = []
+
+    @finances.each do |finance|
+      @link = $urlpath.to_s+"sync/?"+
+      "target=finance"+
+      "&uid="+finance.uid.to_s+
+      "&total_billing="+finance.total_billing.to_s
+
+      if !finance.payment_date.nil?
+        @link += "&payment_date="+finance.payment_date.to_s
+      end 
+
+      @total_assignment = Assignment.where("finance_reference = ? and active = 1", finance.id).count 
+      @invoice_date = "-"
+
+      if(@total_assignment!=0)
+        @targeted_assignment = Assignment.where("finance_reference = ? and active = 1", finance.id).first 
+
+        if !@targeted_assignment.container_id.nil? && @targeted_assignment.container_id != 0
+          if !Container.find(@targeted_assignment.container_id).shipment_id.nil? && Container.find(@targeted_assignment.container_id).shipment_id != 0
+            @targeted_shipment = Shipment.find(Container.find(@targeted_assignment.container_id).shipment_id)
+
+            if(!@targeted_shipment.actualdeparture.nil?)
+              @invoice_date = @targeted_shipment.actualdeparture
+            end
+          end
+        end
+      end
+
+      @link += "&description="+@invoice_date.to_s+
+      "&active="+finance.active.to_s+  
+      "&code=server"+
+      "&subcode="+finance.id.to_s 
+
+      @linkurl.push(@link)
+    
+      #saving sync datetime
+      finance.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      if(finance.edited_at.nil?)
+        finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+      end
+
+      @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+      finance.description = @response['response']
+      finance.save
+    end
+
+    redirect_to(finances_url)
+  end
+
+  def sync
+    finance = Finance.find(params[:id])
+
+    @linkurl = []
+
+    @link = $urlpath.to_s+"sync/?"+
+    "target=finance"+
+    "&uid="+finance.uid.to_s+
+    "&total_billing="+finance.total_billing.to_s
+
+    if !finance.payment_date.nil?
+      @link += "&payment_date="+finance.payment_date.to_s
+    end 
+
+    @link += "&description="+finance.uid.to_s+
+    "&active="+finance.active.to_s+  
+    "&code=server"+
+    "&subcode="+finance.id.to_s
+
+    @linkurl.push(@link)
+  
+    #saving sync datetime
+    finance.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    if(finance.edited_at.nil?)
+      finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    end
+
+    @response = HTTParty.get(@link.to_s, format: :json).parsed_response 
+
+    finance.description = @response['response']
+    finance.save
+
+    redirect_to(finances_url)
+  end
 
   def document_invoice
     @customer_lists = Assignment.select("customer_id").where("finance_reference = ? and active = 1", params[:id]).group("customer_id")
@@ -72,25 +175,25 @@ class FinancesController < ApplicationController
 
   # GET /finances or /finances.json
   def index
-    @selectedfinance = Finance.where("total_billing = '0' and active = 1")
+    @selectedfinance = Finance.where("total_billing = '0' and created_at > ?", 60.days.ago)
 
-    @selectedfinance.each do |finance|
-  
-      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
-      
-      if check_assignments == 0
-      
-        finance.active = 0
-        finance.save
-
-        assignments = Assignment.where("finance_reference = ?",finance.id)
-        assignments.each do |assignment|
-        assignment.finance_reference = nil
-        assignment.save
-        end
-      
-      end
-    end
+#    @selectedfinance.each do |finance|
+#  
+#      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
+#      
+#      if check_assignments == 0
+#      
+#        finance.active = 0
+#        finance.save
+#
+#        assignments = Assignment.where("finance_reference = ?",finance.id)
+#        assignments.each do |assignment|
+#        assignment.finance_reference = nil
+#        assignment.save
+#        end
+#      
+#      end
+#    end
 
     @unpaid_finances = Finance.where("active = 1 AND payment_date is NULL")
     @unpaid_finances.each do |unpaid_finance|
@@ -109,6 +212,9 @@ class FinancesController < ApplicationController
     else
       @finances = Finance.where("active = 1").order("created_at DESC")
     end
+
+    @unsync_finance = Finance.where("sync_at is NULL OR sync_at < edited_at").count
+    
   end
 
   # GET /finances/1 or /finances/1.json
@@ -141,7 +247,7 @@ class FinancesController < ApplicationController
         @customer_id.push(customer.id)
       end
 
-      @availableassignments = Assignment.where(customer_id: @customer_id).or(Assignment.where("uid LIKE ? AND grand_total > 0", "%#{keyword}%")).order("pickuptime DESC").and(Assignment.where("finance_reference = 0 OR finance_reference is NULL"))
+      @availableassignments = Assignment.where(customer_id: @customer_id).or(Assignment.where("uid LIKE ? AND grand_total > 0 AND active = 1", "%#{keyword}%")).order("pickuptime DESC").and(Assignment.where("finance_reference = 0 OR finance_reference is NULL"))
     else
       @availableassignments = []
     end
@@ -149,6 +255,8 @@ class FinancesController < ApplicationController
     @financed_assignments = Assignment.where("finance_reference = ?", params[:id])
 
     @finance = Finance.find(params[:id])
+    @finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+    @finance.save
   end
 
   # POST /finances or /finances.json
@@ -173,8 +281,10 @@ class FinancesController < ApplicationController
 
         if !@finance.payment_document.nil?
           @finance.payment_date = Time.now.strftime("%d/%m/%Y")
-          @finance.save
         end
+
+        @finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        @finance.save
 
         format.html { redirect_to finances_url, notice: "Finance was successfully updated." }
         format.json { render :show, status: :ok, location: @finance }

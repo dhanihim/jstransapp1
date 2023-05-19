@@ -63,29 +63,31 @@ class AssignmentsController < ApplicationController
       @assignment = Assignment.where("uid = ?", @assignment_update.uid)
       @assignment.each do |assignment|
 
-        #search for container
-        count_container = Container.where("number = ?",@assignment_update.container).count
-        if count_container != 0
-          container = Container.where("number = ?",@assignment_update.container)
-          container.each do |container|
-            assignment.container_id = container.id
+        if @assignment_update.container!=""
+          #search for container
+          count_container = Container.where("number = ?",@assignment_update.container).count
+          if count_container != 0
+            container = Container.where("number = ?",@assignment_update.container)
+            container.each do |container|
+              assignment.container_id = container.id
+            end
+          else
+            create_container = Container.new
+
+            create_container.number = @assignment_update.container
+            create_container.size = assignment.containertype
+            create_container.active = 1
+            create_container.pol = CustomerLocation.find(assignment.pickup_location).location_id
+            create_container.pod = CustomerLocation.find(assignment.destination_location).location_id
+
+            create_container.save
+
+            selected_container = Container.where("number = ?",@assignment_update.container)
+            selected_container.each do |selected_container|
+              assignment.container_id = selected_container.id
+            end
           end
-        else
-          create_container = Container.new
-
-          create_container.number = @assignment_update.container
-          create_container.size = assignment.containertype
-          create_container.active = 1
-          create_container.pol = CustomerLocation.find(assignment.pickup_location).location_id
-          create_container.pod = CustomerLocation.find(assignment.destination_location).location_id
-
-          create_container.save
-
-          selected_container = Container.where("number = ?",@assignment_update.container)
-          selected_container.each do |selected_container|
-            assignment.container_id = selected_container.id
-          end
-        end
+        end 
 
         @id = assignment.id
         @uid = assignment.uid
@@ -135,6 +137,10 @@ class AssignmentsController < ApplicationController
       if !assignment.container_id.nil? && !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0
         @link += "&shipname="+Shipment.find(Container.find(assignment.container_id).shipment_id).shipname.to_s+
         Shipment.find(Container.find(assignment.container_id).shipment_id).voyage.to_s
+        @link += "&shipment_id="+Container.find(assignment.container_id).shipment_id.to_s
+
+        @link += "&estimateddeparture="+Shipment.find(Container.find(assignment.container_id).shipment_id).estimateddeparture.to_s
+        @link += "&estimatedarrival="+Shipment.find(Container.find(assignment.container_id).shipment_id).estimatedarrival.to_s
       end
 
       @link += 
@@ -171,11 +177,12 @@ class AssignmentsController < ApplicationController
       "&total_price="+assignment.total_price.to_s+
       "&ppn="+assignment.ppn.to_s+
       "&grand_total="+assignment.grand_total.to_s+       
-      "&active="+assignment.active.to_s+      
+      "&active="+assignment.active.to_s+
+      "&finance_reference="+assignment.finance_reference.to_s+      
       "&code=server"+      
       "&subcode="+assignment.id.to_s       
 
-      product_description = "-".to_s
+      product_description = "".to_s
 
       #product_description for packinglist
       assignment_detail = AssignmentDetail.where("assignment_id = ?", assignment.id)
@@ -212,9 +219,13 @@ class AssignmentsController < ApplicationController
     "target=assignment"+
     "&uid="+@assignment.uid.to_s
 
-    if !@assignment.container_id.nil? && !Container.find(@assignment.container_id).shipment_id.nil?
-      @link += "&shipname="+Shipment.find(Container.find(@assignment.container_id).shipment_id).shipname.to_s+
+    if !@assignment.container_id.nil? && !Container.find(@assignment.container_id).shipment_id.nil? && Container.find(@assignment.container_id).shipment_id != 0
+      @link += "&shipname="+Shipment.find(Container.find(@assignment.container_id).shipment_id).shipname.to_s+" "
       Shipment.find(Container.find(@assignment.container_id).shipment_id).voyage.to_s
+      @link += "&shipment_id="+Container.find(@assignment.container_id).shipment_id.to_s
+
+      @link += "&estimateddeparture="+Shipment.find(Container.find(@assignment.container_id).shipment_id).estimateddeparture.to_s
+      @link += "&estimatedarrival="+Shipment.find(Container.find(@assignment.container_id).shipment_id).estimatedarrival.to_s
     end
 
     @link += 
@@ -252,6 +263,7 @@ class AssignmentsController < ApplicationController
     "&ppn="+@assignment.ppn.to_s+
     "&grand_total="+@assignment.grand_total.to_s+       
     "&active="+@assignment.active.to_s+   
+    "&finance_reference="+assignment.finance_reference.to_s+ 
     "&code=server"+
     "&subcode="+@assignment.id.to_s 
 

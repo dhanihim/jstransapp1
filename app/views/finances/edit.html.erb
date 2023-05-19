@@ -32,29 +32,31 @@
 					</thead>
 					<tbody>
 						<% @availableassignments.each do |assignment| %>
-						<tr>
-							<td><%= assignment.uid %></td>
-							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
-								<% if !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
-									<td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> - <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
-								<% else %>
-									<td>-</td>
-								<% end %>
-							<% else %>
-								<td>-</td>
+							<% if assignment.active == 1 %>
+								<tr>
+									<td><%= assignment.uid %></td>
+									<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+										<% if !Container.find(assignment.container_id).shipment_id.nil? && Container.find(assignment.container_id).shipment_id != 0 %>
+											<td><%= Shipment.find(Container.find(assignment.container_id).shipment_id).shipname %> - <%= Shipment.find(Container.find(assignment.container_id).shipment_id).voyage %></td>
+										<% else %>
+											<td>-</td>
+										<% end %>
+									<% else %>
+										<td>-</td>
+									<% end %>
+									<td><%= Customer.find(assignment.customer_id).name %></td>
+									<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
+										<td><%= Container.find(assignment.container_id).number %></td>
+									<% else %>
+										<td>-</td>
+									<% end %>
+									<td><%= number_with_delimiter(assignment.grand_total.to_i) %></td>
+									<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
+									<td>
+										<%= link_to "Add", attach_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-success btn-sm" %>
+									</td>
+								</tr>
 							<% end %>
-							<td><%= Customer.find(assignment.customer_id).name %></td>
-							<% if !assignment.container_id.nil? && assignment.container_id != 0%>		
-								<td><%= Container.find(assignment.container_id).number %></td>
-							<% else %>
-								<td>-</td>
-							<% end %>
-							<td><%= number_with_delimiter(assignment.grand_total.to_i) %></td>
-							<td><%= assignment.pickuptime.to_date.to_s(:long) %></td>
-							<td>
-								<%= link_to "Add", attach_assignment_finances_path(:finance_reference => params[:id], :assignment_id => assignment.id, :keyword => params[:keyword]), class:"btn btn-success btn-sm" %>
-							</td>
-						</tr>
 						<% end %>
 					</tbody>
 				</table>

@@ -35,7 +35,7 @@
 
     <div class="field form-group">
       <%= form.label :dooring_agent_id, "Dooring Agent" %>
-      <%= form.collection_select :dooring_agent_id, Agent.where("active = 1 AND pickupordooring = 'Dooring'").order("name ASC"), :id, :name, { include_blank: '=== Select a Dooring Agent ===' }, {class:"js-example-basic-single sform-control"} %>
+      <%= form.collection_select :dooring_agent_id, Agent.where("active = 1 AND pickupordooring = 'Dooring'").order("name ASC"), :id, :name, {include_blank: '=== Select a Dooring Agent ===' }, {class:"js-example-basic-single form-control"} %>
     </div>
 
     <div class="field form-group">

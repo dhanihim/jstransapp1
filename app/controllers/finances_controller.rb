@@ -127,7 +127,11 @@ class FinancesController < ApplicationController
     total_billing = 0
     included_assignment = Assignment.where("finance_reference = ?", @finance.id)
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total
+      addvalue = assignment.grand_total
+      if assignment.grand_total.nil?
+        addvalue = 0
+      end
+      total_billing = total_billing + addvalue
     end
     @finance.total_billing = total_billing
     @finance.save
@@ -145,7 +149,11 @@ class FinancesController < ApplicationController
     finance = Finance.find(params[:finance_reference])
     included_assignment = Assignment.where("finance_reference = ?", params[:finance_reference])
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total
+      addvalue = assignment.grand_total
+      if assignment.grand_total.nil?
+        addvalue = 0
+      end
+      total_billing = total_billing + addvalue
     end
     finance.total_billing = total_billing
     finance.save
@@ -163,9 +171,13 @@ class FinancesController < ApplicationController
     #Calculate Total Billing
     total_billing = 0
     finance = Finance.find(params[:finance_reference])
-    included_assignment = Assignment.where("finance_reference = ?", params[:finance_reference])
+    included_assignment = Assignment.where("finance_reference = ? and active = 1", params[:finance_reference])
     included_assignment.each do |assignment|
-      total_billing = total_billing + assignment.grand_total
+      addvalue = assignment.grand_total
+      if assignment.grand_total.nil?
+        addvalue = 0
+      end
+      total_billing = total_billing + addvalue
     end
     finance.total_billing = total_billing
     finance.save
@@ -177,23 +189,35 @@ class FinancesController < ApplicationController
   def index
     @selectedfinance = Finance.where("total_billing = '0' and created_at > ?", 60.days.ago)
 
-#    @selectedfinance.each do |finance|
-#  
-#      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
-#      
-#      if check_assignments == 0
-#      
-#        finance.active = 0
-#        finance.save
-#
+    @selectedfinance.each do |finance|
+  
+      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
+      
+      if check_assignments == 0
+        finance.active = 0
+        finance.save
+      end 
+      
+      if check_assignments > 0 
 #        assignments = Assignment.where("finance_reference = ?",finance.id)
 #        assignments.each do |assignment|
-#        assignment.finance_reference = nil
-#        assignment.save
+#          assignment.finance_reference = nil
+#          assignment.save
 #        end
-#      
-#      end
-#    end
+
+        total_billing = 0
+        included_assignment = Assignment.where("finance_reference = ?", finance.id)
+        included_assignment.each do |assignment|
+          addvalue = assignment.grand_total
+          if assignment.grand_total.nil?
+            addvalue = 0
+          end
+          total_billing = total_billing + addvalue
+        end
+        finance.total_billing = total_billing
+        finance.save
+      end
+    end
 
     @unpaid_finances = Finance.where("active = 1 AND payment_date is NULL")
     @unpaid_finances.each do |unpaid_finance|
@@ -201,7 +225,11 @@ class FinancesController < ApplicationController
       total_billing = 0
       included_assignment = Assignment.where("finance_reference = ?", unpaid_finance.id)
       included_assignment.each do |assignment|
-        total_billing = total_billing + assignment.grand_total
+        addvalue = assignment.grand_total
+        if assignment.grand_total.nil?
+          addvalue = 0
+        end
+        total_billing = total_billing + addvalue
       end
       unpaid_finance.total_billing = total_billing
       unpaid_finance.save

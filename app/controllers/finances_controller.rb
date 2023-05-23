@@ -219,6 +219,17 @@ class FinancesController < ApplicationController
       end
     end
 
+    @selectedfinance = Finance.where("total_billing > '0' and created_at > ? AND active = 0", 60.days.ago)
+    
+    @selectedfinance.each do |finance|
+      check_assignments = Assignment.where("finance_reference = ?",finance.id).count
+
+      if(check_assignments>0)
+        finance.active = 1
+        finance.save
+      end
+    end
+
     @unpaid_finances = Finance.where("active = 1 AND payment_date is NULL")
     @unpaid_finances.each do |unpaid_finance|
       #Calculate Total Billing

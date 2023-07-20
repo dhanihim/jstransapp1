@@ -1,7 +1,6 @@
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: %i[ show edit update destroy ]
 
-
   def recursive_factorial(n)
     # Base case
     return 1 if n <= 1
@@ -375,6 +374,6 @@ class ShipmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def shipment_params
-      params.require(:shipment).permit(:uid, :shipname, :voyage, :estimateddeparture, :estimatedarrival, :actualdeparture, :actualarrival, :active, :description, :pol, :pod)
+      params.require(:shipment).permit(:uid, :shipname, :voyage, :estimateddeparture, :estimatedarrival, :actualdeparture, :actualarrival, :active, :description, :pol, :pod, :user_id)
     end
 end

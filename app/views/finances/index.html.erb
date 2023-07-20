@@ -60,6 +60,7 @@
         <th>Payment date</th>
         <th>Payment document</th>
         <th>Created At</th>
+        <th>Created By</th>
         <th style="width:1px;"></th>
         <th style="width:1px;"></th>
       </tr>
@@ -102,6 +103,13 @@
             <% end %>
           <% end %>
           <td><%= finance.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
+          <td>
+            <% if finance.user_id !=0 && !finance.user_id.nil? %>
+              <font style="text-transform: capitalize;"><%= User.find(finance.user_id).name %></font>
+            <% else %>
+              -
+            <% end %>
+          </td>
           <td>
             <% if !finance.payment_date.nil? %>
               <%= link_to 'Undo', undo_payment_finance_path(finance), class:"btn", style:"background-color:#d30000 !important; color:white" %>

@@ -29,7 +29,7 @@
     
 
     <% url = request.path_info %>
-    <% if !url.include?('users') && !url.include?('document') %>
+    <% if (!url.include?('d/users/sign_in') && !url.include?('document')) %>
       <%= render "dashboard/header" %>
     <% end %>
 

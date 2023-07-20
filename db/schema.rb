@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_02_033439) do
+ActiveRecord::Schema.define(version: 2023_07_20_102200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 2023_05_02_033439) do
     t.integer "finance_reference"
     t.string "code"
     t.integer "subcode"
+    t.integer "user_id"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -126,6 +127,7 @@ ActiveRecord::Schema.define(version: 2023_05_02_033439) do
     t.integer "shipment_id"
     t.integer "pol"
     t.integer "pod"
+    t.integer "user_id"
   end
 
   create_table "customer_location_pricelists", force: :cascade do |t|
@@ -218,6 +220,7 @@ ActiveRecord::Schema.define(version: 2023_05_02_033439) do
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "sync_at"
     t.datetime "edited_at"
+    t.integer "user_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -250,6 +253,7 @@ ActiveRecord::Schema.define(version: 2023_05_02_033439) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "pol"
     t.integer "pod"
+    t.integer "user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -260,6 +264,10 @@ ActiveRecord::Schema.define(version: 2023_05_02_033439) do
     t.datetime "remember_created_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "username"
+    t.string "name"
+    t.integer "active"
+    t.datetime "deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

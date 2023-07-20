@@ -58,6 +58,7 @@
         <th>Shipname</th>
         <th>Voyage</th>
         <th>Created</th>
+        <th>Created By</th>
         <th>Estimated Departure</th>
         <th>Estimated Arrival</th>
         <th>Actual Departure</th>
@@ -81,6 +82,13 @@
           <td><%= shipment.shipname %></td>
           <td><%= shipment.voyage %></td>
           <td><%= shipment.created_at.in_time_zone("Jakarta").to_s(:long) %></td>
+          <td>
+            <% if shipment.user_id !=0 && !shipment.user_id.nil? %>
+              <font style="text-transform: capitalize;"><%= User.find(shipment.user_id).name %></font>
+            <% else %>
+              -
+            <% end %>
+          </td>
           <td>
           <% if !shipment.estimateddeparture.nil? %>
             <%= shipment.estimateddeparture.to_s(:long)  %>

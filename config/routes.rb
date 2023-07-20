@@ -58,7 +58,18 @@ Rails.application.routes.draw do
     end
   end
 
-  devise_for :users
+  match '/users',   to: 'users#index',   via: 'get'
+  #match '/users/:id',     to: 'users#show',       via: 'get'
+  
+  devise_for :users, :path_prefix => 'd'
+  resources :users do 
+    collection do 
+      get :create_user
+    end
+    member do
+      get :delete_user
+    end
+  end
   
   get 'dashboard/index'
   get 'dashboard/unpaid_assignment_list'

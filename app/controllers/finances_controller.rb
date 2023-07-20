@@ -166,6 +166,9 @@ class FinancesController < ApplicationController
 
     assignment = Assignment.find(params[:assignment_id])
     assignment.finance_reference = params[:finance_reference]
+    if assignment.user_id.nil?
+      assignment.user_id = 0
+    end
     assignment.save
 
     #Calculate Total Billing
@@ -267,6 +270,7 @@ class FinancesController < ApplicationController
     @finance.uid = 'INV/'+Time.now.to_i.to_s+'/'+Time.now.year.to_s
     @finance.active = 1
     @finance.total_billing = 0
+    @finance.user_id = current_user.id
 
     @finance.save
 
@@ -361,6 +365,6 @@ class FinancesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def finance_params
-      params.require(:finance).permit(:uid, :total_billing, :payment_date, :payment_document, :description, :active)
+      params.require(:finance).permit(:uid, :total_billing, :payment_date, :payment_document, :description, :active, :user_id)
     end
 end

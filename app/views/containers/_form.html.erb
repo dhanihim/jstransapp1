@@ -11,6 +11,10 @@
     </div>
   <% end %>
 
+  <% if params[:id].nil? %>
+    <%= form.number_field :user_id, hidden:"true", value:current_user.id %>
+  <% end %>
+  
   <div class="field form-group">
     <%= form.text_field :shipment_id, class:"form-control", value:"", hidden:"true" %>
   </div>

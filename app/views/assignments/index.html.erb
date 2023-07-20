@@ -109,6 +109,7 @@
         <th>Dooring Document</th>
         <!-- <th>Payment Document</th> -->
         <th>Invoice</th>
+        <th>Created By</th>
         <th></th>
         <th></th>
       </tr>
@@ -233,6 +234,14 @@
             <% end %>
           <% end %>
 
+          <td>
+            <% if assignment.user_id !=0 && !assignment.user_id.nil? %>
+              <font style="text-transform: capitalize;"><%= User.find(assignment.user_id).name %></font>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          
           <td style="width:5%; white-space: nowrap;">
             <% if assignment.sync_at.nil? || (assignment.sync_at < assignment.edited_at) %>
               <%= link_to 'Sync', sync_assignment_assignment_url(assignment, :loadtype => params[:loadtype]), class:"btn btn-dark" %>

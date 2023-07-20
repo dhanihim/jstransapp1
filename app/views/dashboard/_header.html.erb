@@ -29,8 +29,17 @@
             <li class="nav-item">
               <%= link_to "Finance", finances_url, class:"nav-link" %>
             </li>
+            <li class="nav-item">
+              <%= link_to "User", users_url, class:"nav-link" %>
+            </li>
         </ul>
         <ul class="navbar-nav">
+            <span class="navbar-text" style="color:white; margin-right: 25px;">
+              Hello, <strong><font style="text-transform: capitalize;"><%= User.find(current_user.id).name %></font></strong>
+            </span>
+            <li class="nav-item">
+              <%= link_to "Edit Profile", edit_user_registration_path, class:"nav-link" %>
+            </li>
             <li class="nav-item">
               <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class:"nav-link" %>
             </li>

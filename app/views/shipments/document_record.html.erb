@@ -3,7 +3,7 @@
 <br>
 <br>
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-4">
 		Jl. Delima selatan II no 63
 		Cluster OPAL Pondok Candra
 		Sidoarjo
@@ -19,7 +19,7 @@
 		<br>
 		<strong><%= @customer.name %></strong>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-8">
 		<table class="table table-sm">
 			<tbody>
 				<tr>
@@ -47,6 +47,37 @@
 					<td>:</td>
 					<td><%= Shipment.find(params[:id]).shipname %> <%= Shipment.find(params[:id]).voyage %></td>
 				</tr>
+
+				<% if ShipmentHistory.where("shipment_to_id = ?", params[:id]).count > 0 %>
+                    <% history = ShipmentHistory.where("shipment_to_id = ?", params[:id]) %>
+                    <% history.each do |history| %>
+                  	<tr>
+						<td></td>
+						<td>:</td>
+						<td>
+                    		<strong><%= history.description %></strong>
+							<center>
+								<% if Shipment.where("id = ?",history.shipment_from_id).count == 0 %>
+		                          <i>Deleted Shipment</i>
+		                        <% else %>
+		                          <%= simple_format check_history(history.shipment_from_id) %>
+		                          <% if(check_history(history.shipment_from_id)!="") %>
+		                            <br>
+		                          <% end %>
+		                          <%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+		                        <% end %>
+		                      	<br><strong>to</strong><br>
+		                        <% if Shipment.where("id = ?",history.shipment_to_id).count == 0 %>
+		                            <i>Deleted Shipment</i>
+		                        <% else %>
+		                          <%= Shipment.find(history.shipment_to_id).uid %> - <%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %>
+		                        <% end %>
+		                    </center>
+						</td>
+					</tr>
+                    <% end %>
+                <% end %>
+
 				<tr>
 					<td>POL</td>
 					<td>:</td>

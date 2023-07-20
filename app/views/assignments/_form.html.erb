@@ -71,7 +71,9 @@
     <% end %>
   <% elsif %>
 
-  <div class="field form-group">
+    <%= form.number_field :user_id, hidden:"true", value:current_user.id %>
+
+    <div class="field form-group">
       <%= form.text_field :uid, class:"form-control" , value: 'ASG'+Time.now.to_i.to_s, readonly:"true" %>
     </div>
 

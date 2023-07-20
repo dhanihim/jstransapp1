@@ -78,6 +78,7 @@
       <th>Agent Door</th>
       <th>Grand Total</th>
       <th>Created At</th>
+      <th>Created By</th>
       <th>Payment</th>
       <th></th>
     </tr>
@@ -170,6 +171,13 @@
           <%= number_with_delimiter(Assignment.where("container_id = ? AND active = 1",container.id).sum(:grand_total)) %>
         </td>
         <td style="white-space:nowrap"><%= container.created_at.in_time_zone("Jakarta").to_date.to_s(:long) %></td>
+        <td>
+          <% if container.user_id !=0 && !container.user_id.nil? %>
+            <font style="text-transform: capitalize;"><%= User.find(container.user_id).name %></font>
+          <% else %>
+            -
+          <% end %>
+        </td>
 
         <!-- Pengambilan cepat dengan assignment pertama saja yang memiliki nomer container berikut -->
         

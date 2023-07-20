@@ -1,0 +1,28 @@
+<h4>Users</h4>
+
+<br>
+
+<%= link_to 'New User', new_user_path, class:"btn btn-primary" %>
+
+<br>
+<br>
+
+<div class="table-responsive">
+<table class="table" id="myTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><p style= 'text-transform: capitalize;'><%= user.name.to_s.capitalize  %></p></td>
+        <td><%= user.email %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

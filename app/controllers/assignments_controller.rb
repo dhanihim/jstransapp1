@@ -65,7 +65,7 @@ class AssignmentsController < ApplicationController
 
         if @assignment_update.container!=""
           #search for container
-          count_container = Container.where("number = ?",@assignment_update.container).count
+          count_container = Container.where("number = ? AND created_at > ? AND active = 1",@assignment_update.container, 30.days.ago).count
           if count_container != 0
             container = Container.where("number = ?",@assignment_update.container)
             container.each do |container|
@@ -479,6 +479,6 @@ class AssignmentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def assignment_params
-      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status, :status, :finance_reference)
+      params.require(:assignment).permit(:container_id, :agent_id, :customer_id, :pickup_location, :destination_location, :uid, :pickuptime, :document_status, :payment_status, :loadtype, :containertype, :active, :ppn, :grand_total, :dooring_agent_id, :dooring_status, :status, :finance_reference, :user_id)
     end
 end

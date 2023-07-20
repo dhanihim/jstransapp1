@@ -105,6 +105,6 @@ class ContainersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def container_params
-      params.require(:container).permit(:pol, :pod, :number, :sealnumber, :size, :active, :description, :shipment_id)
+      params.require(:container).permit(:pol, :pod, :number, :sealnumber, :size, :active, :description, :shipment_id, :user_id)
     end
 end

@@ -35,11 +35,11 @@ class UsersController < ApplicationController
 
     def create_user
         #untuk berjalan element yang harus ada sepertinya email, password, dann password_confirmation
-        @user = User.new(:email => params[:email], :password => params[:password], :password_confirmation => params[:password_confirmation], :name => params[:name], :username => params[:username])
+        @user = User.new(:email => params[:email], :password => params[:password], :password_confirmation => params[:password_confirmation], :name => params[:name], :username => params[:username], :active => 1)
         if @user.save
             redirect_to users_url, notice: "User succesfully created!" 
         else
-            redirect_to users_url, notice: "Failed to created! "+@user.errors.to_s
+            redirect_to users_url, notice: "Failed to created! "+@user.errors.full_messages.to_s
         end
     end
 

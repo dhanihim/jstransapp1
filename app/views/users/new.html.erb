@@ -1,21 +1,21 @@
 <%= form_with url: create_user_users_path, method: :get do |f| %>
   <div class="field form-group">
-    <%= f.text_field :name, style: 'text-transform: capitalize;', class:"form-control", placeholder:"Name", autofocus: true %>
+    <%= f.text_field :name, style: 'text-transform: capitalize;', class:"form-control", placeholder:"Name", autofocus: true, autocomplete:"off" %>
   </div>
 
   <div class="field form-group">
-    <%= f.email_field :email, style: 'text-transform: lowercase;', class:"form-control", placeholder:"Email" %>
+    <%= f.email_field :email, style: 'text-transform: lowercase;', class:"form-control", placeholder:"Email", autocomplete:"off" %>
   </div>
 
   <div class="field form-group">
     <% if @minimum_password_length %>
     <em>(<%= @minimum_password_length %> characters minimum)</em>
     <% end %>
-    <%= f.password_field :password, class:"form-control", placeholder:"Password" %>
+    <%= f.password_field :password, class:"form-control", placeholder:"Password", autocomplete:"off" %>
   </div>
 
   <div class="field form-group">
-    <%= f.password_field :password_confirmation, class:"form-control", placeholder:"Re-type Password" %>
+    <%= f.password_field :password_confirmation, class:"form-control", placeholder:"Re-type Password", autocomplete:"off" %>
   </div>
 
   <%= f.number_field :active, value:"1", type:"hidden" %>
@@ -27,4 +27,4 @@
 <% end %>
 
 <br>
-<%= link_to 'Back', locations_path, class:"btn btn-secondary" %>
+<%= link_to 'Back', @users_path, class:"btn btn-secondary" %>

@@ -69,6 +69,7 @@
         <th>Modified</th>
         <th></th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
 
@@ -162,18 +163,17 @@
               </div>
             <% end %>
           </td>
-          <td style="width:5%; white-space:nowrap">
+          <td style="white-space: nowrap;">
             <% @shipment_histories = ShipmentHistory.where("shipment_from_id = ?", shipment.id) %>
             <% if @shipment_histories.count > 0 %>
               <% @shipment_histories.each do |history| %>
                 <strong><%= "Merged to "+Shipment.find(history.shipment_to_id).shipname.to_s+" "+Shipment.find(history.shipment_to_id).voyage.to_s %></strong>
                 <br>
               <% end %>
-            <% else %>
-              <% if shipment.actualarrival.nil? %>
-                <%= link_to 'Merge', merge_shipments_path(:target => shipment.id), class:"btn btn-primary btn-block" %>
-              <% end %>
             <% end %>
+          </td>
+          <td style="width:5%; white-space:nowrap">
+            <%= link_to 'Merge', merge_shipments_path(:target => shipment.id), class:"btn btn-primary btn-block" %>
           </td>
           <td style="width:5%; white-space:nowrap">
             <%= link_to 'Rename', rename_shipments_path(:target => shipment.id), class:"btn btn-dark", "data-toggle" => "modal", 'data-target' => '#renameModal'+shipment.id.to_s %>

@@ -15,34 +15,34 @@
   <div class="row">
     <div class="field form-group col-md-4">
       <%= form.label :per20ft %>
-      <%= form.number_field :per20ft, class:"form-control" %>
+      <%= form.number_field :per20ft, class:"form-control", required:"true" %>
     </div>
 
     <div class="field form-group col-md-4">
       <%= form.label :per20fr %>
-      <%= form.number_field :per20fr, class:"form-control" %>
+      <%= form.number_field :per20fr, class:"form-control", required:"true" %>
     </div>
     
     <div class="field form-group col-md-4">
       <%= form.label :per20od %>
-      <%= form.number_field :per20od, class:"form-control" %>
+      <%= form.number_field :per20od, class:"form-control", required:"true" %>
     </div>
   </div>
   
   <div class="row">
     <div class="field form-group col-md-4">
       <%= form.label :per21ft %>
-      <%= form.number_field :per21ft, class:"form-control" %>
+      <%= form.number_field :per21ft, class:"form-control", required:"true" %>
     </div>
 
     <div class="field form-group col-md-4">
       <%= form.label :per40ft %>
-      <%= form.number_field :per40ft, class:"form-control" %>
+      <%= form.number_field :per40ft, class:"form-control", required:"true" %>
     </div>
 
     <div class="field form-group col-md-4">
       <%= form.label :per40fr %>
-      <%= form.number_field :per40fr, class:"form-control" %>
+      <%= form.number_field :per40fr, class:"form-control", required:"true" %>
     </div>
   </div>
 
@@ -51,9 +51,19 @@
     <%= form.select :ppncategory, [["PPN(+1.1%)",1],["Non PPN",2]], {}, class:"form-control", placeholder:"Category", autocomplete:"off"   %>
   </div>
 
-  <div class="field form-group">
-    <%= form.label :expireddate %>
-    <%= form.date_field :expireddate, class:"form-control", autocomplete:"off", required:"true"   %>
+  <div class="row">
+    <div class="col-6">
+      <div class="field form-group">
+        <%= form.label :started_at %>
+        <%= form.date_field :started_at, min:Date.today , class:"form-control", autocomplete:"off", required:"true"   %>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="field form-group">
+        <%= form.label :expireddate %>
+        <%= form.date_field :expireddate, min:Date.today, class:"form-control", autocomplete:"off", required:"true"   %>
+      </div>
+    </div>
   </div>
 
   <div class="field form-group">
@@ -69,11 +79,27 @@
   </div>
 
   <div class="field form-group">
-    <%= form.number_field :location_id, class:"form-control", hidden:"true" %>
+    <% if params[:address].nil? %>
+      <%= form.number_field :customer_location_id, class:"form-control", hidden:"true" %>
+    <% else %>
+      <%= form.label :customer_location_id, "Pickup Address" %>
+      <%= form.number_field :customer_location_id, class:"form-control", value:params[:address], hidden:"true" %>
+      <%= form.text_field :customer_location_text, class:"form-control", value:CustomerLocation.find(params[:address]).address, disabled:true %>
+    <% end %>
+  </div>
+
+  <div class="field form-group">
+    <% if params[:location].nil? %>
+      <%= form.number_field :location_id, class:"form-control", hidden:"true" %>
+    <% else %>
+      <%= form.label :location_id, "Dooring Location" %>
+      <%= form.number_field :location_id, class:"form-control", value:params[:location], hidden:"true" %>
+      <%= form.text_field :location_text, class:"form-control", value:Location.find(params[:location]).name, disabled:true %>
+    <% end %>
   </div>
 
   <br>
   <div class="actions">
-    <%= form.submit "Update Data", class:"btn btn-primary" %>
+    <%= form.submit class:"btn btn-primary" %>
   </div>
 <% end %>

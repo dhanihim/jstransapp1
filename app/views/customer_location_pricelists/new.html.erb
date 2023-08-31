@@ -1,5 +1,12 @@
-<h1>New Customer Location Pricelist</h1>
+
+<%= link_to 'Back', customer_location_path(params[:address]), class:"btn btn-secondary"  %>
+<br>
+<br>
+
+<h4>New Customer Location Pricelist</h4>
+<br>
 
 <%= render 'form', customer_location_pricelist: @customer_location_pricelist %>
 
-<%= link_to 'Back', customer_location_pricelists_path %>
+<br>
+<%= link_to 'Back', customer_location_pricelists_path, class:"btn btn-secondary" %>

@@ -65,6 +65,7 @@
   <thead>
     <tr>
       <th>#</th>
+      <th>Payment</th>
       <th>Number</th>
       <th>Seal Number</th>
       <th>Size</th>
@@ -79,7 +80,6 @@
       <th>Grand Total</th>
       <th>Created At</th>
       <th>Created By</th>
-      <th>Payment</th>
       <th></th>
     </tr>
   </thead>
@@ -90,6 +90,23 @@
     <% @containers.each do |container| %>
       <tr>
         <td><%= counter = counter + 1 %></td>
+        <!-- Pengambilan cepat dengan assignment pertama saja yang memiliki nomer container berikut -->
+        
+        <% if Assignment.where("container_id = ? AND active = 1",container.id).count > 0 %>
+          <% invoicedassignment = Assignment.where("container_id = ? AND active = 1",container.id).first %>
+
+          <% if invoicedassignment.finance_reference.nil? || invoicedassignment.finance_reference==0 %>
+            <td style="color:red"><strong>Not Yet Generated</strong></td>
+          <% elsif %>
+            <% if Finance.find(invoicedassignment.finance_reference).payment_date.nil? %>
+              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
+            <% else %>
+              <td style="color:green"><strong>Paid #<%= Finance.find(invoicedassignment.finance_reference).uid %></strong></td>
+            <% end %>
+          <% end %>
+        <% else %>
+          <td>-</td>
+        <% end %>
         <td><%= container.number %></td>
         <td><%= container.sealnumber %></td>
         <td><%= container.size %></td>
@@ -178,24 +195,6 @@
             -
           <% end %>
         </td>
-
-        <!-- Pengambilan cepat dengan assignment pertama saja yang memiliki nomer container berikut -->
-        
-        <% if Assignment.where("container_id = ? AND active = 1",container.id).count > 0 %>
-          <% invoicedassignment = Assignment.where("container_id = ? AND active = 1",container.id).first %>
-
-          <% if invoicedassignment.finance_reference.nil? || invoicedassignment.finance_reference==0 %>
-            <td style="color:red"><strong>Not Yet Generated</strong></td>
-          <% elsif %>
-            <% if Finance.find(invoicedassignment.finance_reference).payment_date.nil? %>
-              <td style="color:orange;"><strong>Waiting for Payment</strong></td>
-            <% else %>
-              <td style="color:green"><strong>Paid #<%= Finance.find(invoicedassignment.finance_reference).uid %></strong></td>
-            <% end %>
-          <% end %>
-        <% else %>
-          <td>-</td>
-        <% end %>
         
         <td style="width:5%; white-space:nowrap;">
           <%= link_to 'Assignment List', container, class:"btn btn-success", style:"white-space:nowrap;", style:"white-space:nowrap;" %>

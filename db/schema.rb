@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_20_102200) do
+ActiveRecord::Schema.define(version: 2023_08_29_022852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(version: 2023_07_20_102200) do
     t.integer "customer_location_id"
     t.integer "location_id"
     t.date "expireddate"
+    t.date "started_at"
     t.index ["customer_location_id"], name: "index_customer_location_pricelists_on_customer_location_id"
     t.index ["location_id"], name: "index_customer_location_pricelists_on_location_id"
   end

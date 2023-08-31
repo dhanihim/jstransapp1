@@ -1,7 +1,7 @@
 class FinancesController < ApplicationController
   before_action :set_finance, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def undo_payment
     @finance = Finance.find(params[:id])
@@ -252,7 +252,7 @@ class FinancesController < ApplicationController
     if !params[:datefrom].nil?
       @finances = Finance.where("created_at >= ? AND created_at <= ? AND active = 1", params[:datefrom], params[:dateto]).order("created_at DESC")  
     else
-      @finances = Finance.where("active = 1").order("created_at DESC")
+      @finances = Finance.where("active = 1 AND created_at > ?", 30.days.ago).order("created_at DESC")
     end
 
     @unsync_finance = Finance.where("sync_at is NULL OR sync_at < edited_at").count

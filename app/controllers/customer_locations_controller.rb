@@ -15,7 +15,7 @@ class CustomerLocationsController < ApplicationController
 
     @dooring_locations.each do |dooring_location|
       @dooringid = dooring_location.id
-      @available = CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ?", @customer_locations.id, @dooringid).count
+      @available = CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND started_at is NULL", @customer_locations.id, @dooringid).count
 
       if(@available==0)
         @customer_location_pricelist = CustomerLocationPricelist.new
@@ -33,7 +33,8 @@ class CustomerLocationsController < ApplicationController
       end
     end
 
-    @customer_location_pricelists = CustomerLocationPricelist.where("customer_location_id = ?", @customer_locations.id).order("location_id ASC")
+    @customer_location_pricelists = CustomerLocationPricelist.where("customer_location_id = ? AND started_at <= ? AND active = 1", @customer_locations.id, Date.today).order("location_id ASC")
+    @route_with_no_contract = CustomerLocationPricelist.where("customer_location_id = ? AND started_at is NULL AND active = 1", @customer_locations.id).order("location_id ASC")
   end
 
   # GET /customer_locations/new

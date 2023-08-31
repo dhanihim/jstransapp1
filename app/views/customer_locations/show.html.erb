@@ -5,6 +5,23 @@
 <h4>Location Shipment Pricelist <strong>"<%= @customer_locations.customer.name %> - <%= @customer_locations.address %>, <%= @customer_locations.location.name %></strong>"</h4>
 <br>
 
+<!-- <div class="row">
+  <div class="col-md-6 col-sm-12">
+  <h6>Color Description</h6>
+    <table class="table table-borderless table-sm">
+      <tr>
+        <td class="table-success"></td>
+        <td>Pending</td>
+      </tr>
+      <tr>
+        <td class="table-danger"></td>
+        <td>Expired</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br> -->
+
 <div class="table-responsive">
 <table class="table">
   <thead class="thead-dark">
@@ -17,6 +34,7 @@
       <th>40 FT</th>
       <th>40 FR</th>
       <th>Ppncategory</th>
+      <th>Started</th>
       <th>Expired</th>
       <th></th>
     </tr>
@@ -25,36 +43,45 @@
   <tbody>
     <% @customer_location_pricelists.each do |customer_location_pricelist| %>
       <% if customer_location_pricelist.location_id != @customer_locations.location_id %>
-        <% if customer_location_pricelist.expireddate.to_s < Date.today.to_s && !customer_location_pricelist.expireddate.blank? %>
-        <tr class="table-danger">  
-        <% else %>
         <tr>
-        <% end %>
-          <td><%= customer_location_pricelist.location.name %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per20ft) %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per20fr) %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per20od) %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per21ft) %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per40ft) %></td>
-          <td><%= number_with_delimiter(customer_location_pricelist.per40fr) %></td>
-          <td>
-              <% if customer_location_pricelist.ppncategory.blank? %>
-                Not Set
-              <% elsif customer_location_pricelist.ppncategory == 1 %>
-                PPN(+1.1%)
-              <% elsif customer_location_pricelist.ppncategory == 2 %>
-                Non PPN
-              <% end %>  
-          </td>
-          <td>
-            <% if customer_location_pricelist.expireddate.blank? %>
-              <%= customer_location_pricelist.expireddate %> 
-            <% else %>
-              <%= customer_location_pricelist.expireddate.to_s(:long) %> 
-            <% end %> 
-          </td>
+          <td><strong><%= customer_location_pricelist.location.name %></strong></td>
+          <% if customer_location_pricelist.started_at.nil? && customer_location_pricelist.expireddate.nil? %>
+            <td colspan="9"><center><i>[No contract available]</i></center></td>
+          <% else %>
+            <td><%= number_with_delimiter(customer_location_pricelist.per20ft) %></td>
+            <td><%= number_with_delimiter(customer_location_pricelist.per20fr) %></td>
+            <td><%= number_with_delimiter(customer_location_pricelist.per20od) %></td>
+            <td><%= number_with_delimiter(customer_location_pricelist.per21ft) %></td>
+            <td><%= number_with_delimiter(customer_location_pricelist.per40ft) %></td>
+            <td><%= number_with_delimiter(customer_location_pricelist.per40fr) %></td>
+            <td>
+                <% if customer_location_pricelist.ppncategory.blank? %>
+                  Not Set
+                <% elsif customer_location_pricelist.ppncategory == 1 %>
+                  PPN(+1.1%)
+                <% elsif customer_location_pricelist.ppncategory == 2 %>
+                  Non PPN
+                <% end %>  
+            </td>
+            <td>
+              <% if customer_location_pricelist.started_at.blank? %>
+                <%= customer_location_pricelist.started_at %> 
+              <% else %>
+                <%= customer_location_pricelist.started_at.to_s(:long) %> 
+              <% end %> 
+            </td>
+            <td>
+              <% if customer_location_pricelist.expireddate.blank? %>
+                <%= customer_location_pricelist.expireddate %> 
+              <% else %>
+                <%= customer_location_pricelist.expireddate.to_s(:long) %> 
+              <% end %> 
+            </td>
+          <% end %>
           <td style="width:5%; white-space:nowrap">
-            <%= link_to 'Edit', edit_customer_location_pricelist_path(customer_location_pricelist), class:"btn btn-info" %>
+            <%= link_to 'History', customer_location_pricelists_path(:customer_location_id => params[:id], :destination => customer_location_pricelist.location), class:"btn btn-info" %>
+            <!-- Edit is hidden because of new module -->
+            <% link_to 'Edit', edit_customer_location_pricelist_path(customer_location_pricelist), class:"btn btn-info" %>
             <%= link_to 'X', customer_location_pricelist, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
         </tr>
       <% end %>
@@ -63,4 +90,42 @@
 </table>
 </div>
 
+<br>
+
+
+<div class="row">
+  <div class="col-md-6 col-sm-12">
+    <h4>Available Route</h4>
+    <br>
+    <div class="table-responsive">
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th>Dooring Location</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @route_with_no_contract.each do |customer_location_pricelist| %>
+          <% if customer_location_pricelist.location_id != @customer_locations.location_id && CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND (started_at <= ? OR started_at is NULL)", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count == 1 %>
+            <tr>
+              <td><strong><%= customer_location_pricelist.location.name %></strong></td>
+              <td>
+                <% if CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count > 0 %>
+                    <%= CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count %> pending contract(s)
+                <% end %>
+              </td>
+              <td style="width:5%; white-space:nowrap">
+                <%= link_to 'Add Pricelist', customer_location_pricelists_path(:customer_location_id => params[:id], :destination => customer_location_pricelist.location), class:"btn btn-primary" %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
 <br>

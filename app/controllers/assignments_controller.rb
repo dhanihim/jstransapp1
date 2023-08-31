@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def price_adjustment
     assignment = Assignment.find(params[:id])
@@ -342,8 +342,8 @@ class AssignmentsController < ApplicationController
       @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
       @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
     else
-      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 90.days.ago).order("uid DESC")
-      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 90.days.ago).order("uid DESC")
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
     end
   end
 
@@ -394,12 +394,34 @@ class AssignmentsController < ApplicationController
           pickup_location = CustomerLocation.find(@assignment.pickup_location)
           location = Location.find(CustomerLocation.find(@assignment.destination_location).location_id)
           
-          price = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and expireddate >= ?", pickup_location, location, Date.today)
           container = @assignment.containertype
           priceused = 0
           ppncategory = 0
 
-          price.each do |price|
+          #checking expired contract
+          expired = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and expireddate <= ? and active = 1", pickup_location, location, Date.today)
+          expired.each do |pricelist|
+            pricelist.active = 0
+            pricelist.description = "Expired"
+            pricelist.save
+          end
+
+          isthere = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and started_at <= ? and expireddate >= ? and active = 1", pickup_location, location, Date.today, Date.today).count
+      
+          if isthere > 0
+
+            price = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and started_at <= ? and expireddate >= ? and active = 1", pickup_location, location, Date.today, Date.today).last
+            
+            #renew active location pricelist
+            disable = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and started_at <= ? and active = 1", pickup_location, location, Date.today)
+            disable.each do |pricelist|
+              if pricelist.id != price.id
+                pricelist.description = "Overwrite by system"
+                pricelist.active = 0
+                pricelist.save
+              end
+            end
+
             if(container == "20FT" && price.per20ft!=0)
               priceused = price.per20ft
             elsif(container == "20FR" && price.per20fr!=0)
@@ -415,6 +437,7 @@ class AssignmentsController < ApplicationController
             end
 
             ppncategory = price.ppncategory
+            
           end
 
           @assignment.total_price = priceused

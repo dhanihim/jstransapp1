@@ -53,17 +53,227 @@
 
   <script type="text/javascript">
     $(document).ready( function () {
-        $('#myTable').DataTable();
+        /*$('#myTable').DataTable();*/
+        $('#myTable thead tr')
+        .clone(true)
+        .addClass('filters')
+        .appendTo('#myTable thead');
+
+        $('#myTable').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        initComplete: function () {
+            var api = this.api();
+ 
+            // For each column
+            api
+                .columns()
+                .eq(0)
+                .each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    var title = $(cell).text();
+                    $(cell).html('<input type="text" placeholder="' + title + '" class="form-control" />');
+ 
+                    // On every keypress in this input
+                    $(
+                        'input',
+                        $('.filters th').eq($(api.column(colIdx).header()).index())
+                    )
+                        .off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+ 
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+ 
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                  });
+
+            this.api().columns('.dt-filter-select').every(function () {
+                var column = this;
+                var select = $('<select class="form-control"><option value=""></option></select>')
+                    .appendTo($(column.footer()).empty())
+                    .on('change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false)
+                            .draw();
+                    });
+                column.data().unique().sort().each(function (d,j) {
+                    select.append('<option value="'+d+'">'+d+'</option>')
+                });
+            });
+
+        },
+        });
 
         $('#myTable1').DataTable();
         $('#myTable2').DataTable();
         $('#myTable3').DataTable();
 
+        $('#fcldatatable thead tr')
+        .clone(true)
+        .addClass('filters')
+        .appendTo('#fcldatatable thead');
+
         $('#fcldatatable').DataTable({
           order: [[9, 'desc']],
+          orderCellsTop: true,
+          fixedHeader: true,
+          initComplete: function () {
+              var api = this.api();
+   
+              // For each column
+              api
+                  .columns()
+                  .eq(0)
+                  .each(function (colIdx) {
+                      // Set the header cell to contain the input element
+                      var cell = $('.filters th').eq(
+                          $(api.column(colIdx).header()).index()
+                      );
+                      var title = $(cell).text();
+                      $(cell).html('<input type="text" placeholder="' + title + '" class="form-control" />');
+   
+                      // On every keypress in this input
+                      $(
+                          'input',
+                          $('.filters th').eq($(api.column(colIdx).header()).index())
+                      )
+                          .off('keyup change')
+                          .on('change', function (e) {
+                              // Get the search value
+                              $(this).attr('title', $(this).val());
+                              var regexr = '({search})'; //$(this).parents('th').find('select').val();
+   
+                              var cursorPosition = this.selectionStart;
+                              // Search the column for that value
+                              api
+                                  .column(colIdx)
+                                  .search(
+                                      this.value != ''
+                                          ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                          : '',
+                                      this.value != '',
+                                      this.value == ''
+                                  )
+                                  .draw();
+                          })
+                          .on('keyup', function (e) {
+                              e.stopPropagation();
+   
+                              $(this).trigger('change');
+                              $(this)
+                                  .focus()[0]
+                                  .setSelectionRange(cursorPosition, cursorPosition);
+                          });
+                    });
+
+          },
         });
         $('#lcldatatable').DataTable({
           order: [[9, 'desc']],
+        });
+
+        $('#containerdatatable thead tr')
+        .clone(true)
+        .addClass('filters')
+        .appendTo('#containerdatatable thead');
+
+        $('#containerdatatable').DataTable({
+          order: [[8, 'desc']],
+          orderCellsTop: true,
+          fixedHeader: true,
+          initComplete: function () {
+              var api = this.api();
+   
+              // For each column
+              api
+                  .columns()
+                  .eq(0)
+                  .each(function (colIdx) {
+                      // Set the header cell to contain the input element
+                      var cell = $('.filters th').eq(
+                          $(api.column(colIdx).header()).index()
+                      );
+                      var title = $(cell).text();
+                      $(cell).html('<input type="text" placeholder="' + title + '" class="form-control" />');
+   
+                      // On every keypress in this input
+                      $(
+                          'input',
+                          $('.filters th').eq($(api.column(colIdx).header()).index())
+                      )
+                          .off('keyup change')
+                          .on('change', function (e) {
+                              // Get the search value
+                              $(this).attr('title', $(this).val());
+                              var regexr = '({search})'; //$(this).parents('th').find('select').val();
+   
+                              var cursorPosition = this.selectionStart;
+                              // Search the column for that value
+                              api
+                                  .column(colIdx)
+                                  .search(
+                                      this.value != ''
+                                          ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                          : '',
+                                      this.value != '',
+                                      this.value == ''
+                                  )
+                                  .draw();
+                          })
+                          .on('keyup', function (e) {
+                              e.stopPropagation();
+   
+                              $(this).trigger('change');
+                              $(this)
+                                  .focus()[0]
+                                  .setSelectionRange(cursorPosition, cursorPosition);
+                          });
+                    });
+
+              this.api().columns('.dt-filter-select').every(function () {
+                  var column = this;
+                  var select = $('<select class="form-control"><option value=""></option></select>')
+                      .appendTo($(column.footer()).empty())
+                      .on('change', function () {
+                          var val = $.fn.dataTable.util.escapeRegex(
+                              $(this).val()
+                          );
+                          column
+                              .search( val ? '^'+val+'$' : '', true, false)
+                              .draw();
+                      });
+                  column.data().unique().sort().each(function (d,j) {
+                      select.append('<option value="'+d+'">'+d+'</option>')
+                  });
+              });
+          },
         });
 
         $('.js-example-basic-single').select2();

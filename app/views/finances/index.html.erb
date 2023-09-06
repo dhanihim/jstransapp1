@@ -1,7 +1,22 @@
 <h4>Finances</h4>
 <br>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-6">
+    <center><h5>Search by Keyword</h5></center>
+
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+      <div class="row">
+        <%= form.text_field :keyword, placeholder:"Search by invoice UID", class:"form-control", style:"text-align:center; margin-top:15px;", autocomplete:"off", autofocus:"true" %> 
+      </div>
+      
+      <br>
+      
+      <%= form.submit "Load Finance Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+  <div class="col-md-6">
     <center><h5>Search by Date</h5></center>
 
     <%= form_with url: "", method: :get do |form| %>
@@ -26,6 +41,9 @@
   </div>
 </div>
 
+<br>
+<br>
+
 <div class="row">
   <div class="col-md-3">
     <div class="informationbox3">
@@ -39,14 +57,21 @@
 </div>
 <br>
 <br>
-<% if params[:datefrom].nil? %>
+<% if params[:datefrom].nil? && params[:keyword].nil? %>
   <h5>Finance Created within 30 Days</h5>
-<% elsif %>
+<% elsif !params[:keyword].nil? %>
+  <h5></h5>
+<% elsif !params[:datefrom].nil? %>
   <h5>Finance Created between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
 <% end %>
 <br>
 <%= link_to 'New Finance', new_finance_path, class:"btn btn-primary" %>
 <br>
+<br>
+
+  <% if !params[:keyword].nil? %>
+    <h6>Searching for keyword <strong>"<%= params[:keyword] %>"</strong></h6>
+  <% end %>
 <br>
 
 <div class="table-responsive">
@@ -55,7 +80,7 @@
       <tr>
         <th>#</th>
         <th>Uid</th>
-        <th>Customer</th>
+        <th class="dt-filter-select">Customer</th>
         <th>Total billing</th>
         <th>Payment date</th>
         <th>Payment document</th>
@@ -155,6 +180,20 @@
         </tr>
       <% end %>
     </tbody>
+    <tfoot>
+        <tr>
+            <th>#</th>
+            <th>Uid</th>
+            <th class="dt-filter-select">Customer</th>
+            <th>Total billing</th>
+            <th>Payment date</th>
+            <th>Payment document</th>
+            <th>Created At</th>
+            <th>Created By</th>
+            <th style="width:1px;"></th>
+            <th style="width:1px;"></th>
+        </tr>
+    </tfoot>
   </table>
 </div>
 

@@ -251,6 +251,10 @@ class FinancesController < ApplicationController
 
     if !params[:datefrom].nil?
       @finances = Finance.where("created_at >= ? AND created_at <= ? AND active = 1", params[:datefrom], params[:dateto]).order("created_at DESC")  
+    elsif(!params[:keyword].nil?)
+      keyword = params[:keyword].upcase
+    
+      @finances = Finance.where("UPPER(uid) LIKE ? AND active = 1", "%#{keyword}%")
     else
       @finances = Finance.where("active = 1 AND created_at > ?", 30.days.ago).order("created_at DESC")
     end

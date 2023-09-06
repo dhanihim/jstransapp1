@@ -26,6 +26,7 @@
 <table class="table">
   <thead class="thead-dark">
     <tr>
+      <th>ID</th>
       <th>Dooring Location</th>
       <th>20 FT</th>
       <th>20 FR</th>
@@ -44,6 +45,7 @@
     <% @customer_location_pricelists.each do |customer_location_pricelist| %>
       <% if customer_location_pricelist.location_id != @customer_locations.location_id %>
         <tr>
+          <td><%= number_with_delimiter(customer_location_pricelist.id) %></td>
           <td><strong><%= customer_location_pricelist.location.name %></strong></td>
           <% if customer_location_pricelist.started_at.nil? && customer_location_pricelist.expireddate.nil? %>
             <td colspan="9"><center><i>[No contract available]</i></center></td>

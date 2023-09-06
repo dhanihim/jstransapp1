@@ -64,13 +64,19 @@
 		                          <% if(check_history(history.shipment_from_id)!="") %>
 		                            <br>
 		                          <% end %>
-		                          <%= Shipment.find(history.shipment_from_id).uid %> - <%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+		                          <% if Shipment.find(history.shipment_from_id).shipname != Shipment.find(history.shipment_to_id).shipname && Shipment.find(history.shipment_from_id).voyage != Shipment.find(history.shipment_to_id).voyage %>
+		                          	<%= Shipment.find(history.shipment_from_id).shipname %>, <%= Shipment.find(history.shipment_from_id).voyage %>
+		                          <% end %>
 		                        <% end %>
+
+		                        <% if Shipment.find(history.shipment_from_id).shipname != Shipment.find(history.shipment_to_id).shipname && Shipment.find(history.shipment_from_id).voyage != Shipment.find(history.shipment_to_id).voyage %>
 		                      	<br><strong>to</strong><br>
+		                      	<% end %>
+
 		                        <% if Shipment.where("id = ?",history.shipment_to_id).count == 0 %>
 		                            <i>Deleted Shipment</i>
-		                        <% else %>
-		                          <%= Shipment.find(history.shipment_to_id).uid %> - <%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %>
+		                        <% elsif Shipment.find(history.shipment_from_id).shipname != Shipment.find(history.shipment_to_id).shipname && Shipment.find(history.shipment_from_id).voyage != Shipment.find(history.shipment_to_id).voyage %>	
+		                          	<%= Shipment.find(history.shipment_to_id).shipname %>, <%= Shipment.find(history.shipment_to_id).voyage %>
 		                        <% end %>
 		                    </center>
 						</td>

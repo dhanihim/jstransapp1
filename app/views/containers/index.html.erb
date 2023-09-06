@@ -61,25 +61,25 @@
 <br>
 
 <div class="table-responsive">
-<table class="table" id="myTable">
+<table class="table" id="containerdatatable">
   <thead>
     <tr>
       <th>#</th>
-      <th>Payment</th>
-      <th>Number</th>
-      <th>Seal Number</th>
-      <th>Size</th>
-      <th>POL</th>
-      <th>POD</th>
-      <th>Shipment</th>
-      <th>ETD</th>
-      <th>Cargo</th>
-      <th>Customer</th>
-      <th>Trucking</th>
-      <th>Agent Door</th>
-      <th>Grand Total</th>
-      <th>Created At</th>
-      <th>Created By</th>
+      <th class="dt-filter-select">Payment</th>
+      <th class="dt-filter-select">Number</th>
+      <th class="dt-filter-select">Seal Number</th>
+      <th class="dt-filter-select">Size</th>
+      <th class="dt-filter-select">POL</th>
+      <th class="dt-filter-select">POD</th>
+      <th class="dt-filter-select">Shipment</th>
+      <th class="dt-filter-select">ETD</th>
+      <th class="dt-filter-select">Cargo</th>
+      <th class="dt-filter-select">Customer</th>
+      <th class="dt-filter-select">Trucking</th>
+      <th class="dt-filter-select">Agent Door</th>
+      <th class="dt-filter-select">Grand Total</th>
+      <th class="dt-filter-select">Created At</th>
+      <th class="dt-filter-select">Created By</th>
       <th></th>
     </tr>
   </thead>
@@ -188,9 +188,9 @@
           <%= number_with_delimiter(Assignment.where("container_id = ? AND active = 1",container.id).sum(:grand_total)) %>
         </td>
         <td style="white-space:nowrap"><%= container.created_at.in_time_zone("Jakarta").to_date.to_s(:long) %></td>
-        <td>
+        <td style="text-transform: capitalize;">
           <% if container.user_id !=0 && !container.user_id.nil? %>
-            <font style="text-transform: capitalize;"><%= User.find(container.user_id).name %></font>
+            <%= User.find(container.user_id).name %>
           <% else %>
             -
           <% end %>
@@ -204,5 +204,26 @@
       </tr>
     <% end %>
   </tbody>
+  <tfoot>
+    <tr>
+      <th>#</th>
+      <th>Payment</th>
+      <th>Number</th>
+      <th>Seal Number</th>
+      <th>Size</th>
+      <th>POL</th>
+      <th>POD</th>
+      <th>Shipment</th>
+      <th>ETD</th>
+      <th>Cargo</th>
+      <th>Customer</th>
+      <th>Trucking</th>
+      <th>Agent Door</th>
+      <th>Grand Total</th>
+      <th>Created At</th>
+      <th>Created By</th>
+      <th></th>
+    </tr>
+  </tfoot>
 </table>
 </div>

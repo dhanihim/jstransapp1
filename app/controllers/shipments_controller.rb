@@ -31,7 +31,12 @@ class ShipmentsController < ApplicationController
 
     passing_id = 0
     shipmenthistory.each do |history|
-      sentence += Shipment.find(history.shipment_from_id).uid+" - "+Shipment.find(history.shipment_from_id).shipname+" "+Shipment.find(history.shipment_from_id).voyage+"\nchanged to\n"+Shipment.find(history.shipment_to_id).uid+" - "+Shipment.find(history.shipment_to_id).shipname+" "+Shipment.find(history.shipment_to_id).voyage+"\n"
+
+      #code with uid Shipment.find(history.shipment_from_id).uid+" - "
+
+      if Shipment.find(history.shipment_from_id).shipname != Shipment.find(history.shipment_to_id).shipname && Shipment.find(history.shipment_from_id).voyage != Shipment.find(history.shipment_to_id).voyage
+        sentence += Shipment.find(history.shipment_from_id).shipname+" "+Shipment.find(history.shipment_from_id).voyage+"\nchanged to\n"+Shipment.find(history.shipment_to_id).shipname+" "+Shipment.find(history.shipment_to_id).voyage+"\n"
+      end
 
       sentence += check_history(history.shipment_from_id, sentence)+"\n".to_s
     end

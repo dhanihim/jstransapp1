@@ -152,22 +152,71 @@ class AssignmentsController < ApplicationController
         @link += "&container_number="+Container.find(assignment.container_id).number.to_s
       end
       
+      #if !assignment.pickup_location.nil?
+      #  if  CustomerLocation.where("id = ?",assignment.pickup_location).count > 0
+      #    @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
+      #      "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
+      #  else
+      #    @link += "&pickup_address=null&pol=null"
+      #  end
+      #end 
+      #
+      #if !assignment.destination_location.nil?
+      #  if CustomerLocation.where("id = ?",assignment.destination_location).count > 0
+      #    @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
+      #      "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
+      #  else
+      #    @link += "&pickup_address=null&pol=null"
+      #  end
+      #end
+
+      pickup_address = nil
+      pol = nil
+      destination_address = nil
+      pod = nil
+
       if !assignment.pickup_location.nil?
         if  CustomerLocation.where("id = ?",assignment.pickup_location).count > 0
-          @link += "&pickup_address="+CustomerLocation.find(assignment.pickup_location).address.to_s+
-            "&pol="+Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
-        else
-          @link += "&pickup_address=null&pol=null"
+          pickup_address = CustomerLocation.find(assignment.pickup_location).address.to_s
+          pol = Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name.to_s
         end
       end 
 
       if !assignment.destination_location.nil?
         if CustomerLocation.where("id = ?",assignment.destination_location).count > 0
-          @link += "&destination_address="+CustomerLocation.find(assignment.destination_location).address.to_s+
-            "&pod="+Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
-        else
-          @link += "&pickup_address=null&pol=null"
+          destination_address = CustomerLocation.find(assignment.destination_location).address.to_s
+          pod = Location.find(CustomerLocation.find(assignment.destination_location).location_id).name.to_s
         end
+      end
+
+      if !pickup_address.nil?
+        pickup_address = pickup_address.gsub("&","%26")
+        pickup_address = pickup_address.gsub(" ","%20")
+
+        @link += "&pickup_address="+pickup_address
+      else
+        @link += "&pickup_address=null"
+      end
+
+      if !pol.nil?
+        @link += "&pol="+pol
+      else
+        @link += "&pol=null"
+      end
+
+      if !destination_address.nil?
+        destination_address = destination_address.gsub("&","%26")
+        destination_address = destination_address.gsub(" ","%20")
+
+        @link += "&destination_address="+destination_address
+      else
+        @link += "&destination_address=null"
+      end
+      
+      if !pod.nil?
+        @link += "&pod="+pod
+      else
+        @link += "&pod=null"
       end
 
       @link += "&pickuptime="+assignment.pickuptime.to_s(:long).to_s+
@@ -237,23 +286,55 @@ class AssignmentsController < ApplicationController
       @link += "&container_number="+Container.find(@assignment.container_id).number.to_s
     end
     
-    if !@assignment.pickup_location.nil?
-    if  CustomerLocation.where("id = ?",@assignment.pickup_location).count > 0
-      @link += "&pickup_address="+CustomerLocation.find(@assignment.pickup_location).address.to_s+
-    "&pol="+Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name.to_s
-    else
-      @link += "&pickup_address=null&pol=null"
-    end
-  end 
+    pickup_address = nil
+    pol = nil
+    destination_address = nil
+    pod = nil
 
-  if !@assignment.destination_location.nil?
-    if CustomerLocation.where("id = ?",@assignment.destination_location).count > 0
-      @link += "&destination_address="+CustomerLocation.find(@assignment.destination_location).address.to_s+
-    "&pod="+Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name.to_s
-    else
-      @link += "&pickup_address=null&pol=null"
+    if !@assignment.pickup_location.nil?
+      if  CustomerLocation.where("id = ?",@assignment.pickup_location).count > 0
+        pickup_address = CustomerLocation.find(@assignment.pickup_location).address.to_s
+        pol = Location.find(CustomerLocation.find(@assignment.pickup_location).location_id).name.to_s
+      end
+    end 
+
+    if !@assignment.destination_location.nil?
+      if CustomerLocation.where("id = ?",@assignment.destination_location).count > 0
+        destination_address = CustomerLocation.find(@assignment.destination_location).address.to_s
+        pod = Location.find(CustomerLocation.find(@assignment.destination_location).location_id).name.to_s
+      end
     end
-  end
+
+    if !pickup_address.nil?
+      pickup_address = pickup_address.gsub("&","%26")
+      pickup_address = pickup_address.gsub(" ","%20")
+
+      @link += "&pickup_address="+pickup_address
+    else
+      @link += "&pickup_address=null"
+    end
+
+    if !pol.nil?
+      @link += "&pol="+pol
+    else
+      @link += "&pol=null"
+    end
+
+    if !destination_address.nil?
+      destination_address = destination_address.gsub("&","%26")
+      destination_address = destination_address.gsub(" ","%20")
+
+      @link += "&destination_address="+destination_address
+    else
+      @link += "&destination_address=null"
+    end
+    
+    if !pod.nil?
+      @link += "&pod="+pod
+    else
+      @link += "&pod=null"
+    end
+
 
     @link += "&pickuptime="+@assignment.pickuptime.to_s(:long).to_s+
     "&load_type="+@assignment.loadtype.to_s+
@@ -263,7 +344,7 @@ class AssignmentsController < ApplicationController
     "&ppn="+@assignment.ppn.to_s+
     "&grand_total="+@assignment.grand_total.to_s+       
     "&active="+@assignment.active.to_s+   
-    "&finance_reference="+assignment.finance_reference.to_s+ 
+    "&finance_reference="+@assignment.finance_reference.to_s+ 
     "&code=server"+
     "&subcode="+@assignment.id.to_s 
 
@@ -339,11 +420,11 @@ class AssignmentsController < ApplicationController
     @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
 
     if !params[:datefrom].nil?
-      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
-      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1  AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("uid DESC")
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("pickuptime DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("pickuptime DESC")
     else
-      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
-      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("uid DESC")
+      @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("pickuptime DESC")
+      @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("pickuptime DESC")
     end
   end
 

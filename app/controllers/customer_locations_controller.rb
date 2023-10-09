@@ -82,6 +82,8 @@ class CustomerLocationsController < ApplicationController
   # DELETE /customer_locations/1 or /customer_locations/1.json
   def destroy
 
+    @customer_locations = CustomerLocation.find(params[:id])
+
     @customer_locations.active = 0
     @customer_locations.save
 

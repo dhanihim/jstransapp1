@@ -51,22 +51,22 @@
     <% if (Assignment.find(params[:id]).container_id.nil? && Assignment.find(params[:id]).loadtype == "Full Container Load") || (AssignmentDetail.where("assignment_id = ?", params[:id]).count == 0 && Assignment.find(params[:id]).loadtype == "Less Container Load") %>
       <div class="field form-group">
         <%= form.label :pickup_location %>
-        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup' AND active = 1", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
       </div>
 
       <div class="field form-group">
         <%= form.label :destination_location %>
-        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring' AND active = 1", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control"} %>
       </div>
     <% else %>
       <div class="field form-group">
         <%= form.label :pickup_location %>
-        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+        <%= form.collection_select :pickup_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Pickup' AND active = 1", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
       </div>
 
       <div class="field form-group">
         <%= form.label :destination_location %>
-        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring'", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
+        <%= form.collection_select :destination_location, CustomerLocation.where("customer_id = ? AND pickup_or_dooring = 'Dooring' AND active = 1", params[:customer_id]).order("address ASC"), :id, :name_with_initial, {}, {class:"form-control", disabled:true} %>
       </div>
     <% end %>
   <% elsif %>

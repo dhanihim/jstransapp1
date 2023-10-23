@@ -101,6 +101,8 @@ class AssignmentsController < ApplicationController
             assignment.dooring_web_path = @link
           elsif (@assignment_update.document_type==3)
             assignment.payment_web_path = @link
+          elsif (@assignment_update.document_type==4)
+            assignment.upload_web_path = @link
           end
         end
         

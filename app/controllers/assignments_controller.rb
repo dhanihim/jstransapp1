@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def price_adjustment
     assignment = Assignment.find(params[:id])
@@ -106,13 +106,14 @@ class AssignmentsController < ApplicationController
           end
         end
         
-        assignment.status = response['status']
+        if response['status'].to_s != "-1"
+          assignment.status = response['status']
+          assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
+        end
 
         if(response['description']!='')
           assignment.description = response['description']
         end
-
-        assignment.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
 
         assignment.save
         

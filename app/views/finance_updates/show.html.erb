@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Uid:</strong>
+  <%= @finance_update.uid %>
+</p>
+
+<p>
+  <strong>Document path:</strong>
+  <%= @finance_update.document_path %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @finance_update.description %>
+</p>
+
+<%= link_to 'Edit', edit_finance_update_path(@finance_update) %> |
+<%= link_to 'Back', finance_updates_path %>

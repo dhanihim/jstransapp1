@@ -1,0 +1,2 @@
+class FinanceUpdate < ApplicationRecord
+end

@@ -1,0 +1,32 @@
+<%= form_with(model: finance_update) do |form| %>
+  <% if finance_update.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(finance_update.errors.count, "error") %> prohibited this finance_update from being saved:</h2>
+
+      <ul>
+        <% finance_update.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :uid %>
+    <%= form.text_field :uid %>
+  </div>
+
+  <div class="field">
+    <%= form.label :document_path %>
+    <%= form.text_field :document_path %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_field :description %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

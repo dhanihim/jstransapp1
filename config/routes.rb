@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :finance_updates
   resources :shipment_histories
   resources :finances do
     member do
@@ -6,6 +7,7 @@ Rails.application.routes.draw do
       get :undo_payment
     end
     collection do 
+      get :fetch_all_document
       get :sync_all
       get :sync
       get :attach_assignment

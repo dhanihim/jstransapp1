@@ -54,6 +54,15 @@
       <% end %>
     </div>
   </div>
+  <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_web_finance %></h4>
+        <h6 class="textbox2">Unfetched Document</h6>
+        <% if @unsync_web_finance!=0 %>
+          <%= link_to "Fetch All", fetch_all_document_finances_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
 </div>
 <br>
 <br>
@@ -87,6 +96,7 @@
         <th>Created At</th>
         <th>Created By</th>
         <th style="width:1px;"></th>
+        <th>Upload Doc</th>
         <th style="width:1px;"></th>
       </tr>
     </thead>
@@ -138,6 +148,21 @@
           <td>
             <% if !finance.payment_date.nil? %>
               <%= link_to 'Undo', undo_payment_finance_path(finance), class:"btn", style:"background-color:#d30000 !important; color:white" %>
+            <% end %>
+          </td>
+          <td style="width:5%; white-space: nowrap;">
+            <% if finance.upload_web_path.nil? %>
+              <form action="<%= $urlpath.to_s+"action/do_upload" %>" method="POST" target="_blank" style="display: inline-block;">
+                <input type="hidden" name="uid" value="<%= finance.uid %>">
+                <input type="hidden" name="target" value="finance">
+                <input type="submit" class="btn btn-dark" value="Upload">
+              </form>
+            <% elsif %>
+              <%= link_to '📁 Download', finance.upload_web_path, class:"btn btn-dark", target:"_blank" %>
+              <form action="<%= $urlpath.to_s+"action/do_upload" %>" method="POST" target="_blank" style="display: inline-block;">
+                <input type="hidden" name="uid" value="<%= finance.uid %>">
+                <input type="submit" class="btn btn-secondary" value="Re-Upload">
+              </form>
             <% end %>
           </td>
           <td style="white-space:nowrap">

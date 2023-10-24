@@ -111,6 +111,7 @@
         <th>Invoice</th>
         <th>Created By</th>
         <th></th>
+        <th>Upload Document</th>
         <th></th>
       </tr>
     </thead>
@@ -247,7 +248,21 @@
               <%= link_to 'Sync', sync_assignment_assignment_url(assignment, :loadtype => params[:loadtype]), class:"btn btn-dark" %>
             <% end %>
           </td>
-          
+          <td style="width:5%; white-space: nowrap;">
+            <% if assignment.upload_web_path.nil? %>
+              <form action="<%= $urlpath.to_s+"action/do_upload" %>" method="POST" target="_blank" style="display: inline-block;">
+                <input type="hidden" name="uid" value="<%= assignment.uid %>">
+                <input type="hidden" name="target" value="assignment">
+                <input type="submit" class="btn btn-dark" value="Upload">
+              </form>
+            <% elsif %>
+              <%= link_to '📁 Download', assignment.upload_web_path, class:"btn btn-dark", target:"_blank" %>
+              <form action="<%= $urlpath.to_s+"action/do_upload" %>" method="POST" target="_blank" style="display: inline-block;">
+                <input type="hidden" name="uid" value="<%= assignment.uid %>">
+                <input type="submit" class="btn btn-secondary" value="Re-Upload">
+              </form>
+            <% end %>
+          </td>
           <td style="width:5%; white-space: nowrap;">
             <!-- style:"background-color:#E3F2FD;color:#003478" -->
             <%= link_to 'Duplicate', duplicate_assignments_path(:loadtype => params[:loadtype]), class:"btn btn-primary", "data-toggle" => "modal", 'data-target' => '#duplicateModal'+assignment.id.to_s %>

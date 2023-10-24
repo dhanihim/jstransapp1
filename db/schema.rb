@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_05_045845) do
+ActiveRecord::Schema.define(version: 2023_10_24_042543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2023_09_05_045845) do
     t.string "code"
     t.integer "subcode"
     t.integer "user_id"
+    t.string "upload_web_path"
     t.index ["agent_id"], name: "index_assignments_on_agent_id"
     t.index ["customer_id"], name: "index_assignments_on_customer_id"
   end
@@ -212,6 +213,14 @@ ActiveRecord::Schema.define(version: 2023_09_05_045845) do
     t.string "email"
   end
 
+  create_table "finance_updates", force: :cascade do |t|
+    t.string "uid"
+    t.string "document_path"
+    t.string "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "finances", force: :cascade do |t|
     t.string "uid"
     t.string "total_billing"
@@ -224,6 +233,7 @@ ActiveRecord::Schema.define(version: 2023_09_05_045845) do
     t.datetime "sync_at"
     t.datetime "edited_at"
     t.integer "user_id"
+    t.string "upload_web_path"
   end
 
   create_table "locations", force: :cascade do |t|

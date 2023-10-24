@@ -1,7 +1,7 @@
 class FinancesController < ApplicationController
   before_action :set_finance, only: %i[ show edit update destroy ]
-  $urlpath = "http://jstranslogistik.com/"
-  #$urlpath = "http://localhost/jstranswebapp/"
+  #$urlpath = "http://jstranslogistik.com/"
+  $urlpath = "http://localhost/jstranswebapp/"
 
   def undo_payment
     @finance = Finance.find(params[:id])
@@ -11,6 +11,48 @@ class FinancesController < ApplicationController
     @finance.edited_at = Time.now.strftime("%d/%m/%Y %H:%M")
 
     @finance.save
+
+    redirect_to(finances_url)
+  end
+
+  def fetch_all_document
+    @app_finance_max = FinanceUpdate.maximum(:id)
+    if(@app_finance_max=='' || @app_finance_max.nil?)
+      @app_finance_max = 0
+    end
+
+    @link = $urlpath.to_s+"sync/finance_update/?id="+@app_finance_max.to_s
+    
+    @response = [HTTParty.get(@link, format: :json).parsed_response]
+
+    #because there is 2 [[]] at the json, use array[0][0] to access
+    #the aray for each is refering to second [] then access the field such as 'id'
+    @response[0][0].each do |response|
+      @finance_update = FinanceUpdate.new
+
+      @finance_update.id = response['id']
+      @finance_update.uid = response['uid']
+      @finance_update.document_path = response['document_path']
+      @finance_update.save
+
+
+      @finance = Finance.where("uid = ?", @finance_update.uid)
+      @finance.each do |finance|
+
+        if(@finance_update.document_path!='')
+          @link = $urlpath.to_s+"assets/uploads/"+@finance_update.document_path
+          
+          finance.upload_web_path = @link
+        end
+
+        if(response['description']!='')
+          finance.description = response['description']
+        end
+
+        finance.save
+        
+      end
+    end
 
     redirect_to(finances_url)
   end
@@ -190,6 +232,21 @@ class FinancesController < ApplicationController
 
   # GET /finances or /finances.json
   def index
+    @app_finance_max = FinanceUpdate.maximum(:id)
+    if(@app_finance_max=='' || @app_finance_max.nil?)
+      @app_finance_max = 0
+    end
+
+    if Finance.internet_connection
+      @response = HTTParty.get($urlpath.to_s+"sync/finance_update/", format: :json).parsed_response 
+      @web_finance_max = @response[0][0]['max_id']
+      #@web_finance_max = 0
+
+      @unsync_web_finance = (@web_finance_max.to_i - @app_finance_max.to_i)
+    else
+      @unsync_web_finance = -1
+    end
+
     @selectedfinance = Finance.where("total_billing = '0' and created_at > ?", 60.days.ago)
 
     @selectedfinance.each do |finance|

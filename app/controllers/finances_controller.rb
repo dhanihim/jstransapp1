@@ -1,7 +1,7 @@
 class FinancesController < ApplicationController
   before_action :set_finance, only: %i[ show edit update destroy ]
-  #$urlpath = "http://jstranslogistik.com/"
-  $urlpath = "http://localhost/jstranswebapp/"
+  $urlpath = "http://jstranslogistik.com/"
+  #$urlpath = "http://localhost/jstranswebapp/"
 
   def undo_payment
     @finance = Finance.find(params[:id])

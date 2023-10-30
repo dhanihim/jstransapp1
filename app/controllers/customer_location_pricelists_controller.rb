@@ -37,7 +37,7 @@ class CustomerLocationPricelistsController < ApplicationController
       pricelist = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? AND started_at <= ?",customer_location_id, location_id, Date.today)
       pricelist.each do |pricelist|
         pricelist.active = 0
-        pricelist.description = "Overwritten"
+        pricelist.log = "Overwritten"
         pricelist.save
       end
     end
@@ -75,7 +75,7 @@ class CustomerLocationPricelistsController < ApplicationController
 
   # DELETE /customer_location_pricelists/1 or /customer_location_pricelists/1.json
   def destroy
-    @customer_location_pricelist.description = "Deleted"
+    @customer_location_pricelist.log = "Deleted"
     @customer_location_pricelist.active = 0
 
     @customer_location_pricelist.save

@@ -2,8 +2,24 @@
 
 <h4>Full Container Load Assignments</h4>
 <br>
+<br>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-6">
+    <center><h5>Search by Keyword</h5></center>
+
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+      <div class="row">
+        <%= form.text_field :keyword, placeholder:"Search by Container Number", class:"form-control", style:"text-align:center; margin-top:15px;", autocomplete:"off", autofocus:"true" %> 
+      </div>
+      
+      <br>
+      
+      <%= form.submit "Load Assignment Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+  <div class="col-md-6">
     <center><h5>Search by Date</h5></center>
 
     <%= form_with url: "", method: :get do |form| %>
@@ -71,7 +87,11 @@
 <br>
 
 <% if params[:datefrom].nil? %>
-  <h5>Assignment Pickup Date within 30 Days</h5>
+  <% if !params[:keyword].nil? %>
+    <h5>Searching for keyword <strong>"<%= params[:keyword] %>"</strong></h5>
+  <% else %>
+    <h5>Assignment Pickup Date within 30 Days</h5>
+  <% end %>
 <% elsif %>
   <h5>Assignment Pickup Date between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
 <% end %>

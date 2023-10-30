@@ -26,6 +26,7 @@
       <th>per40fr</th>
       <th>Ppncategory</th>
       <th>Description</th>
+      <th>Log</th>
       <th>Started At</th>
       <th>Expired At</th>
       <th>Customer location from</th>
@@ -53,6 +54,7 @@
           <% end %>  
         </td>
         <td><%= customer_location_pricelist.description %></td>
+        <td><%= customer_location_pricelist.log %></td>
         <td>
           <% if customer_location_pricelist.started_at.blank? %>
             <%= customer_location_pricelist.started_at %> 
@@ -93,6 +95,7 @@
       <th>per40fr</th>
       <th>Ppncategory</th>
       <th>Description</th>
+      <th>Log</th>
       <th>Started At</th>
       <th>Expired At</th>
       <th>Customer location from</th>
@@ -120,6 +123,7 @@
           <% end %>  
         </td>
         <td><%= customer_location_pricelist.description %></td>
+        <td><%= customer_location_pricelist.log %></td>
         <td style="color:green">
           <strong>
             <% if customer_location_pricelist.started_at.blank? %>
@@ -161,6 +165,7 @@
       <th>per40fr</th>
       <th>Ppncategory</th>
       <th>Description</th>
+      <th>Log</th>
       <th>Started At</th>
       <th>Expired At</th>
       <th>Customer location from</th>
@@ -186,9 +191,12 @@
             Non PPN
           <% end %>  
         </td>
+        <td>
+          <%= customer_location_pricelist.description %>
+        </td>
         <td style="color:red">
           <strong>
-            <%= customer_location_pricelist.description %>
+            <%= customer_location_pricelist.log %>
           </strong>
         </td>
         <td>

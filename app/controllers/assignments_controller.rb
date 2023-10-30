@@ -394,7 +394,6 @@ class AssignmentsController < ApplicationController
 
   def remove_assignment_container
     @assignment = Assignment.find(params[:id])
-
     @assignment.container_id = nil
 
     @assignment.save
@@ -425,6 +424,14 @@ class AssignmentsController < ApplicationController
     if !params[:datefrom].nil?
       @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("pickuptime DESC")
       @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("pickuptime DESC")
+    elsif(!params[:keyword].nil?)
+      keyword = params[:keyword].upcase
+
+      @container = Container.where("number LIKE ?", "%#{keyword}%");
+      @container_id_array = @container.map(&:id)
+
+      @assignmentsfcl = Assignment.where("container_id in (?)", @container_id_array).order("pickuptime DESC")
+      @assignmentslcl = Assignment.where("container_id in (?)", @container_id_array).order("pickuptime DESC")
     else
       @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("pickuptime DESC")
       @assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND active = 1 AND pickuptime >= ?", 30.days.ago).order("pickuptime DESC")

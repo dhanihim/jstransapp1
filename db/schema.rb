@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_30_133750) do
+ActiveRecord::Schema.define(version: 2023_10_31_013815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(version: 2023_10_30_133750) do
     t.datetime "edited_at"
     t.integer "user_id"
     t.string "upload_web_path"
+    t.integer "deleted_by"
   end
 
   create_table "locations", force: :cascade do |t|

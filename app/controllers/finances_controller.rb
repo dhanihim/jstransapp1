@@ -409,6 +409,7 @@ class FinancesController < ApplicationController
       assignment.save
     end
 
+    @finance.deleted_by = current_user.id
     @finance.active = 0
     @finance.save
 

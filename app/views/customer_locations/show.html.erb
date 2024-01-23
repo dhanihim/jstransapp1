@@ -42,11 +42,13 @@
   </thead>
 
   <tbody>
+    <% @location_exist = [] %>
     <% @customer_location_pricelists.each do |customer_location_pricelist| %>
       <% if customer_location_pricelist.location_id != @customer_locations.location_id %>
         <tr>
           <td><%= number_with_delimiter(customer_location_pricelist.id) %></td>
           <td><strong><%= customer_location_pricelist.location.name %></strong></td>
+          <% @location_exist.push(customer_location_pricelist.location.id) %>
           <% if customer_location_pricelist.started_at.nil? && customer_location_pricelist.expireddate.nil? %>
             <td colspan="9"><center><i>[No contract available]</i></center></td>
           <% else %>
@@ -94,7 +96,6 @@
 
 <br>
 
-
 <div class="row">
   <div class="col-md-6 col-sm-12">
     <h4>Available Route</h4>
@@ -109,20 +110,21 @@
         </tr>
       </thead>
 
+
       <tbody>
-        <% @route_with_no_contract.each do |customer_location_pricelist| %>
-          <% if customer_location_pricelist.location_id != @customer_locations.location_id && CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND (started_at <= ? OR started_at is NULL)", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count == 1 %>
-            <tr>
-              <td><strong><%= customer_location_pricelist.location.name %></strong></td>
-              <td>
-                <% if CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count > 0 %>
-                    <%= CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count %> pending contract(s)
-                <% end %>
-              </td>
-              <td style="width:5%; white-space:nowrap">
-                <%= link_to 'Add Pricelist', customer_location_pricelists_path(:customer_location_id => params[:id], :destination => customer_location_pricelist.location), class:"btn btn-primary" %>
-              </td>
-            </tr>
+        <% @location_available.each do |location_available| %>
+            <% if !@location_exist.include? location_available.id %>
+              <tr>
+                <td><strong><%= location_available.name %></strong></td>
+                <td>
+                  <% if CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", @customer_locations.id, location_available.id, Date.today).count > 0 %>
+                      <%= CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND started_at > ?", @customer_locations.id, location_available.id, Date.today).count %> pending contract(s)
+                  <% end %>
+                </td>
+                <td style="width:5%; white-space:nowrap">
+                  <%= link_to 'Add Pricelist', customer_location_pricelists_path(:customer_location_id => params[:id], :destination => location_available.id), class:"btn btn-primary" %>
+                </td>
+              </tr>
           <% end %>
         <% end %>
       </tbody>
@@ -131,3 +133,17 @@
   </div>
 </div>
 <br>
+
+<!-- <tbody>
+  @route_with_no_contract.each do |customer_location_pricelist|
+    if customer_location_pricelist.location_id != @customer_locations.location_id && CustomerLocationPricelist.where("customer_location_id = ? AND location_id = ? AND active = 1 AND (started_at <= ? OR started_at is NULL)", customer_location_pricelist.customer_location_id, customer_location_pricelist.location_id, Date.today).count == 1
+      <tr>
+        <td><strong>customer_location_pricelist.location.name</strong></td>
+        
+        <td style="width:5%; white-space:nowrap">
+          link_to 'Add Pricelist', customer_location_pricelists_path(:customer_location_id => params[:id], :destination => customer_location_pricelist.location), class:"btn btn-primary"
+        </td>
+      </tr>
+    end
+  end
+</tbody> -->

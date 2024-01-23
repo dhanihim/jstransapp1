@@ -245,7 +245,10 @@ class AssignmentsController < ApplicationController
       product_description = product_description.gsub("&","%26")
       product_description = product_description.gsub(" ","%20")
 
+
       @link += "&product_description="+product_description.to_s
+
+      @link = @link.gsub("\u00A0", "")
 
       @linkurl.push(@link)
 
@@ -351,7 +354,7 @@ class AssignmentsController < ApplicationController
     "&code=server"+
     "&subcode="+@assignment.id.to_s 
 
-    product_description = "";
+    product_description = ""
 
     #product_description for packinglist
     assignment_detail = AssignmentDetail.where("assignment_id = ?", @assignment.id)
@@ -359,10 +362,14 @@ class AssignmentsController < ApplicationController
       product_description = product_description.to_s+detail.description.to_s+"_"+CustomerProduct.find(detail.customer_product_id).name+"_"+detail.quantity.to_s+"_"+detail.unit_description.to_s+"|"
     end
 
+
     product_description = product_description.gsub("&","%26")
     product_description = product_description.gsub(" ","%20")
 
     @link += "&product_description="+product_description.to_s
+
+
+    @link = @link.gsub("\u00A0", "")
 
     #saving sync datetime
     @assignment.sync_at = Time.now.strftime("%d/%m/%Y %H:%M")

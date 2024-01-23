@@ -46,7 +46,8 @@ class CustomerLocationsController < ApplicationController
     end
 
     @customer_location_pricelists = CustomerLocationPricelist.where("customer_location_id = ? AND started_at <= ? AND active = 1", @customer_locations.id, Date.today).order("location_id ASC")
-    @route_with_no_contract = CustomerLocationPricelist.where("customer_location_id = ? AND started_at is NULL AND active = 1", @customer_locations.id).order("location_id ASC")
+    #@route_with_no_contract = CustomerLocationPricelist.where("customer_location_id = ? AND (started_at is NULL AND active = 1)", @customer_locations.id).order("location_id ASC")
+    @location_available = Location.where("active = 1")
   end
 
   # GET /customer_locations/new

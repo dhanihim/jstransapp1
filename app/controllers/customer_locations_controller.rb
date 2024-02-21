@@ -17,7 +17,7 @@ class CustomerLocationsController < ApplicationController
 
       used_id = CustomerLocationPricelist.where("customer_location_id = ? and location_id = ? and active = 1 and started_at <= ? and expireddate >= ?", customer_location_id, location_id, Date.today, Date.today).maximum("id")
 
-      CustomerLocationPricelist.where("id != ? AND customer_location_id = ? and location_id = ?",used_id, customer_location_id, location_id).update_all(active: 0, log: "Overwritten")
+      CustomerLocationPricelist.where("id != ? AND customer_location_id = ? and location_id = ? AND started_at < ?",used_id, customer_location_id, location_id, Date.today).update_all(active: 0, log: "Overwritten")
     end
 
     @customer_id = @customer_location.customer_id

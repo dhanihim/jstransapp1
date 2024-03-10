@@ -1,0 +1,148 @@
+<style type="text/css">
+  @media print
+  {    
+      .no-print, .no-print *
+      {
+          display: none !important;
+      }
+  }
+</style>
+<div class="no-print">
+<div class="row no-print">
+  <div class="col-md-12">
+    <center><h5>Search by Date</h5></center>
+
+    <%= form_with url: "", method: :get do |form| %>
+    <center>
+
+      <div class="row">
+        <div class="col-md-4">
+          <%= form.date_field :datefrom, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.date_field :dateto, class:'form-control', required:'true', style:"text-align:center; margin-top:15px;", autocomplete:"off"%>
+        </div>
+        <div class="col-md-4">
+          <%= form.select :datetype, ["Created At"], {}, class:"form-control", style:"margin-top:15px;", placeholder:"datetype", autocomplete:"off"   %>
+        </div>
+      </div>
+      <br>
+
+      <%= form.submit "Load Assignment Data", class:"btn btn-primary" %>
+    </center>
+    <% end %>
+  </div>
+</div>
+
+<br>
+<br>
+
+<% if params[:datefrom].nil? && params[:keyword].nil? %>
+  <h5>Finance Created within 30 Days</h5>
+<% elsif !params[:keyword].nil? %>
+  <h5></h5>
+<% elsif !params[:datefrom].nil? %>
+  <h5>Finance Created between <%= params[:datefrom] %> - <%= params[:dateto] %></h5>
+<% end %>
+<br>
+
+<% if !params[:keyword].nil? %>
+  <h6>Searching for keyword <strong>"<%= params[:keyword] %>"</strong></h6>
+<% end %>
+<br>
+
+</div>
+<div class="table-responsive">
+  <table class="table table-bordered" id="myTable1">
+    <!-- <thead>
+      <tr>
+        <th>#</th>
+      </tr>
+    </thead> -->
+    <tbody>
+      <% @finances.each do |finance| %>
+        <% @subtotal = 0 %>
+        <% @ppn = 0 %>
+        <% @grand_total = 0 %>
+        <tr>
+          <td>
+            <strong><%= finance.uid %></strong>
+          </td>
+          <td colspan="8">
+            <% @counter = 0; %>
+            <% @selected_assignments = Assignment.select("customer_id").where("finance_reference = ?",finance.id).group("customer_id") %>
+            <% @selected_assignments.each do |a| %>
+              <% if @counter>0 %>
+                <br>
+              <% end %>
+              <strong><%= Customer.find(a.customer_id).name %></strong>
+              <% @counter = @counter + 1 %>
+            <% end %>
+            </td>
+            <td>
+            <strong><%= finance.created_at.in_time_zone("Jakarta").to_s(:long) %></strong>
+          </td>
+        </tr>
+        <% @selected_assignments = Assignment.where("finance_reference = ?",finance.id) %>
+        <% @selected_assignments.each do |assignment| %>
+          <tr>
+            <td>
+            <% if !assignment.pickup_location.nil? && !assignment.destination_location.nil? %>
+              <% if CustomerLocation.where("id = ?",assignment.pickup_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.pickup_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+               - 
+              <% if CustomerLocation.where("id = ?",assignment.destination_location).count > 0 %>
+                <%= Location.find(CustomerLocation.find(assignment.destination_location).location_id).name %>
+              <% else %>
+                <font style="font-style: italic; color:red">[Deleted Location]</font>
+              <% end %>
+            <% elsif %>
+              -
+            <% end %>
+            DOOR - DOOR 
+            <%= Container.find(assignment.container_id).number %></td>
+            <td style="white-space:nowrap;">
+              <%= number_with_delimiter(assignment.grand_total - assignment.ppn) %>
+              <% @subtotal += assignment.grand_total - assignment.ppn %>
+            </td>
+            <td>1</td>
+            <td style="white-space:nowrap;">
+              <%= number_with_delimiter(assignment.grand_total - assignment.ppn) %>
+            </td>
+            <td>0</td>
+            <td style="white-space:nowrap;">
+              <%= number_with_delimiter(assignment.grand_total - assignment.ppn) %>
+            </td>
+            <td style="white-space:nowrap;">
+              <%= number_with_delimiter(assignment.ppn) %>
+              <% @ppn += assignment.ppn %>
+            </td>
+            <td>0</td>
+            <td>0</td>
+            <td style="white-space:nowrap;">
+              <%= number_with_delimiter(assignment.grand_total) %>
+              <% @grand_total += assignment.grand_total %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td></td>
+          <td style="white-space:nowrap;"><strong><%= number_with_delimiter(@subtotal) %></strong></td>
+          <td colspan="3"></td>
+          <td style="white-space:nowrap;"><strong><%= number_with_delimiter(@subtotal) %></strong></td>
+          <td style="white-space:nowrap;"><strong><%= number_with_delimiter(@ppn) %></strong></td>
+          <td colspan="2"></td>
+          <td style="white-space:nowrap;"><strong><%= number_with_delimiter(@grand_total) %></strong></td>
+        </tr>
+        <!-- Untuk line break row tabel -->
+        <tr>
+          <td colspan="10"></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<br>

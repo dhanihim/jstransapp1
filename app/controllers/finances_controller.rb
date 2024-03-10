@@ -324,6 +324,15 @@ class FinancesController < ApplicationController
   def show
   end
 
+  # GET /finances/1 or /finances/1.json
+  def document_tax_report
+    if !params[:datefrom].nil?
+      @finances = Finance.where("created_at >= ? AND created_at <= ? AND active = 1", params[:datefrom], params[:dateto]).order("created_at DESC")  
+    else
+      @finances = Finance.where("active = 1 AND created_at > ?", 30.days.ago).order("created_at DESC")
+    end
+  end
+
   # GET /finances/new
   def new
     @finance = Finance.new

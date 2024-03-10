@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       get :sync
       get :attach_assignment
       get :remove_assignment
+      get :document_tax_report
     end
   end
   resources :assignment_updates

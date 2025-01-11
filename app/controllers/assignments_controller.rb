@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
 
     if assignment.ppn != 0
       #ppn 1.1%
-      assignment.ppn = (params[:total_price].to_i - params[:price_adjustment].to_i)*0.011  
+      assignment.ppn = (params[:total_price].to_i - params[:price_adjustment].to_i)*0.012  
     end
 
     assignment.price_adjustment = params[:price_adjustment].to_i
@@ -410,23 +410,23 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments or /assignments.json
   def index
-    @app_assignment_max = AssignmentUpdate.maximum(:id)
-    if(@app_assignment_max=='' || @app_assignment_max.nil?)
-      @app_assignment_max = 0
-    end
+    # @app_assignment_max = AssignmentUpdate.maximum(:id)
+    # if(@app_assignment_max=='' || @app_assignment_max.nil?)
+    #   @app_assignment_max = 0
+    # end
 
-    if Assignment.internet_connection
-      @response = HTTParty.get($urlpath.to_s+"sync/assignment_update/", format: :json).parsed_response 
-      @web_assignment_max = @response[0][0]['max_id']
-      #@web_assignment_max = 0
+    # if Assignment.internet_connection
+    #   @response = HTTParty.get($urlpath.to_s+"sync/assignment_update/", format: :json).parsed_response 
+    #   @web_assignment_max = @response[0][0]['max_id']
+    #   #@web_assignment_max = 0
 
-      @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
-    else
-      @unsync_assignment = -1
-    end
+    #   @unsync_assignment = (@web_assignment_max.to_i - @app_assignment_max.to_i)
+    # else
+    #   @unsync_assignment = -1
+    # end
 
-    @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
-    @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
+    # @unsync_assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
+    # @unsync_assignmentslcl = Assignment.where("loadtype = 'Less Container Load' AND (sync_at is NULL OR sync_at < edited_at)")
 
     if !params[:datefrom].nil?
       @assignmentsfcl = Assignment.where("loadtype = 'Full Container Load' AND active = 1 AND pickuptime >= ? AND pickuptime <= ?", params[:datefrom], params[:dateto]).order("pickuptime DESC")
@@ -541,7 +541,7 @@ class AssignmentsController < ApplicationController
           @assignment.total_price = priceused
 
           if(ppncategory==1)
-            @assignment.ppn = (1.1*priceused/100)
+            @assignment.ppn = (1.2*priceused/100)
           else
             @assignment.ppn = 0
           end

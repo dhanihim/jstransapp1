@@ -46,6 +46,43 @@
 
 <br>
 <br>
+<% if @unsync_assignment!=-1 %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+        <% if @unsync_assignmentsfcl.count!=0 %>
+          <%= link_to "Sync All", sync_all_assignment_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignment %></h4>
+        <h6 class="textbox2">Unfetched Document</h6>
+        <% if @unsync_assignment!=0 %>
+          <%= link_to "Fetch All", fetch_all_document_assignments_url(:loadtype => 1), class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_assignmentsfcl.count %></h4>
+        <h6 class="textbox2">Unsynced FCL</h6>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="informationbox3">
+        <h5 class="textbox2" style="margin-bottom: 38px;color: red;">No Internet Connection</h5>
+        <h6 class="textbox2">Unfetched Document</h6>
+      </div>
+    </div>
+  </div>
+<% end %>
 <br>
 <br>
 
@@ -82,10 +119,18 @@
         <th>Total Product</th>
         <th>Total Price</th>
         <th>Price Adjustment</th>
-        <th>PPN(1.2%)</th>
+        <th>PPN(1.1%)</th>
         <th>Grand Total</th>
+        <th>Status</th>
+        <th>Web Travel Document</th>
+        <th>Web Dooring Document</th>
+        <!-- <th>Web Payment Document</th> -->
+        <th>Travel Document</th>
+        <th>Dooring Document</th>
+        <!-- <th>Payment Document</th> -->
         <th>Invoice</th>
         <th>Created By</th>
+        <th></th>
         <th>Upload Document</th>
         <th></th>
       </tr>
@@ -151,6 +196,54 @@
           <td><%= number_with_delimiter(assignment.price_adjustment) %></td>
           <td><%= number_with_delimiter(assignment.ppn) %></td>
           <td><%= number_with_delimiter(assignment.grand_total) %></td>
+          
+          <% if assignment.status==0 %>
+            <td style="color:red"><strong>Booked</strong></td>
+          <% elsif assignment.status==1 %>
+            <td style="color:#fa8602"><strong>Picked Up</strong></td>
+          <% elsif assignment.status==2 %>
+            <td style="color:blue"><strong>Doored</strong></td>
+          <% elsif assignment.status==3 %>
+            <td style="color:green"><strong>Paid</strong></td>
+          <% end %>
+
+          <% if assignment.document_web_path.nil? || assignment.document_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.document_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.dooring_web_path.nil? || assignment.dooring_web_path == ""%>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>              
+            <td>
+              <%= link_to 'View', assignment.dooring_web_path, target: "_blank", class:"btn btn-info btn-block" %>
+            </td>
+          <% end %>
+          <% if assignment.document_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.document_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.document_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
+
+          <% if assignment.dooring_status.url.nil? %>
+            <td style="color:red"><strong>Not Uploaded</strong></td>
+          <% elsif %>
+            <% if assignment.dooring_status.file.exists? %>
+              <td>
+                <%= link_to '📁 Download', assignment.dooring_status.url, class:"btn btn-dark btn-sm" %>
+              </td>
+            <% else %>
+              <td style="color:red"><strong>Error</strong></td>
+            <% end %>
+          <% end %>
 
           <% if assignment.finance_reference.nil? || assignment.finance_reference==0 %>
             <td style="color:red"><strong>Not Yet Generated</strong></td>
@@ -170,6 +263,11 @@
             <% end %>
           </td>
           
+          <td style="width:5%; white-space: nowrap;">
+            <% if assignment.sync_at.nil? || (assignment.sync_at < assignment.edited_at) %>
+              <%= link_to 'Sync', sync_assignment_assignment_url(assignment, :loadtype => params[:loadtype]), class:"btn btn-dark" %>
+            <% end %>
+          </td>
           <td style="width:5%; white-space: nowrap;">
             <% if assignment.upload_web_path.nil? %>
               <form action="<%= $urlpath.to_s+"action/do_upload" %>" method="POST" target="_blank" style="display: inline-block;">

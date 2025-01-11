@@ -28,6 +28,8 @@ gem 'jbuilder', '~> 2.7'
 gem 'devise', '~> 4.8', '>= 4.8.1'
 gem 'httparty', '~> 0.20.0'
 
+gem 'rails_db'
+
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 

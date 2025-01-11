@@ -1,8 +1,25 @@
 <h4>Customers</h4>
 
+<div class="row">
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_customers.count %></h4>
+      <h6 class="textbox2">Unsync Customer(s)</h6>
+      <% if Assignment.internet_connection %>
+        <% if @unsync_customers.count!=0 %>
+          <%= link_to "Sync All", sync_all_customer_customers_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      <% else %>
+        <p style="color: red;float:right; margin-right:20px; margin-top: 25px"><strong>No Connection</strong></p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<br>
+<br>
+
 <%= link_to 'New Customer', new_customer_path, class:"btn btn-primary" %>
-<br>
-<br>
 <br>
 <br>
 
@@ -18,6 +35,7 @@
       <th>Person Responsible (PR)</th>
       <th>NPWP File</th>
       <th>PR ID File</th>
+      <th></th>
       <th></th>
     </tr>
   </thead>
@@ -54,6 +72,12 @@
           <% end %>
         <% end %>
 
+        <td style="width:5%; white-space: nowrap;">
+          <% if customer.sync_at.nil? || (customer.sync_at < customer.edited_at) %>
+            <%= link_to 'Sync', sync_customer_customer_url(customer), class:"btn btn-dark" %>
+          <% end %>
+        </td>
+        
         <td style="width:5%; white-space: nowrap;">
           <%= link_to 'Detail', customer, class:"btn btn-success" %>
           <%= link_to 'Edit', edit_customer_path(customer), class:"btn btn-info" %>

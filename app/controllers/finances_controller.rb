@@ -232,20 +232,20 @@ class FinancesController < ApplicationController
 
   # GET /finances or /finances.json
   def index
-    @app_finance_max = FinanceUpdate.maximum(:id)
-    if(@app_finance_max=='' || @app_finance_max.nil?)
-      @app_finance_max = 0
-    end
+     # @app_finance_max = FinanceUpdate.maximum(:id)
+     # if(@app_finance_max=='' || @app_finance_max.nil?)
+     #   @app_finance_max = 0
+     # end
 
-    if Finance.internet_connection
-      @response = HTTParty.get($urlpath.to_s+"sync/finance_update/", format: :json).parsed_response 
-      @web_finance_max = @response[0][0]['max_id']
-      #@web_finance_max = 0
+     # if Finance.internet_connection
+     #   @response = HTTParty.get($urlpath.to_s+"sync/finance_update/", format: :json).parsed_response 
+     #   @web_finance_max = @response[0][0]['max_id']
+     #   #@web_finance_max = 0
 
-      @unsync_web_finance = (@web_finance_max.to_i - @app_finance_max.to_i)
-    else
-      @unsync_web_finance = -1
-    end
+     #   @unsync_web_finance = (@web_finance_max.to_i - @app_finance_max.to_i)
+     # else
+     #   @unsync_web_finance = -1
+     # end
 
     @selectedfinance = Finance.where("total_billing = '0' and created_at > ?", 60.days.ago)
 

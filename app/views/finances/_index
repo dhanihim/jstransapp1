@@ -44,6 +44,26 @@
 <br>
 <br>
 
+<div class="row">
+  <div class="col-md-3">
+    <div class="informationbox3">
+      <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_finance %></h4>
+      <h6 class="textbox2">Unsynced Finance</h6>
+      <% if @unsync_finance!=0 %>
+        <%= link_to "Sync All", sync_all_finances_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-3">
+      <div class="informationbox3">
+        <h4 class="textbox2" style="margin-bottom: 35px;"><%= @unsync_web_finance %></h4>
+        <h6 class="textbox2">Unfetched Document</h6>
+        <% if @unsync_web_finance!=0 %>
+          <%= link_to "Fetch All", fetch_all_document_finances_url, class:"btn btn-dark", style:"float:right; margin-right:20px; margin-top: 25px" %>
+        <% end %>
+      </div>
+    </div>
+</div>
 <br>
 <br>
 <% if params[:datefrom].nil? && params[:keyword].nil? %>

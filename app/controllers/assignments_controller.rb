@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
 
     if assignment.ppn != 0
       #ppn 1.1%
-      assignment.ppn = (params[:total_price].to_i - params[:price_adjustment].to_i)*0.012  
+      assignment.ppn = (params[:total_price].to_i - params[:price_adjustment].to_i)*0.011  
     end
 
     assignment.price_adjustment = params[:price_adjustment].to_i
@@ -541,7 +541,7 @@ class AssignmentsController < ApplicationController
           @assignment.total_price = priceused
 
           if(ppncategory==1)
-            @assignment.ppn = (1.2*priceused/100)
+            @assignment.ppn = (0.011*priceused)
           else
             @assignment.ppn = 0
           end
